@@ -2,6 +2,8 @@ const express = require('express');
 const Order = require('../models/Order');
 const Retailer = require('../models/Retailer');
 const { auth } = require('../middleware/auth');
+const { hasPermission, requirePermission } = require('../middleware/rbac');
+const { recordAuditEvent } = require('../services/auditService');
 const { sendEmail, emailTemplates } = require('../services/emailService');
 const { notifications } = require('../services/notificationService');
 const logger = require('../services/logger');
@@ -9,7 +11,7 @@ const logger = require('../services/logger');
 const router = express.Router();
 
 // Create order with retailer and GST calculation
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, requirePermission('order.create'), async (req, res) => {
   try {
     const { 
       retailerId, 
@@ -20,6 +22,15 @@ router.post('/', auth, async (req, res) => {
       notes,
       paymentMethod
     } = req.body;
+
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: 'At least one order item is required' });
+    }
+
+    const invalidItem = items.find(item => !item.name || Number(item.quantity) <= 0 || Number(item.price) < 0);
+    if (invalidItem) {
+      return res.status(400).json({ message: 'Each item requires a name, positive quantity, and non-negative price' });
+    }
 
     // Get retailer details
     let retailerData = {};
@@ -44,10 +55,12 @@ router.post('/', auth, async (req, res) => {
     // Calculate totals
     let subtotal = 0;
     const processedItems = items.map(item => {
-      const itemTotal = item.price * item.quantity;
+      const itemTotal = Number(item.price) * Number(item.quantity);
       subtotal += itemTotal;
       return {
         ...item,
+        quantity: Number(item.quantity),
+        price: Number(item.price),
         total: itemTotal
       };
     });
@@ -76,6 +89,12 @@ router.post('/', auth, async (req, res) => {
     });
 
     await order.save();
+    await recordAuditEvent(req, {
+      action: 'order.create',
+      entity: 'Order',
+      entityId: order._id,
+      newValue: { orderNumber: order.orderNumber, amount: order.amount, status: order.status }
+    });
 
     // Update retailer order history
     if (retailerId) {
@@ -128,13 +147,13 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Get orders (with filtering)
-router.get('/', auth, async (req, res) => {
+router.get('/', auth, requirePermission('order.view'), async (req, res) => {
   try {
     const { userId, status, limit } = req.query;
     let query = {};
     
-    // Admins can see all orders, users only see their own
-    if (req.user.role === 'admin') {
+    // Users with order edit permission can see all orders; others only see their own.
+    if (hasPermission(req.user, 'order.edit')) {
       if (userId) query.userId = userId;
       if (status) query.orderStatus = status;
     } else {
@@ -153,9 +172,12 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Get order by ID (for tracking)
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', auth, requirePermission('order.view'), async (req, res) => {
   try {
-    const order = await Order.findOne({ orderId: req.params.id, userId: req.user.id });
+    const query = hasPermission(req.user, 'order.edit')
+      ? { orderId: req.params.id }
+      : { orderId: req.params.id, userId: req.user.id };
+    const order = await Order.findOne(query);
     if (!order) return res.status(404).json({ message: 'Order not found' });
     res.json(order);
   } catch (err) {
@@ -164,14 +186,20 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // Update order status (admin)
-router.put('/:id/status', auth, async (req, res) => {
-  if (req.user.role !== 'admin') return res.status(403).json({ message: 'Admin required' });
+router.put('/:id/status', auth, requirePermission('order.edit'), async (req, res) => {
   try {
     const order = await Order.findOneAndUpdate(
       { orderId: req.params.id },
-      { orderStatus: req.body.status, updatedAt: Date.now() },
+      { orderStatus: req.body.status, status: req.body.status, updatedAt: Date.now() },
       { new: true }
     );
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+    await recordAuditEvent(req, {
+      action: 'order.status.update',
+      entity: 'Order',
+      entityId: order._id,
+      newValue: { orderStatus: order.orderStatus, status: order.status }
+    });
     res.json(order);
   } catch (err) {
     res.status(400).json({ message: err.message });

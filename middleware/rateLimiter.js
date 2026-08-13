@@ -1,4 +1,5 @@
 const rateLimit = require('express-rate-limit');
+const { hasPermission } = require('./rbac');
 const { ipKeyGenerator } = rateLimit;
 
 // Standard rate limiter for regular users
@@ -89,7 +90,7 @@ const authLimiter = rateLimit({
 // Role-based limiter selector
 const getRateLimiter = (req, res, next) => {
   // If user is authenticated and is admin
-  if (req.user && req.user.role === 'admin') {
+  if (req.user && hasPermission(req.user, 'role.manage')) {
     return adminLimiter(req, res, next);
   }
   // Otherwise use standard limiter

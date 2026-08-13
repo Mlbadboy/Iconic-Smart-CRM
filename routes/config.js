@@ -2,13 +2,14 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
-const { auth, adminOnly } = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
+const { requirePermission } = require('../middleware/rbac');
 const { sendEmail } = require('../services/emailService');
 const logger = require('../services/logger');
 
 // Only admins can access configuration
 router.use(auth);
-router.use(adminOnly);
+router.use(requirePermission('role.manage'));
 
 // Get current configuration
 router.get('/current', async (req, res) => {

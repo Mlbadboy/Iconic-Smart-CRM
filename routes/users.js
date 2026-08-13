@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { auth, adminOnly } = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
+const { hasPermission, requirePermission } = require('../middleware/rbac');
+const { recordAuditEvent } = require('../services/auditService');
 const User = require('../models/User');
 
 // Get all users (Admin only)
-router.get('/', auth, adminOnly, async (req, res) => {
+router.get('/', auth, requirePermission('user.view'), async (req, res) => {
     try {
         const users = await User.find()
             .select('-password')
@@ -19,7 +21,7 @@ router.get('/', auth, adminOnly, async (req, res) => {
 });
 
 // Get user by ID (Admin only)
-router.get('/:id', auth, adminOnly, async (req, res) => {
+router.get('/:id', auth, requirePermission('user.view'), async (req, res) => {
     try {
         const user = await User.findById(req.params.id).select('-password');
         
@@ -35,12 +37,12 @@ router.get('/:id', auth, adminOnly, async (req, res) => {
 });
 
 // Delete user (Admin only, cannot delete self)
-router.delete('/:id', auth, adminOnly, async (req, res) => {
+router.delete('/:id', auth, requirePermission('user.disable'), async (req, res) => {
     try {
         const userId = req.params.id;
         
         // Prevent admin from deleting themselves
-        if (userId === req.user.userId) {
+        if (userId === req.user.id) {
             return res.status(400).json({ message: 'Cannot delete your own account' });
         }
         
@@ -51,11 +53,17 @@ router.delete('/:id', auth, adminOnly, async (req, res) => {
         }
         
         // Prevent deleting other admin users (optional protection)
-        if (user.role === 'admin') {
-            return res.status(400).json({ message: 'Cannot delete admin users' });
+        if (hasPermission(user, 'role.manage')) {
+            return res.status(400).json({ message: 'Cannot delete administrator users' });
         }
         
         await User.findByIdAndDelete(userId);
+        await recordAuditEvent(req, {
+            action: 'user.delete',
+            entity: 'User',
+            entityId: user._id,
+            previousValue: { name: user.name, email: user.email, role: user.role }
+        });
         
         res.json({ message: 'User deleted successfully', deletedUser: user.name });
         console.log('🗑️ User deleted:', user.name, user.email);
@@ -66,7 +74,7 @@ router.delete('/:id', auth, adminOnly, async (req, res) => {
 });
 
 // Update user (Admin only)
-router.put('/:id', auth, adminOnly, async (req, res) => {
+router.put('/:id', auth, requirePermission('user.edit'), async (req, res) => {
     try {
         const userId = req.params.id;
         const updates = req.body;
@@ -83,6 +91,12 @@ router.put('/:id', auth, adminOnly, async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
+        await recordAuditEvent(req, {
+            action: 'user.update',
+            entity: 'User',
+            entityId: user._id,
+            newValue: user.toObject ? user.toObject() : user
+        });
         
         res.json(user);
         console.log('✏️ User updated:', user.name);

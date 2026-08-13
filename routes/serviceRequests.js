@@ -2,8 +2,21 @@ const express = require('express');
 const router = express.Router();
 const ServiceRequest = require('../models/ServiceRequest');
 const { auth } = require('../middleware/auth');
+const { hasPermission, requirePermission } = require('../middleware/rbac');
+const { recordAuditEvent } = require('../services/auditService');
 const { sendEmail, emailTemplates } = require('../services/emailService');
 const logger = require('../services/logger');
+
+const allowedStatusTransitions = {
+    open: ['in-progress', 'closed'],
+    'in-progress': ['resolved', 'open'],
+    resolved: ['closed', 'in-progress'],
+    closed: []
+};
+
+function canManageServiceRequest(user, request) {
+    return hasPermission(user, 'service.assign') || String(request.userId?._id || request.userId || '') === user.id;
+}
 
 // Email notification function (real implementation)
 async function sendEmailNotification(requestData) {
@@ -35,9 +48,10 @@ async function sendEmailNotification(requestData) {
 }
 
 // Get all service requests
-router.get('/', auth, async (req, res) => {
+router.get('/', auth, requirePermission('service.view'), async (req, res) => {
     try {
-        const requests = await ServiceRequest.find()
+        const query = hasPermission(req.user, 'service.assign') ? {} : { userId: req.user.id };
+        const requests = await ServiceRequest.find(query)
             .populate('userId', 'name email')
             .sort({ createdAt: -1 });
         res.json(requests);
@@ -47,9 +61,11 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Get service requests by status
-router.get('/status/:status', auth, async (req, res) => {
+router.get('/status/:status', auth, requirePermission('service.view'), async (req, res) => {
     try {
-        const requests = await ServiceRequest.find({ status: req.params.status })
+        const query = { status: req.params.status };
+        if (!hasPermission(req.user, 'service.assign')) query.userId = req.user.id;
+        const requests = await ServiceRequest.find(query)
             .populate('userId', 'name email')
             .sort({ createdAt: -1 });
         res.json(requests);
@@ -59,9 +75,11 @@ router.get('/status/:status', auth, async (req, res) => {
 });
 
 // Get service requests by service center
-router.get('/center/:centerId', auth, async (req, res) => {
+router.get('/center/:centerId', auth, requirePermission('service.view'), async (req, res) => {
     try {
-        const requests = await ServiceRequest.find({ serviceCenterId: req.params.centerId })
+        const query = { serviceCenterId: req.params.centerId };
+        if (!hasPermission(req.user, 'service.assign')) query.userId = req.user.id;
+        const requests = await ServiceRequest.find(query)
             .populate('userId', 'name email')
             .sort({ createdAt: -1 });
         res.json(requests);
@@ -71,9 +89,11 @@ router.get('/center/:centerId', auth, async (req, res) => {
 });
 
 // Get service requests by serial number
-router.get('/serial/:serialNumber', auth, async (req, res) => {
+router.get('/serial/:serialNumber', auth, requirePermission('service.view'), async (req, res) => {
     try {
-        const requests = await ServiceRequest.find({ serialNumber: req.params.serialNumber })
+        const query = { serialNumber: req.params.serialNumber };
+        if (!hasPermission(req.user, 'service.assign')) query.userId = req.user.id;
+        const requests = await ServiceRequest.find(query)
             .populate('userId', 'name email')
             .sort({ createdAt: -1 });
         res.json(requests);
@@ -83,7 +103,7 @@ router.get('/serial/:serialNumber', auth, async (req, res) => {
 });
 
 // Create new service request
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, requirePermission('service.create'), async (req, res) => {
     try {
         // Create service request
         const request = new ServiceRequest({
@@ -92,6 +112,12 @@ router.post('/', auth, async (req, res) => {
         });
         
         await request.save();
+        await recordAuditEvent(req, {
+            action: 'service.create',
+            entity: 'ServiceRequest',
+            entityId: request._id,
+            newValue: { serviceId: request.serviceId, status: request.status, priority: request.priority }
+        });
 
         // Send email notification
         try {
@@ -131,18 +157,34 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Update service request
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', auth, requirePermission('service.edit'), async (req, res) => {
     try {
+        const existing = await ServiceRequest.findById(req.params.id);
+        if (!existing) {
+            return res.status(404).json({ message: 'Service request not found' });
+        }
+        if (!canManageServiceRequest(req.user, existing)) {
+            return res.status(403).json({ message: 'Not authorized to update this service request' });
+        }
+        if (existing.status === 'closed') {
+            return res.status(409).json({ message: 'Closed service requests cannot be edited' });
+        }
+        const updates = { ...req.body };
+        delete updates.userId;
+        delete updates.serviceId;
         const request = await ServiceRequest.findByIdAndUpdate(
             req.params.id,
-            req.body,
+            updates,
             { new: true, runValidators: true }
         );
         
-        if (!request) {
-            return res.status(404).json({ message: 'Service request not found' });
-        }
-        
+        await recordAuditEvent(req, {
+            action: 'service.update',
+            entity: 'ServiceRequest',
+            entityId: request._id,
+            previousValue: { status: existing.status, priority: existing.priority, assignedTo: existing.assignedTo },
+            newValue: { status: request.status, priority: request.priority, assignedTo: request.assignedTo }
+        });
         res.json(request);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -150,19 +192,31 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // Update service request status
-router.patch('/:id/status', auth, async (req, res) => {
+router.patch('/:id/status', auth, requirePermission('service.edit'), async (req, res) => {
     try {
         const { status } = req.body;
-        
-        const request = await ServiceRequest.findByIdAndUpdate(
-            req.params.id,
-            { status },
-            { new: true }
-        );
+        const request = await ServiceRequest.findById(req.params.id);
         
         if (!request) {
             return res.status(404).json({ message: 'Service request not found' });
         }
+        if (!canManageServiceRequest(req.user, request)) {
+            return res.status(403).json({ message: 'Not authorized to update this service request' });
+        }
+        const validNextStatuses = allowedStatusTransitions[request.status] || [];
+        if (!validNextStatuses.includes(status)) {
+            return res.status(409).json({ message: `Invalid status transition from ${request.status} to ${status}` });
+        }
+        const previousStatus = request.status;
+        request.status = status;
+        await request.save();
+        await recordAuditEvent(req, {
+            action: 'service.status.update',
+            entity: 'ServiceRequest',
+            entityId: request._id,
+            previousValue: { status: previousStatus },
+            newValue: { status: request.status }
+        });
         
         res.json(request);
     } catch (error) {
@@ -171,13 +225,14 @@ router.patch('/:id/status', auth, async (req, res) => {
 });
 
 // Get statistics
-router.get('/stats/summary', auth, async (req, res) => {
+router.get('/stats/summary', auth, requirePermission('service.view'), async (req, res) => {
     try {
-        const total = await ServiceRequest.countDocuments();
-        const open = await ServiceRequest.countDocuments({ status: 'open' });
-        const inProgress = await ServiceRequest.countDocuments({ status: 'in-progress' });
-        const resolved = await ServiceRequest.countDocuments({ status: 'resolved' });
-        const closed = await ServiceRequest.countDocuments({ status: 'closed' });
+        const query = hasPermission(req.user, 'service.assign') ? {} : { userId: req.user.id };
+        const total = await ServiceRequest.countDocuments(query);
+        const open = await ServiceRequest.countDocuments({ ...query, status: 'open' });
+        const inProgress = await ServiceRequest.countDocuments({ ...query, status: 'in-progress' });
+        const resolved = await ServiceRequest.countDocuments({ ...query, status: 'resolved' });
+        const closed = await ServiceRequest.countDocuments({ ...query, status: 'closed' });
 
         res.json({
             total,

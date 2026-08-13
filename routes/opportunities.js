@@ -1,26 +1,25 @@
 const express = require('express');
 const Opportunity = require('../models/Opportunity');
 const { auth } = require('../middleware/auth');
+const { requirePermission } = require('../middleware/rbac');
+const { recordAuditEvent } = require('../services/auditService');
+const { assertTransition } = require('../services/workflowService');
 
 const router = express.Router();
 
-// Create opportunity
-router.post('/', auth, async (req, res) => {
-  if (req.user.role !== 'admin') return res.status(403).json({ message: 'Admin required' });
+router.post('/', auth, requirePermission('opportunity.create'), async (req, res) => {
   try {
     const { name, value, leadId, assignedTo, expectedCloseDate } = req.body;
-    const opportunityId = 'OPP-' + Date.now();
-    const opportunity = new Opportunity({ opportunityId, name, value, leadId, assignedTo, expectedCloseDate });
+    const opportunity = new Opportunity({ opportunityId: 'OPP-' + Date.now(), name, value, leadId, assignedTo, expectedCloseDate });
     await opportunity.save();
+    await recordAuditEvent(req, { action: 'opportunity.create', entity: 'Opportunity', entityId: opportunity._id, newValue: opportunity.toObject() });
     res.status(201).json(opportunity);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 });
 
-// Get all opportunities
-router.get('/', auth, async (req, res) => {
-  if (req.user.role !== 'admin') return res.status(403).json({ message: 'Admin required' });
+router.get('/', auth, requirePermission('opportunity.view'), async (req, res) => {
   try {
     const opportunities = await Opportunity.find().populate('leadId');
     res.json(opportunities);
@@ -29,18 +28,19 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// Update opportunity stage
-router.put('/:id/stage', auth, async (req, res) => {
-  if (req.user.role !== 'admin') return res.status(403).json({ message: 'Admin required' });
+router.put('/:id/stage', auth, requirePermission('opportunity.edit'), async (req, res) => {
   try {
-    const opportunity = await Opportunity.findOneAndUpdate(
-      { opportunityId: req.params.id },
-      { stage: req.body.stage, updatedAt: Date.now() },
-      { new: true }
-    );
+    const opportunity = await Opportunity.findOne({ opportunityId: req.params.id });
+    if (!opportunity) return res.status(404).json({ message: 'Opportunity not found' });
+    const previousStage = opportunity.stage;
+    assertTransition('opportunity', previousStage, req.body.stage);
+    opportunity.stage = req.body.stage;
+    opportunity.updatedAt = Date.now();
+    await opportunity.save();
+    await recordAuditEvent(req, { action: 'opportunity.stage.update', entity: 'Opportunity', entityId: opportunity._id, previousValue: { stage: previousStage }, newValue: { stage: opportunity.stage } });
     res.json(opportunity);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(err.status || 400).json({ message: err.message, code: err.code });
   }
 });
 

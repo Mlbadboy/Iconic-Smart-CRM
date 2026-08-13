@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { nextSequence } = require('../services/sequenceService');
 
 const serviceRequestSchema = new mongoose.Schema({
     serviceId: {
@@ -74,17 +75,10 @@ const serviceRequestSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Generate unique service ID before saving
+// Generate concurrency-safe service ID before saving.
 serviceRequestSchema.pre('save', async function(next) {
-    // Always generate serviceId if not present (even if required: false)
     if (!this.serviceId) {
-        try {
-        const count = await mongoose.model('ServiceRequest').countDocuments();
-        this.serviceId = `SR${String(count + 1).padStart(6, '0')}`;
-        } catch (error) {
-            // Fallback if count fails
-            this.serviceId = `SR${Date.now().toString().slice(-6)}`;
-        }
+        this.serviceId = await nextSequence('service-requests', { prefix: 'SR', pad: 6 });
     }
     next();
 });

@@ -7,15 +7,16 @@ const Order = require('../models/Order');
 const ServiceRequest = require('../models/ServiceRequest');
 const Retailer = require('../models/Retailer');
 const { auth } = require('../middleware/auth');
+const { hasPermission } = require('../middleware/rbac');
 const logger = require('../services/logger');
 
 // Get dashboard statistics
 router.get('/stats', auth, async (req, res) => {
   try {
-    const isAdmin = req.user.role === 'admin';
+    const canViewAll = hasPermission(req.user, 'report.view');
     
     // For non-admin users, filter by their created orders
-    const filter = isAdmin ? {} : { createdBy: req.user.id };
+    const filter = canViewAll ? {} : { userId: req.user.id };
 
     // Get total orders count
     const totalOrders = await Order.countDocuments(filter);
@@ -154,8 +155,8 @@ router.get('/stats', auth, async (req, res) => {
 router.get('/sales', auth, async (req, res) => {
   try {
     const days = parseInt(req.query.days) || 7;
-    const isAdmin = req.user.role === 'admin';
-    const filter = isAdmin ? {} : { createdBy: req.user.id };
+    const canViewAll = hasPermission(req.user, 'report.view');
+    const filter = canViewAll ? {} : { userId: req.user.id };
 
     const daysAgo = new Date();
     daysAgo.setDate(daysAgo.getDate() - days);
@@ -191,8 +192,8 @@ router.get('/sales', auth, async (req, res) => {
 // Get order status distribution
 router.get('/status-distribution', auth, async (req, res) => {
   try {
-    const isAdmin = req.user.role === 'admin';
-    const filter = isAdmin ? {} : { createdBy: req.user.id };
+    const canViewAll = hasPermission(req.user, 'report.view');
+    const filter = canViewAll ? {} : { userId: req.user.id };
 
     const distribution = await Order.aggregate([
       { $match: filter },

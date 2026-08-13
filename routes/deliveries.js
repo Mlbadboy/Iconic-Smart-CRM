@@ -1,25 +1,25 @@
 const express = require('express');
 const Delivery = require('../models/Delivery');
 const { auth } = require('../middleware/auth');
+const { requirePermission } = require('../middleware/rbac');
+const { recordAuditEvent } = require('../services/auditService');
+const { assertTransition } = require('../services/workflowService');
 
 const router = express.Router();
 
-// Create delivery
-router.post('/', auth, async (req, res) => {
-  if (req.user.role !== 'admin') return res.status(403).json({ message: 'Admin required' });
+router.post('/', auth, requirePermission('operations.edit'), async (req, res) => {
   try {
     const { orderRef, courier, eta } = req.body;
-    const deliveryId = 'DEL-' + Date.now();
-    const delivery = new Delivery({ deliveryId, orderRef, courier, eta });
+    const delivery = new Delivery({ deliveryId: 'DEL-' + Date.now(), orderRef, courier, eta });
     await delivery.save();
+    await recordAuditEvent(req, { action: 'delivery.create', entity: 'Delivery', entityId: delivery._id, newValue: delivery.toObject() });
     res.status(201).json(delivery);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 });
 
-// Get deliveries for order
-router.get('/:orderRef', auth, async (req, res) => {
+router.get('/:orderRef', auth, requirePermission('operations.view'), async (req, res) => {
   try {
     const deliveries = await Delivery.find({ orderRef: req.params.orderRef });
     res.json(deliveries);
@@ -28,20 +28,21 @@ router.get('/:orderRef', auth, async (req, res) => {
   }
 });
 
-// Update delivery status
-router.put('/:id/status', auth, async (req, res) => {
-  if (req.user.role !== 'admin') return res.status(403).json({ message: 'Admin required' });
+router.put('/:id/status', auth, requirePermission('operations.edit'), async (req, res) => {
   try {
-    const delivery = await Delivery.findOneAndUpdate(
-      { deliveryId: req.params.id },
-      { currentStatus: req.body.status, eta: req.body.eta, updatedAt: Date.now() },
-      { new: true }
-    );
+    const delivery = await Delivery.findOne({ deliveryId: req.params.id });
+    if (!delivery) return res.status(404).json({ message: 'Delivery not found' });
+    const previousStatus = delivery.currentStatus;
+    assertTransition('delivery', previousStatus, req.body.status);
+    delivery.currentStatus = req.body.status;
+    delivery.eta = req.body.eta || delivery.eta;
+    delivery.updatedAt = Date.now();
     delivery.history.push({ status: req.body.status, timestamp: Date.now() });
     await delivery.save();
+    await recordAuditEvent(req, { action: 'delivery.status.update', entity: 'Delivery', entityId: delivery._id, previousValue: { status: previousStatus }, newValue: { status: delivery.currentStatus } });
     res.json(delivery);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(err.status || 400).json({ message: err.message, code: err.code });
   }
 });
 

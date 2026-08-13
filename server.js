@@ -177,6 +177,7 @@ app.use('/api/opportunities', require('./routes/opportunities'));
 app.use('/api/contacts', require('./routes/contacts'));
 app.use('/api/invoices', require('./routes/invoices'));
 app.use('/api/config', require('./routes/config'));
+app.use('/api/v1/customers', require('./routes/v1/customers'));
 
 // Health check endpoint for Railway
 app.get('/api/health', (req, res) => {

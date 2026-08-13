@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { nextSequence } = require('../services/sequenceService');
 
 const orderSchema = new mongoose.Schema({
   orderNumber: { 
@@ -58,11 +59,10 @@ const orderSchema = new mongoose.Schema({
   deliveryDate: Date
 });
 
-// Generate order number before saving
+// Generate concurrency-safe order number before saving.
 orderSchema.pre('save', async function(next) {
   if (!this.orderNumber) {
-    const count = await mongoose.model('Order').countDocuments();
-    this.orderNumber = `ORD${String(count + 1).padStart(6, '0')}`;
+    this.orderNumber = await nextSequence('orders', { prefix: 'ORD', pad: 6 });
   }
   next();
 });

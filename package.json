@@ -11,7 +11,8 @@
     "client": "cd client && npm start",
     "build": "cd client && npm run build",
     "install-client": "cd client && npm install",
-    "heroku-postbuild": "npm run install-client && npm run build"
+    "heroku-postbuild": "npm run install-client && npm run build",
+    "test:audit": "node test-crm-audit-regression.js"
   },
   "name": "iconic-smart-crm",
   "version": "1.0.0",
