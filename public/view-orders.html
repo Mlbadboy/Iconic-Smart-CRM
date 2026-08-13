@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Orders - Iconic Smart CRM</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7fafc;
+            color: #2d3748;
+        }
+        .header {
+            background: white;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #667eea; }
+        .nav { display: flex; gap: 1rem; }
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-secondary { background: #f7fafc; color: #2d3748; border: 1px solid #e2e8f0; }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .filter-group input, .filter-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-card.success { background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); }
+        .stat-card.warning { background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%); }
+        .stat-card.danger { background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%); }
+        .stat-value { font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .stat-label { font-size: 0.9rem; opacity: 0.9; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th {
+            background: #f7fafc;
+            font-weight: 600;
+        }
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .status-pending { background: #fef5e7; color: #d68910; }
+        .status-confirmed { background: #d4edff; color: #0066cc; }
+        .status-dispatched { background: #f3e8ff; color: #6b21a8; }
+        .status-delivered { background: #d1fae5; color: #047857; }
+        .status-cancelled { background: #fee2e2; color: #dc2626; }
+        .payment-paid { background: #d1fae5; color: #047857; }
+        .payment-pending { background: #fef5e7; color: #d68910; }
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #2d3748;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+        }
+        .toast.show { display: block; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .action-btn {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.85rem;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">📦 View Orders</div>
+            <div class="nav">
+                <a href="/orders.html" class="btn btn-primary">➕ Create New Order</a>
+                <a href="/dashboard.html" class="btn btn-secondary">← Dashboard</a>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalOrders">0</div>
+                <div class="stat-label">Total Orders</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-value" id="pendingOrders">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card success">
+                <div class="stat-value" id="deliveredOrders">0</div>
+                <div class="stat-label">Delivered</div>
+            </div>
+            <div class="stat-card danger">
+                <div class="stat-value" id="pendingPayments">0</div>
+                <div class="stat-label">Pending Payments</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="card">
+            <h2>🔍 Filter Orders</h2>
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Order Status</label>
+                    <select id="filterStatus">
+                        <option value="">All Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Dispatched">Dispatched</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Payment Status</label>
+                    <select id="filterPayment">
+                        <option value="">All Payments</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Pending">Pending</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Search</label>
+                    <input type="text" id="searchQuery" placeholder="Order #, Retailer name...">
+                </div>
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary" onclick="applyFilters()" style="width: 100%;">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="card">
+            <h2>📋 All Orders</h2>
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Loading orders...</p>
+            </div>
+            <table id="ordersTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Date</th>
+                        <th>Retailer</th>
+                        <th>Items</th>
+                        <th>Amount</th>
+                        <th>Order Status</th>
+                        <th>Payment</th>
+                        <th>Invoice</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        const API_URL = 'http://localhost:7000/api';
+        const token = localStorage.getItem('authToken');
+        let allOrders = [];
+        
+        if (!token) {
+            window.location.href = '/login.html';
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        async function loadOrders() {
+            try {
+                const response = await fetch(`${API_URL}/orders`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to load orders');
+
+                allOrders = await response.json();
+                displayOrders(allOrders);
+                updateStats(allOrders);
+            } catch (error) {
+                showToast('❌ Failed to load orders');
+                console.error(error);
+            }
+        }
+
+        function displayOrders(orders) {
+            const loading = document.getElementById('loading');
+            const table = document.getElementById('ordersTable');
+            const tbody = document.getElementById('ordersBody');
+
+            loading.style.display = 'none';
+            table.style.display = 'table';
+
+            if (orders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 3rem;">No orders found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = orders.map(order => `
+                <tr>
+                    <td><strong>${order.orderNumber || 'N/A'}</strong></td>
+                    <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+                    <td>${order.retailerName || 'N/A'}</td>
+                    <td>${order.items?.length || 0} items</td>
+                    <td><strong>₹${order.totalAmount?.toFixed(2) || '0.00'}</strong></td>
+                    <td><span class="status-badge status-${(order.status || 'pending').toLowerCase()}">${order.status || 'Pending'}</span></td>
+                    <td><span class="status-badge payment-${(order.paymentStatus || 'pending').toLowerCase()}">${order.paymentStatus || 'Pending'}</span></td>
+                    <td>
+                        ${order.invoicePath ? `<a href="${order.invoicePath}" target="_blank" class="btn btn-secondary action-btn">📄 PDF</a>` : 'N/A'}
+                    </td>
+                    <td>
+                        <button class="btn btn-secondary action-btn" onclick="viewOrder('${order._id}')">👁️ View</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateStats(orders) {
+            document.getElementById('totalOrders').textContent = orders.length;
+            document.getElementById('pendingOrders').textContent = orders.filter(o => o.status === 'Pending' || !o.status).length;
+            document.getElementById('deliveredOrders').textContent = orders.filter(o => o.status === 'Delivered').length;
+            document.getElementById('pendingPayments').textContent = orders.filter(o => o.paymentStatus === 'Pending' || !o.paymentStatus).length;
+        }
+
+        function applyFilters() {
+            const status = document.getElementById('filterStatus').value;
+            const payment = document.getElementById('filterPayment').value;
+            const search = document.getElementById('searchQuery').value.toLowerCase();
+
+            let filtered = allOrders;
+
+            if (status) {
+                filtered = filtered.filter(o => o.status === status);
+            }
+
+            if (payment) {
+                filtered = filtered.filter(o => o.paymentStatus === payment);
+            }
+
+            if (search) {
+                filtered = filtered.filter(o => 
+                    (o.orderNumber && o.orderNumber.toLowerCase().includes(search)) ||
+                    (o.retailerName && o.retailerName.toLowerCase().includes(search))
+                );
+            }
+
+            displayOrders(filtered);
+            showToast(`Found ${filtered.length} orders`);
+        }
+
+        function viewOrder(orderId) {
+            // TODO: Create order details modal or page
+            showToast('Order details view coming soon!');
+            console.log('View order:', orderId);
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = '/login.html';
+        }
+
+        // Load orders on page load
+        loadOrders();
+    </script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Centers - Iconic Smart CRM</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7fafc;
+            color: #2d3748;
+        }
+        .header {
+            background: white;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #667eea; }
+        .nav { display: flex; gap: 1rem; }
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-secondary { background: #f7fafc; color: #2d3748; border: 1px solid #e2e8f0; }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .container { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .page-header h1 { font-size: 2rem; }
+
+        .form-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+        .form-group input, .form-group textarea {
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .checkbox-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .centers-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        .center-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .center-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+        .center-name { font-size: 1.3rem; font-weight: 600; color: #667eea; }
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: #c6f6d5;
+            color: #2f855a;
+        }
+        .center-details { margin: 1rem 0; }
+        .center-details p { margin: 0.5rem 0; color: #4a5568; }
+        .services-list {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .service-tag {
+            padding: 0.25rem 0.75rem;
+            background: #e6fffa;
+            color: #234e52;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+        .loading { text-align: center; padding: 3rem; }
+        .spinner {
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🚀 Iconic Smart CRM</div>
+            <div class="nav">
+                <a href="/services.html" class="btn btn-secondary">← Back to Services</a>
+                <button class="btn btn-primary" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>🏢 Service Centers</h1>
+            <button class="btn btn-primary" onclick="toggleForm()">➕ Add Service Center</button>
+        </div>
+
+        <!-- Add Service Center Form -->
+        <div id="addForm" class="form-card" style="display: none;">
+            <h2 style="margin-bottom: 1.5rem;">Add New Service Center</h2>
+            <form onsubmit="addServiceCenter(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Center Name *</label>
+                        <input type="text" id="centerName" required placeholder="Enter service center name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" id="centerEmail" required placeholder="email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>GST Number *</label>
+                        <input type="text" id="centerGST" required placeholder="GST Number">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="centerPhone" placeholder="Phone number">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Address *</label>
+                    <textarea id="centerAddress" required placeholder="Full address" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Services Offered *</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="serviceInstallation" value="installation">
+                            <label for="serviceInstallation">Installation</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="serviceRepair" value="repair">
+                            <label for="serviceRepair">Repair</label>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="submit" class="btn btn-primary">Save Service Center</button>
+                    <button type="button" class="btn btn-secondary" onclick="toggleForm()">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading service centers...</p>
+        </div>
+
+        <div id="centersGrid" class="centers-grid" style="display: none;"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:7000/api';
+        let authToken = localStorage.getItem('authToken');
+
+        if (!authToken) window.location.href = '/login.html';
+
+        function toggleForm() {
+            const form = document.getElementById('addForm');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+
+        async function apiRequest(endpoint, options = {}) {
+            const response = await fetch(`${API_URL}${endpoint}`, {
+                ...options,
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                }
+            });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return await response.json();
+        }
+
+        async function addServiceCenter(event) {
+            event.preventDefault();
+            
+            const services = [];
+            if (document.getElementById('serviceInstallation').checked) services.push('installation');
+            if (document.getElementById('serviceRepair').checked) services.push('repair');
+
+            if (services.length === 0) {
+                alert('Please select at least one service type');
+                return;
+            }
+
+            const centerData = {
+                name: document.getElementById('centerName').value,
+                email: document.getElementById('centerEmail').value,
+                gstNumber: document.getElementById('centerGST').value,
+                phone: document.getElementById('centerPhone').value,
+                address: document.getElementById('centerAddress').value,
+                servicesOffered: services,
+                active: true
+            };
+
+            try {
+                await apiRequest('/service-centers', {
+                    method: 'POST',
+                    body: JSON.stringify(centerData)
+                });
+
+                alert('✅ Service Center added successfully!');
+                document.querySelector('form').reset();
+                toggleForm();
+                loadServiceCenters();
+            } catch (error) {
+                alert('❌ Failed to add service center: ' + error.message);
+            }
+        }
+
+        async function loadServiceCenters() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('centersGrid').style.display = 'none';
+
+            try {
+                const centers = await apiRequest('/service-centers');
+                displayCenters(centers);
+            } catch (error) {
+                document.getElementById('loading').innerHTML = '<p>Failed to load service centers</p>';
+            }
+        }
+
+        function displayCenters(centers) {
+            const grid = document.getElementById('centersGrid');
+            
+            if (!centers || centers.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; padding: 2rem;">No service centers found. Add one to get started!</p>';
+            } else {
+                grid.innerHTML = centers.map(center => `
+                    <div class="center-card">
+                        <div class="center-header">
+                            <div class="center-name">${center.name}</div>
+                            <span class="badge">${center.active ? 'Active' : 'Inactive'}</span>
+                        </div>
+                        <div class="center-details">
+                            <p><strong>📧 Email:</strong> ${center.email}</p>
+                            <p><strong>📞 Phone:</strong> ${center.phone || 'N/A'}</p>
+                            <p><strong>🏢 GST:</strong> ${center.gstNumber}</p>
+                            <p><strong>📍 Address:</strong> ${center.address}</p>
+                        </div>
+                        <div class="services-list">
+                            <strong>Services:</strong>
+                            ${center.servicesOffered.map(s => `<span class="service-tag">${s}</span>`).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('centersGrid').style.display = 'grid';
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = '/login.html';
+        }
+
+        window.addEventListener('DOMContentLoaded', loadServiceCenters);
+    </script>
+</body>
+</html>

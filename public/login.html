@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Iconic Smart CRM</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            padding: 3rem 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        h1 {
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input:invalid:not(:placeholder-shown) {
+            border-color: #fc8181;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:focus {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .demo-credentials {
+            background: #edf2f7;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .demo-credentials h3 {
+            color: #2d3748;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .demo-credentials p {
+            margin: 0.5rem 0;
+            color: #4a5568;
+        }
+
+        .demo-credentials code {
+            background: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #667eea;
+        }
+
+        .error-message {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+            font-size: 0.95rem;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            background: #c6f6d5;
+            color: #2f855a;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #718096;
+            margin-top: 1rem;
+        }
+
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .help-links {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .help-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 0.5rem;
+        }
+
+        .help-links a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 2rem 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Accessibility */
+        :focus-visible {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <div class="logo-icon" role="img" aria-label="Rocket icon">🚀</div>
+            <h1>Iconic Smart CRM</h1>
+            <p class="subtitle">Simple, Powerful, Accessible</p>
+        </div>
+
+        <div id="errorMessage" class="error-message" role="alert" aria-live="assertive"></div>
+        <div id="successMessage" class="success-message" role="alert" aria-live="polite"></div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="email">
+                    Email Address
+                    <span class="sr-only">(required)</span>
+                </label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email"
+                    placeholder="Enter your email"
+                    required
+                    autocomplete="email"
+                    aria-required="true"
+                    aria-describedby="email-hint"
+                >
+                <span id="email-hint" class="sr-only">Enter your registered email address</span>
+            </div>
+
+            <div class="form-group">
+                <label for="password">
+                    Password
+                    <span class="sr-only">(required)</span>
+                </label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                    autocomplete="current-password"
+                    aria-required="true"
+                    aria-describedby="password-hint"
+                >
+                <span id="password-hint" class="sr-only">Enter your password</span>
+            </div>
+
+            <button type="submit" class="btn" id="loginBtn" aria-label="Login to dashboard">
+                🔓 Login
+            </button>
+        </form>
+
+        <div class="demo-credentials">
+            <h3>🎯 Demo Credentials</h3>
+            <p><strong>Admin:</strong> <code>admin@iconic-crm.com</code> / <code>admin123</code></p>
+            <p><strong>Manager:</strong> <code>manager@iconic-crm.com</code> / <code>manager123</code></p>
+            <p><strong>Sales:</strong> <code>sales@iconic-crm.com</code> / <code>sales123</code></p>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner" role="status" aria-label="Logging in"></div>
+            <p>Logging you in...</p>
+        </div>
+
+        <div class="help-links">
+            <a href="#" onclick="showHelp(); return false;">Need Help?</a>
+            <span>•</span>
+            <a href="#" onclick="viewDocs(); return false;">Documentation</a>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:7000/api';
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+            setTimeout(() => errorDiv.classList.remove('show'), 5000);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.classList.add('show');
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const loading = document.getElementById('loading');
+
+            // Disable button and show loading
+            loginBtn.disabled = true;
+            loginBtn.textContent = '⏳ Logging in...';
+            loading.style.display = 'block';
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.token) {
+                    // Store token
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('userName', data.user.name);
+                    localStorage.setItem('userRole', data.user.role);
+
+                    showSuccess('✅ Login successful! Redirecting...');
+
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html';
+                    }, 1000);
+                } else {
+                    throw new Error(data.message || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('❌ ' + error.message + '. Please check your credentials and try again.');
+                
+                // Re-enable button
+                loginBtn.disabled = false;
+                loginBtn.textContent = '🔓 Login';
+                loading.style.display = 'none';
+            }
+        }
+
+        function showHelp() {
+            alert('📞 Contact Support:\n\nEmail: support@iconic-crm.com\nPhone: +1-555-0100\n\nOr visit our Help Center at /help.html');
+        }
+
+        function viewDocs() {
+            window.open('/WORKFLOW_GUIDE.md', '_blank');
+        }
+
+        // Auto-fill demo credentials (for easier testing)
+        document.addEventListener('keydown', (e) => {
+            if (e.altKey && e.key === 'a') {
+                document.getElementById('email').value = 'admin@iconic-crm.com';
+                document.getElementById('password').value = 'admin123';
+                showSuccess('Demo admin credentials filled! Press Enter to login.');
+            }
+        });
+
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                showSuccess('You are already logged in. Redirecting...');
+                setTimeout(() => {
+                    window.location.href = '/dashboard.html';
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

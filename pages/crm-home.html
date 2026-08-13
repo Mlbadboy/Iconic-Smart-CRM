@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CRM Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .gradient-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
+            border-radius: inherit;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex flex-col min-h-screen">
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+<nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center space-x-4">
+<svg class="h-8 w-8 text-primary" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z" fill="currentColor"></path>
+</svg>
+<h1 class="text-xl font-bold text-gray-900 dark:text-white">CRM</h1>
+</div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-sm font-medium hover:text-primary dark:hover:text-primary" href="#">Home</a>
+<a class="text-sm font-medium hover:text-primary dark:hover:text-primary" href="#">Orders</a>
+<a class="text-sm font-medium hover:text-primary dark:hover:text-primary" href="#">Services</a>
+<a class="text-sm font-medium hover:text-primary dark:hover:text-primary" href="#">Deliveries</a>
+<a class="text-sm font-medium hover:text-primary dark:hover:text-primary" href="#">Marketing</a>
+</div>
+<div class="flex items-center space-x-4">
+<button class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800">
+<svg fill="currentColor" height="20px" viewBox="0 0 256 256" width="20px" xmlns="http://www.w3.org/2000/svg">
+<path d="M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z"></path>
+</svg>
+</button>
+<div class="w-10 h-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBo5FD4hP9KPE2hsO9AjFmxqa45oWyebQZltWDoA791Oxg9MRqqxagiieVMeF6H5s_zc9PdMJa0iVOKBVIAS3YKkdYiyp5u1r6UU_byGk7Ze1yHGWgBDL0mk2VWXGgDd4NsGsoyDoC4D-nbMmCWlDrY7m_BsMcoVTYRpZcWj5tPpYCPZ3YJtIoIARxtMZdFKrweAPbmRGsM0CY3i0Pd6xZAsFqBrc04kzu3Gg-_ZkkzKSc4bm09OiKa1Rovx3wwugyow4jvRa_oj5A");'></div>
+</div>
+</div>
+</nav>
+</header>
+<main class="flex-grow">
+<section class="relative h-[60vh] min-h-[400px] sm:h-[80vh] md:min-h-[500px] flex items-end bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCdyU7zZSvqw7hb8Nqji7kseOGzZrhIvq1YfSo1dHrAJ4-70mZ6igDD7UTKlQl9krFu7u8WjB_2RdzQ9V_mM4iooQo6oRx9h4CASz4TTvNOSdiZ_Ng1A9JEFocEQu82flijgQ1de22H3KuG9ZvGX-yZSFs2pFp0Mxb9nU9EXP26OCVhRMmB33giszjK_cosndMrQfJlJgQ0undC9nwkqx0K6DQ4yY8KqkGKrsqMoRI06hjIg8uA0EgLF7Bq5WE3cp-JNrtAEa_6Z4Y");'>
+<div class="absolute inset-0 bg-black/40"></div>
+<div class="relative container mx-auto px-4 sm:px-6 lg:px-8 pb-12 md:pb-20 text-white text-center sm:text-left">
+<div class="max-w-3xl">
+<h1 class="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter mb-4">Streamline Your Business Operations</h1>
+<p class="text-base md:text-lg lg:text-xl mb-8">Manage orders, services, deliveries, and marketing campaigns efficiently with our comprehensive CRM solution.</p>
+<div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center sm:justify-start">
+<button class="px-8 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors duration-300">Place Order</button>
+<button class="px-8 py-3 bg-background-light/90 dark:bg-background-dark/90 text-gray-900 dark:text-white font-bold rounded-lg hover:bg-background-light dark:hover:bg-background-dark transition-colors duration-300">Service Request</button>
+</div>
+</div>
+</div>
+</section>
+<section class="py-16 sm:py-24">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-12">
+<h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Key Features</h2>
+<p class="mt-4 text-lg text-gray-600 dark:text-gray-400">Our CRM application offers a range of features to help you manage your business effectively.</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<div class="flex flex-col bg-white dark:bg-gray-800/50 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300">
+<div class="w-full h-48 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBW8_gUICI5BeW9mH9BLfR9iLgoH8BtDJrvLjof4B4qnc1Pe0IVSiI-g9Qkka--kbyBb5sHqzr7fVmAZ7bmq3i1kNduB4Cnw7gCHeaSh5kQlqOJFaxOWMGrCeaD85wz6EwhoETO3JBJQHTsdoBFK3DeBvEQIm5hlzG3RIfDRV9RVxrov1SOOAILDSgwe1-wWV54CQ-iE-rYczOoqT7Coj_Omi74sYe2Wavn9nRoQs_1R1h1GGqnmznUvNmR7ZdFE9js5MMCe5jir70");'></div>
+<div class="p-6 flex-grow">
+<h3 class="text-lg font-bold mb-2 text-gray-900 dark:text-white">Order Management</h3>
+<p class="text-sm text-gray-600 dark:text-gray-400">Efficiently manage customer orders from placement to fulfillment.</p>
+</div>
+</div>
+<div class="flex flex-col bg-white dark:bg-gray-800/50 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300">
+<div class="w-full h-48 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB-WrmwfxR0Zr6sV-iMaMYiucQYZUcMI_ow68CttnmMWuQsSw1I-YImpCcxfnDn4dtfD9Xldm5Sw4BE79iw20p7Ut-oYL5YvHz62gSSr4mcBZmM3RGi58Yo20hM9NZIx9S98YiOhZHwMTczTAum4PZcgc9GWFlFDH4hAqH7CUJVXlwNYknzv2d9NtZkgG5vkOi5-GvuLcoYKCG9hWiHc2eloiThfYJSKJiWgwreYf_Bw_PPPz_JdHronAGNovIoGOugAOZrMg4SzNE");'></div>
+<div class="p-6 flex-grow">
+<h3 class="text-lg font-bold mb-2 text-gray-900 dark:text-white">Service Request Management</h3>
+<p class="text-sm text-gray-600 dark:text-gray-400">Handle service requests promptly and ensure customer satisfaction.</p>
+</div>
+</div>
+<div class="flex flex-col bg-white dark:bg-gray-800/50 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300">
+<div class="w-full h-48 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBKSWazczbb37kFnz2AIXNliRBiWecQoP2TeB55eraxDiVosVRz69nMu0QtzTaWPBiHzMBGejbNBw26oOuI0hsSEIlZLCHsl1VOVEbh7GVEVkF4VN2swUn6BKGuf1y8O5UlhiwkH3w4j1N6bmOq2v0lTfeaviLPYgd3NQdFG99CuSNDXzBukRbMIE63b2X6KASVUsYX9BYFWPqCuTHGO6htzpjQCX_8vmQfMaf4rzcejmQXIeW173wK_-klWnDWng_z1FjJGnOrqMs");'></div>
+<div class="p-6 flex-grow">
+<h3 class="text-lg font-bold mb-2 text-gray-900 dark:text-white">Delivery Tracking</h3>
+<p class="text-sm text-gray-600 dark:text-gray-400">Track deliveries in real-time and optimize logistics.</p>
+</div>
+</div>
+<div class="flex flex-col bg-white dark:bg-gray-800/50 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300">
+<div class="w-full h-48 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCfKgkiQhcNSxvZEv0lQlPdunTeI6M2C4-cIZ6S_HWHyLbdfUdAkpiEDxM3FHr3tbuzHXGjuj6Tyn0NWl1GMea31GW4gPATLhy-R2tHP6aiAqRQqKXTqEffbFIr2IDmJkdtS_xfiuzSSjBfvQM4l4PYQp6pbEFj4DpEn9nPLvt7T0zk1fat8SHI3pn9wB4f9mbf66fyKFSnlcpngpaY9Vp9zW9wIzQQ0kJLSquZtrQcl4usUIFx5AAbUpNjPTQ9YbMZLY7wVSlW9cA");'></div>
+<div class="p-6 flex-grow">
+<h3 class="text-lg font-bold mb-2 text-gray-900 dark:text-white">Marketing Campaign Management</h3>
+<p class="text-sm text-gray-600 dark:text-gray-400">Create, manage, and analyze marketing campaigns.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="bg-white dark:bg-background-dark/50 py-16 sm:py-24">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-12">
+<h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">What Our Clients Say</h2>
+<p class="mt-4 text-lg text-gray-600 dark:text-gray-400">Hear from businesses that have transformed their operations with us.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="p-8 bg-background-light dark:bg-gray-800/50 rounded-xl">
+<p class="mb-6 text-gray-700 dark:text-gray-300">"This CRM has transformed our business operations. We can now manage everything from orders to marketing in one place."</p>
+<div class="flex items-center">
+<div class="w-12 h-12 rounded-full bg-cover bg-center mr-4" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBO5hN6o5axCK_UauncBEBT39EWRjGLgACBbGBngiLzE4a-xG2QLRbQJPUGUhB2jMWAbWqAYQrX5mcMStGE8bvdVfURI3NFg64hcqtEdFcjUtsHCiWDawLmXLJj6eAf_CU43RVW2D0xYZSq3QIt6PZ9Um8G1729PU1AiN8fzxyCAVcRu_rucqHwCK6HrddBPNBKv5ZrdF0MJm86Abv0P5o_b2Rg2NdYQ7ff8C-i6q-97und9d5LIrXXv_hJ7zHeGLnr6WnbbNuM7Sw");'></div>
+<div>
+<p class="font-bold text-gray-900 dark:text-white">Sarah Miller</p>
+<p class="text-sm text-gray-600 dark:text-gray-400">CEO, Tech Solutions Inc.</p>
+</div>
+</div>
+</div>
+<div class="p-8 bg-background-light dark:bg-gray-800/50 rounded-xl">
+<p class="mb-6 text-gray-700 dark:text-gray-300">"The service request management feature has significantly improved our customer satisfaction rates."</p>
+<div class="flex items-center">
+<div class="w-12 h-12 rounded-full bg-cover bg-center mr-4" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAezLL8sMq_nmuQ3SfzKPpA6sLNHXzce7gP21EP2sxGkCGoWr3Sk7W-hVlTJ3wC9L8_595xwCxgH7uGafzlJ_BCPTifu4pnPdKuqQyQK964-A6JaQRULN-76sitICvDCrxrAQ9Wc5R0WlyIACeq8dZ96WwSIw5zyh0Xwr7A3Co3XLtczHILLnQA9Pz9Uc3HZU9bw8Ih0TQ0RyCgLwF9GsrJ5OTE82PaT43lfzlPZq6t83wUWBcTVFOZEovy6b6Nf6G-nHbfal8x50g");'></div>
+<div>
+<p class="font-bold text-gray-900 dark:text-white">David Lee</p>
+<p class="text-sm text-gray-600 dark:text-gray-400">Ops Manager, Global Services Ltd.</p>
+</div>
+</div>
+</div>
+<div class="p-8 bg-background-light dark:bg-gray-800/50 rounded-xl">
+<p class="mb-6 text-gray-700 dark:text-gray-300">"The delivery tracking system is a game-changer. We have reduced delivery times and improved transparency."</p>
+<div class="flex items-center">
+<div class="w-12 h-12 rounded-full bg-cover bg-center mr-4" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDKZdoCmgxmbvpDtWPVQp-1h2UwbVlg7QlYvwXpyZv2xhiRY3c5bjGKRGPgblDvLbutWIcQ04PzW8QOIEzJCipL1KuJ5SszXJDVS6MAOcaSj3PER6f_hDQ2fppiusN9s-RPYIm0uJRVz7aV4ZiMXTeku01O4bUH71b4HZbc7uDwWikZF2-31YJ7r9ZtBpt2C2sMgouZuN88QplcdaMd_hB_wOzYZICdYDq6ljBLLDQWK_gJEnsyACSHs4IZYM9ye3lWTqx3OgpZSto");'></div>
+<div>
+<p class="font-bold text-gray-900 dark:text-white">Emily Chen</p>
+<p class="text-sm text-gray-600 dark:text-gray-400">Logistics, Swift Logistics Co.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-background-light dark:bg-background-dark border-t border-gray-200 dark:border-gray-800">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+<p>© 2024 CRM Inc. All rights reserved.</p>
+</div>
+</footer>
+</div>
+
+</body></html>

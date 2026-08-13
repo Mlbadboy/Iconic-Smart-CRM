@@ -1,0 +1,27 @@
+# Iconic Smart CRM - Development Dockerfile
+
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Install nodemon globally for hot-reload
+RUN npm install -g nodemon
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev dependencies)
+RUN npm install
+
+# Copy application files
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p uploads/invoices uploads/assets logs
+
+# Expose port
+EXPOSE 5000
+
+# Start application with nodemon for hot-reload
+CMD ["npm", "run", "dev"]

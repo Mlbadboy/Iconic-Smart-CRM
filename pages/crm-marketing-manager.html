@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<title>Stitch Design</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter:wght@400;500;700;900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#137fec",
+            "background-light": "#f6f7f8",
+            "background-dark": "#101922",
+          },
+          fontFamily: {
+            "display": ["Inter"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="flex h-full min-h-screen w-full">
+<aside class="w-64 bg-background-light dark:bg-background-dark border-r border-primary/20 dark:border-primary/30 p-6 flex flex-col justify-between">
+<nav class="flex flex-col gap-4">
+<h2 class="text-2xl font-bold text-primary mb-6">CRM</h2>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-primary/70 dark:text-primary/80 hover:bg-primary/10 dark:hover:bg-primary/20" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-primary/70 dark:text-primary/80 hover:bg-primary/10 dark:hover:bg-primary/20" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-medium">Orders</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-primary/70 dark:text-primary/80 hover:bg-primary/10 dark:hover:bg-primary/20" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-medium">Services</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-primary/70 dark:text-primary/80 hover:bg-primary/10 dark:hover:bg-primary/20" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-medium">Deliveries</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg bg-primary/10 dark:bg-primary/20 text-primary" href="#">
+<span class="material-symbols-outlined">campaign</span>
+<span class="font-medium">Marketing</span>
+</a>
+</nav>
+<div class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-primary/70 dark:text-primary/80 hover:bg-primary/10 dark:hover:bg-primary/20" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-medium">Profile</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-primary/70 dark:text-primary/80 hover:bg-primary/10 dark:hover:bg-primary/20" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-medium">Notifications</span>
+</a>
+</div>
+</aside>
+<main class="flex-1 p-8">
+<div class="max-w-4xl mx-auto">
+<header class="mb-8">
+<h1 class="text-3xl font-bold text-black dark:text-white">Marketing Assets</h1>
+<p class="text-primary/60 dark:text-primary/70 mt-1">Manage your promotional materials.</p>
+</header>
+<div class="bg-white dark:bg-background-dark p-6 rounded-lg shadow-sm border border-primary/20 dark:border-primary/30">
+<h2 class="text-xl font-semibold text-black dark:text-white mb-6">Add New Asset</h2>
+<form class="space-y-6">
+<div class="grid grid-cols-1 gap-6">
+<div>
+<label class="block text-sm font-medium text-primary/80 dark:text-primary/90 mb-1" for="title">Title</label>
+<input class="w-full bg-background-light dark:bg-background-dark border border-primary/20 dark:border-primary/30 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary text-black dark:text-white placeholder-primary/40 dark:placeholder-primary/50" id="title" placeholder="e.g., Summer Sale Banner" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-primary/80 dark:text-primary/90 mb-1" for="image">Image Upload</label>
+<div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-primary/30 dark:border-primary/40 border-dashed rounded-lg">
+<div class="space-y-1 text-center">
+<span class="material-symbols-outlined text-4xl text-primary/40">cloud_upload</span>
+<div class="flex text-sm text-primary/60 dark:text-primary/70">
+<label class="relative cursor-pointer bg-white dark:bg-background-dark rounded-md font-medium text-primary hover:text-primary/80 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary" for="file-upload">
+<span>Upload a file</span>
+<input class="sr-only" id="file-upload" name="file-upload" type="file"/>
+</label>
+<p class="pl-1">or drag and drop</p>
+</div>
+<p class="text-xs text-primary/50">PNG, JPG, GIF up to 10MB</p>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block text-sm font-medium text-primary/80 dark:text-primary/90 mb-1" for="start-date">Start Date</label>
+<input class="w-full bg-background-light dark:bg-background-dark border border-primary/20 dark:border-primary/30 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary text-black dark:text-white" id="start-date" type="date"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-primary/80 dark:text-primary/90 mb-1" for="end-date">End Date</label>
+<input class="w-full bg-background-light dark:bg-background-dark border border-primary/20 dark:border-primary/30 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary text-black dark:text-white" id="end-date" type="date"/>
+</div>
+</div>
+</div>
+<div class="flex justify-end pt-2">
+<button class="bg-primary text-white font-bold py-2 px-6 rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" type="submit">
+                Add Asset
+              </button>
+</div>
+</form>
+</div>
+<div class="mt-12">
+<h2 class="text-xl font-semibold text-black dark:text-white mb-4">Active Assets</h2>
+<div class="bg-white dark:bg-background-dark overflow-hidden shadow-sm rounded-lg border border-primary/20 dark:border-primary/30">
+<table class="min-w-full divide-y divide-primary/20 dark:divide-primary/30">
+<thead class="bg-background-light/50 dark:bg-background-dark/50">
+<tr>
+<th class="px-6 py-3 text-left text-xs font-medium text-primary/70 dark:text-primary/80 uppercase tracking-wider" scope="col">Title</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-primary/70 dark:text-primary/80 uppercase tracking-wider" scope="col">Image</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-primary/70 dark:text-primary/80 uppercase tracking-wider" scope="col">Active Period</th>
+<th class="relative px-6 py-3" scope="col">
+<span class="sr-only">Actions</span>
+</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-primary/20 dark:divide-primary/30">
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm font-medium text-black dark:text-white">Summer Sale</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<img alt="Summer Sale Asset" class="h-10 w-10 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqOwkAgft2KvSnQ2rnNu8XbjvDnYNWdJuVjOJ-L7ug0byizfCCca6D5v8IBz3EYqpPmFQatK1vb-9NugCAw6L1_VlvXaGAPMiU6HlZ31kFFOdJ8ITZoXMJSpDk0CNXNiwVKoY5G0_7YRHAnE66WU0Wdnm_SqfQd5gh1meMCGVGXyvCxp4JXv2qbswPIx2qOij5rOcYgk9qC7deY5Sy7ZBeKQOFiR2rjAOO6fCjX4ZkjEfUz_hUSMQnHoucPMnecQiS40cJ62WWKBs"/>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-primary/70 dark:text-primary/80">
+                    2024-06-01 to 2024-08-31
+                  </td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<button class="text-red-500 hover:text-red-700 font-semibold">Deactivate</button>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm font-medium text-black dark:text-white">Back to School</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<img alt="Back to School Asset" class="h-10 w-10 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-IFjsc9EPZeoTre5m3lQWStbzUPUVovtrkcVnga6BRhQhWm1IMyj1nyESZ5NdzhMtRnbKZxBBbh39kE_ZQ1R-XMXSu2ahua0uu9qu9A3hYYFvgLE8TO9YqlhXnj0-BvYeg-khqxWKErjxLpT1itw_ailNH0iz5YKbvjle0SYsAeOrjC95c1HcUcK3G7XTUWgBL-zmXOYUCd-bQ0nDIG7BTOYAxcC44q3gZZ214KV39AniDxfM9Ke8tTJ0tpSTktJNMlbzS7c2GmQ"/>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-primary/70 dark:text-primary/80">
+                    2024-08-15 to 2024-09-15
+                  </td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<button class="text-red-500 hover:text-red-700 font-semibold">Deactivate</button>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm font-medium text-black dark:text-white">Holiday Season</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<img alt="Holiday Season Asset" class="h-10 w-10 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiyKdpxb5X3wCXBN5MtEAbxGIvoQSUzM2tIjWkQBNzXAaqYvKOwcj4qtHDmcgRBW1Eucdpm1DhAP4uZt0XBJgKo3gaydO0n_jU7vBPHKCPpdpNvNRccmxvHlvZLriblt6B8Tc5-MIoxx2BEMSb64oTgHdZJSqLXbbGKFWayu01YR-bCrVuqD9DaPHS47vPJGv2F5y9tYdivvAN4CuD85Q-36m8W4EFezASHel-FCfduqxbJ3kJZlhc-y8wqnlsD_UbGUVe5Y6Yaf8"/>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-primary/70 dark:text-primary/80">
+                    2024-11-01 to 2024-12-31
+                  </td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<button class="text-red-500 hover:text-red-700 font-semibold">Deactivate</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

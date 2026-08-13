@@ -1,0 +1,11 @@
+# dependencies
+node_modules/
+.vscode/
+.idea/
+.wix/
+jsconfig.json
+
+# environment files
+.env
+.env.*
+!.env.example

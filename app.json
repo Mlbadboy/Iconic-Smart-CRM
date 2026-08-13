@@ -1,0 +1,55 @@
+{
+  "name": "Iconic Smart CRM",
+  "description": "Full-stack CRM application with Node.js, Express, and MongoDB",
+  "repository": "https://github.com/mayurprabhune13-jpg/Iconic-Smart-CRM",
+  "logo": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+  "keywords": ["crm", "nodejs", "express", "mongodb", "api"],
+  "image": "heroku/nodejs",
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "env": {
+    "NODE_ENV": {
+      "description": "Environment mode",
+      "value": "production",
+      "required": true
+    },
+    "MONGO_URI": {
+      "description": "MongoDB connection string (use MongoDB Atlas)",
+      "value": "mongodb+srv://username:password@cluster.mongodb.net/iconic-crm?retryWrites=true&w=majority",
+      "required": true
+    },
+    "JWT_SECRET": {
+      "description": "Secret key for JWT token generation",
+      "generator": "secret",
+      "required": true
+    },
+    "JWT_EXPIRE": {
+      "description": "JWT token expiration time",
+      "value": "7d",
+      "required": false
+    },
+    "FRONTEND_URL": {
+      "description": "Frontend application URL for CORS",
+      "value": "https://your-frontend.vercel.app",
+      "required": false
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  },
+  "addons": [
+    {
+      "plan": "mongolab:sandbox",
+      "as": "MONGODB"
+    }
+  ],
+  "scripts": {
+    "postdeploy": "npm run seed"
+  }
+}

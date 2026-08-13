@@ -1,0 +1,68 @@
+// File: client/src/pages/ServiceRequests.jsx
+// Main service requests page with create/view tabs
+
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ServiceRequestList from '../components/services/ServiceRequestList';
+import ServiceRequestForm from '../components/services/ServiceRequestForm';
+import { Plus, List, ArrowLeft } from 'lucide-react';
+
+export default function ServiceRequests() {
+  const navigate = useNavigate();
+  const [view, setView] = useState('list'); // 'list' or 'create'
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Service Requests</h1>
+                <p className="text-sm text-gray-600">
+                  {view === 'list' ? 'Manage service requests' : 'Create new service request'}
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex gap-2">
+              <button
+                onClick={() => setView('list')}
+                className={`btn ${view === 'list' ? 'btn-primary' : 'btn-secondary'} flex items-center gap-2`}
+              >
+                <List className="w-4 h-4" />
+                View Requests
+              </button>
+              <button
+                onClick={() => setView('create')}
+                className={`btn ${view === 'create' ? 'btn-primary' : 'btn-secondary'} flex items-center gap-2`}
+              >
+                <Plus className="w-4 h-4" />
+                New Request
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Content */}
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        {view === 'list' ? (
+          <ServiceRequestList onCreateClick={() => setView('create')} />
+        ) : (
+          <ServiceRequestForm 
+            onSuccess={() => setView('list')} 
+            onCancel={() => setView('list')} 
+          />
+        )}
+      </main>
+    </div>
+  );
+}

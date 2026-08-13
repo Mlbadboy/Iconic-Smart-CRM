@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Requests - Iconic Smart CRM</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7fafc;
+            color: #2d3748;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo { font-size: 1.5rem; font-weight: bold; color: #667eea; }
+
+        .nav { display: flex; gap: 1rem; }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary { background: #667eea; color: white; }
+        .btn-secondary { background: #f7fafc; color: #2d3748; border: 1px solid #e2e8f0; }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+
+        .container { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
+
+        .page-header { 
+            margin-bottom: 2rem; 
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .page-header-text h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .page-header-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filters {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-group { flex: 1; min-width: 200px; }
+        .filter-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .filter-group select, .filter-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+        }
+
+        .services-grid { display: grid; gap: 1.5rem; }
+
+        .service-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .service-id { font-size: 1.2rem; font-weight: 600; color: #667eea; }
+
+        .badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .badge-open { background: #fed7d7; color: #c53030; }
+        .badge-in-progress { background: #feebc8; color: #c05621; }
+        .badge-resolved { background: #c6f6d5; color: #2f855a; }
+        .badge-closed { background: #e2e8f0; color: #4a5568; }
+        .badge-low { background: #bee3f8; color: #2c5282; }
+        .badge-medium { background: #feebc8; color: #c05621; }
+        .badge-high { background: #fed7d7; color: #c53030; }
+        .badge-urgent { background: #fc8181; color: #742a2a; }
+
+        .service-details { margin: 1rem 0; }
+        .service-details p { margin: 0.5rem 0; color: #4a5568; }
+
+        .loading, .empty-state { text-align: center; padding: 3rem; }
+        .spinner {
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🚀 Iconic Smart CRM</div>
+            <div class="nav">
+                <a href="/dashboard.html" class="btn btn-secondary">← Back to Dashboard</a>
+                <button class="btn btn-primary" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <div class="page-header-text">
+                <h1>🎫 Service Requests</h1>
+                <p>Manage customer support tickets and service requests</p>
+            </div>
+            <div class="page-header-actions">
+                <a href="/service-centers.html" class="btn btn-secondary">🏢 Service Centers</a>
+                <a href="/create-service-request.html" class="btn btn-primary">➕ Create Request</a>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>Status</label>
+                <select id="statusFilter" onchange="filterServices()">
+                    <option value="">All Statuses</option>
+                    <option value="open">Open</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="resolved">Resolved</option>
+                    <option value="closed">Closed</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Priority</label>
+                <select id="priorityFilter" onchange="filterServices()">
+                    <option value="">All Priorities</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="urgent">Urgent</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Search</label>
+                <input type="text" id="searchInput" placeholder="Search by ID or description..." onkeyup="filterServices()">
+            </div>
+            <div class="filter-group" style="display: flex; align-items: flex-end;">
+                <button class="btn btn-primary" onclick="loadServices()">🔄 Refresh</button>
+            </div>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading service requests...</p>
+        </div>
+
+        <div id="servicesGrid" class="services-grid" style="display: none;"></div>
+
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🎫</div>
+            <h2>No Service Requests Found</h2>
+            <p>There are no service requests matching your criteria.</p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:7000/api';
+        let authToken = localStorage.getItem('authToken');
+        let allServices = [];
+
+        if (!authToken) window.location.href = '/login.html';
+
+        async function apiRequest(endpoint, options = {}) {
+            const response = await fetch(`${API_URL}${endpoint}`, {
+                ...options,
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                }
+            });
+            return response.ok ? await response.json() : null;
+        }
+
+        async function loadServices() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('servicesGrid').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+
+            // Try new endpoint first, fallback to old one
+            let services = await apiRequest('/service-requests');
+            if (!services) {
+                services = await apiRequest('/services');
+            }
+
+            if (services && services.length > 0) {
+                allServices = services;
+                displayServices(services);
+            } else {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+            }
+        }
+
+        function displayServices(services) {
+            const grid = document.getElementById('servicesGrid');
+            grid.innerHTML = services.map(service => `
+                <div class="service-card">
+                    <div class="service-header">
+                        <div>
+                            <div class="service-id">${service.serviceId}</div>
+                            <p style="color: #718096; margin-top: 0.25rem;">
+                                ${service.userId?.name || 'Unknown'} • ${service.userId?.email || ''}
+                            </p>
+                        </div>
+                        <div class="badges">
+                            <span class="badge badge-${service.status}">${service.status.toUpperCase()}</span>
+                            <span class="badge badge-${service.priority}">${service.priority.toUpperCase()}</span>
+                        </div>
+                    </div>
+
+                    <div class="service-details">
+                        <p><strong>Issue Type:</strong> ${service.issueType}</p>
+                        <p><strong>Description:</strong> ${service.description}</p>
+                        ${service.orderRef ? `<p><strong>Order Ref:</strong> ${service.orderRef}</p>` : ''}
+                        ${service.assignedTo ? `<p><strong>Assigned To:</strong> ${service.assignedTo}</p>` : ''}
+                        <p><strong>Created:</strong> ${new Date(service.createdAt).toLocaleDateString()}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('servicesGrid').style.display = 'grid';
+        }
+
+        function filterServices() {
+            const status = document.getElementById('statusFilter').value;
+            const priority = document.getElementById('priorityFilter').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+
+            const filtered = allServices.filter(s => {
+                const matchesStatus = !status || s.status === status;
+                const matchesPriority = !priority || s.priority === priority;
+                const matchesSearch = !search || 
+                    s.serviceId.toLowerCase().includes(search) ||
+                    s.description.toLowerCase().includes(search);
+                return matchesStatus && matchesPriority && matchesSearch;
+            });
+
+            if (filtered.length > 0) {
+                displayServices(filtered);
+                document.getElementById('emptyState').style.display = 'none';
+            } else {
+                document.getElementById('servicesGrid').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = '/login.html';
+        }
+
+        window.addEventListener('DOMContentLoaded', loadServices);
+    </script>
+</body>
+</html>

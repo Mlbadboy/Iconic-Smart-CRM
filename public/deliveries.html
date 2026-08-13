@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deliveries & Dispatch - Iconic Smart CRM</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7fafc;
+            color: #2d3748;
+        }
+        .header {
+            background: white;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #667eea; }
+        .nav { display: flex; gap: 1rem; }
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-secondary { background: #f7fafc; color: #2d3748; border: 1px solid #e2e8f0; }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
+        .container { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .page-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .page-header p { color: #718096; font-size: 1.1rem; }
+
+        /* Main Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .action-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            border-color: #667eea;
+        }
+
+        .card-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+
+        .card-description {
+            color: #718096;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.show { display: flex; align-items: center; justify-content: center; padding: 2rem; }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .modal-header h2 { font-size: 1.8rem; }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #718096;
+        }
+
+        .close-btn:hover { color: #2d3748; }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .festival-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .festival-card {
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .festival-card:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+
+        .festival-card.selected {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+
+        .festival-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .festival-date {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .upload-area {
+            border: 2px dashed #e2e8f0;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upload-area:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+
+        .upload-area.dragover {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+
+        .file-preview {
+            margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .file-item {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #e2e8f0;
+        }
+
+        .file-item img, .file-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .remove-file {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: #fc8181;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .content-list {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .content-item {
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .badge-pending { background: #fef5e7; color: #d97706; }
+        .badge-approved { background: #d1fae5; color: #065f46; }
+        .badge-published { background: #dbeafe; color: #1e40af; }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🚀 Iconic Smart CRM</div>
+            <div class="nav">
+                <a href="/dashboard.html" class="btn btn-secondary">← Back to Dashboard</a>
+                <button class="btn btn-primary" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>📦 Deliveries & Dispatch Management</h1>
+            <p>Manage order dispatches with logistic partners and track deliveries</p>
+        </div>
+
+        <!-- Main Action Cards -->
+        <div class="cards-grid">
+            <!-- Add Dispatch Card -->
+            <div class="action-card" onclick="openDispatchModal()">
+                <div class="card-icon">📤</div>
+                <div class="card-title">Add Dispatch Details</div>
+                <div class="card-description">
+                    Select pending order, choose logistic partner, and add AWB/Tracking ID
+                </div>
+            </div>
+
+            <!-- Manage Partners Card -->
+            <div class="action-card" onclick="openLogisticPartnersModal()">
+                <div class="card-icon">🚚</div>
+                <div class="card-title">Logistic Partners</div>
+                <div class="card-description">
+                    Onboard and manage logistic delivery partners
+                </div>
+            </div>
+        </div>
+
+        <!-- Dispatches List -->
+        <div class="content-list">
+            <h2 style="margin-bottom: 1.5rem;">📋 All Dispatches</h2>
+            <div id="dispatchesList"></div>
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Loading dispatches...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Dispatch Modal -->
+    <div id="dispatchModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📤 Add Dispatch Details</h2>
+                <button class="close-btn" onclick="closeModal('dispatchModal')">&times;</button>
+            </div>
+            <form onsubmit="submitDispatch(event)">
+                <div class="form-group">
+                    <label>Step 1: Select Order *</label>
+                    <select id="dispatchOrderId" required onchange="loadOrderDetails()">
+                        <option value="">-- Select Pending Order --</option>
+                    </select>
+                    <div id="orderDetails" style="margin-top: 1rem; padding: 1rem; background: #f7fafc; border-radius: 8px; display: none;">
+                        <p><strong>Customer:</strong> <span id="orderCustomerName">-</span></p>
+                        <p><strong>Phone:</strong> <span id="orderCustomerPhone">-</span></p>
+                        <p><strong>Address:</strong> <span id="orderAddress">-</span></p>
+                        <p><strong>Amount:</strong> ₹<span id="orderAmount">-</span></p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Step 2: Select Logistic Partner *</label>
+                    <select id="dispatchPartnerId" required onchange="loadPartnerDetails()">
+                        <option value="">-- Select Partner --</option>
+                    </select>
+                    <div id="partnerDetails" style="margin-top: 1rem; padding: 1rem; background: #f7fafc; border-radius: 8px; display: none;">
+                        <p><strong>Service Type:</strong> <span id="partnerServiceType">-</span></p>
+                        <p><strong>Contact:</strong> <span id="partnerContact">-</span></p>
+                        <p><strong>API Integration:</strong> <span id="partnerApiStatus">-</span></p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Step 3: AWB Number *</label>
+                    <input type="text" id="awbNumber" required placeholder="Enter AWB/Tracking Number" style="text-transform: uppercase;">
+                </div>
+                <div class="form-group">
+                    <label>Tracking ID (Optional)</label>
+                    <input type="text" id="trackingId" placeholder="Enter Tracking ID if different from AWB">
+                </div>
+                <div class="form-group">
+                    <label>Estimated Delivery Date</label>
+                    <input type="date" id="estimatedDeliveryDate">
+                </div>
+                <div class="form-group">
+                    <label>Notes (Optional)</label>
+                    <textarea id="dispatchNotes" rows="3" placeholder="Additional notes about this dispatch"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Dispatch</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Logistic Partners Modal -->
+    <div id="logisticPartnersModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2>🚚 Logistic Partners</h2>
+                <button class="close-btn" onclick="closeModal('logisticPartnersModal')">&times;</button>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <button class="btn btn-primary" onclick="openAddPartnerModal()">➕ Onboard New Partner</button>
+            </div>
+
+            <div id="partnersList" style="max-height: 400px; overflow-y: auto;">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading partners...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Logistic Partner Modal -->
+    <div id="addPartnerModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2>➕ Onboard Logistic Partner</h2>
+                <button class="close-btn" onclick="closeModal('addPartnerModal')">&times;</button>
+            </div>
+            <form onsubmit="submitPartner(event)">
+                <div class="form-group">
+                    <label>Partner Name *</label>
+                    <input type="text" id="partnerName" required placeholder="e.g., ShipRocket, Blue Dart, Delhivery">
+                </div>
+                <div class="form-group">
+                    <label>Partner Code *</label>
+                    <input type="text" id="partnerCode" required placeholder="e.g., SHIPROCKET, BLUEDART" style="text-transform: uppercase;">
+                </div>
+                <div class="form-group">
+                    <label>Contact Person *</label>
+                    <input type="text" id="contactPerson" required placeholder="Contact person name">
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="partnerEmail" required placeholder="partner@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Phone *</label>
+                    <input type="tel" id="partnerPhone" required placeholder="+91 1234567890">
+                </div>
+                <div class="form-group">
+                    <label>Address *</label>
+                    <textarea id="partnerAddress" rows="2" required placeholder="Partner address"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Service Type *</label>
+                    <select id="serviceType" required>
+                        <option value="express">Express</option>
+                        <option value="standard">Standard</option>
+                        <option value="economy">Economy</option>
+                        <option value="same-day">Same Day</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tracking URL *</label>
+                    <input type="url" id="trackingUrl" required placeholder="https://partner.com/track?id=">
+                    <small style="color: #718096;">URL where {trackingId} will be appended</small>
+                </div>
+                
+                <hr style="margin: 1.5rem 0; border: none; border-top: 2px solid #e2e8f0;">
+                
+                <h3 style="margin-bottom: 1rem;">🔌 API Integration (Optional - Like ShipRocket)</h3>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="enableApiIntegration" onchange="toggleApiFields()">
+                        Enable API Integration
+                    </label>
+                </div>
+                
+                <div id="apiFields" style="display: none;">
+                    <div class="form-group">
+                        <label>API Type *</label>
+                        <select id="apiType" required>
+                            <option value="shiprocket">ShipRocket</option>
+                            <option value="delhivery">Delhivery</option>
+                            <option value="blue-dart">Blue Dart</option>
+                            <option value="fedex">FedEx</option>
+                            <option value="dhl">DHL</option>
+                            <option value="custom">Custom API</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>API Endpoint</label>
+                        <input type="url" id="apiEndpoint" placeholder="https://api.partner.com/v1/">
+                        <small style="color: #718096;">Base API endpoint</small>
+                    </div>
+                    <div class="form-group">
+                        <label>API Key / Email *</label>
+                        <input type="text" id="apiKey" placeholder="API Key or Email for authentication">
+                    </div>
+                    <div class="form-group">
+                        <label>API Secret / Password</label>
+                        <input type="password" id="apiSecret" placeholder="API Secret or Password">
+                    </div>
+                    <div class="form-group">
+                        <label>Tracking Endpoint</label>
+                        <input type="url" id="trackingEndpoint" placeholder="https://api.partner.com/track/{awb}">
+                        <small style="color: #718096;">Use {awb} as placeholder for AWB number</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Webhook URL (Optional)</label>
+                        <input type="url" id="webhookUrl" placeholder="https://your-domain.com/webhooks/tracking">
+                        <small style="color: #718096;">For receiving tracking updates from partner</small>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Onboard Partner</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:7000/api';
+        let authToken = localStorage.getItem('authToken');
+        let pendingOrders = [];
+        let partners = [];
+
+        if (!authToken) window.location.href = '/login.html';
+
+        // ============================================
+        // DISPATCH FUNCTIONS
+        // ============================================
+        
+        async function openDispatchModal() {
+            await loadPendingOrders();
+            await loadPartners();
+            document.getElementById('dispatchModal').classList.add('show');
+        }
+
+        async function loadPendingOrders() {
+            try {
+                const response = await fetch(`${API_URL}/dispatches/pending-orders`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                pendingOrders = await response.json();
+                
+                const select = document.getElementById('dispatchOrderId');
+                select.innerHTML = '<option value="">-- Select Pending Order --</option>';
+                pendingOrders.forEach(order => {
+                    const option = document.createElement('option');
+                    option.value = order._id;
+                    option.textContent = `${order.orderNumber || order._id} - ₹${order.amount?.toFixed(2) || 0} - ${order.customer?.name || 'Direct'}`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                alert('Failed to load pending orders');
+            }
+        }
+
+        async function loadOrderDetails() {
+            const orderId = document.getElementById('dispatchOrderId').value;
+            const order = pendingOrders.find(o => o._id === orderId);
+            
+            if (order) {
+                document.getElementById('orderCustomerName').textContent = order.customer?.name || 'Direct';
+                document.getElementById('orderCustomerPhone').textContent = order.customer?.phone || order.retailerPhone || '-';
+                document.getElementById('orderAddress').textContent = order.deliveryAddress || order.retailerAddress || '-';
+                document.getElementById('orderAmount').textContent = order.amount?.toFixed(2) || '0.00';
+                document.getElementById('orderDetails').style.display = 'block';
+            } else {
+                document.getElementById('orderDetails').style.display = 'none';
+            }
+        }
+
+        async function loadPartners() {
+            try {
+                const response = await fetch(`${API_URL}/logistic-partners/active`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                partners = await response.json();
+                
+                const select = document.getElementById('dispatchPartnerId');
+                select.innerHTML = '<option value="">-- Select Partner --</option>';
+                partners.forEach(partner => {
+                    const option = document.createElement('option');
+                    option.value = partner._id;
+                    option.textContent = `${partner.partnerName} (${partner.serviceType})`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading partners:', error);
+                alert('Failed to load logistic partners');
+            }
+        }
+
+        async function loadPartnerDetails() {
+            const partnerId = document.getElementById('dispatchPartnerId').value;
+            const partner = partners.find(p => p._id === partnerId);
+            
+            if (partner) {
+                document.getElementById('partnerServiceType').textContent = partner.serviceType || '-';
+                document.getElementById('partnerContact').textContent = `${partner.contactPerson} - ${partner.phone}`;
+                const apiStatus = partner.apiIntegration?.enabled 
+                    ? `✅ Enabled (${partner.apiIntegration.apiType})` 
+                    : '❌ Not Enabled';
+                document.getElementById('partnerApiStatus').textContent = apiStatus;
+                document.getElementById('partnerDetails').style.display = 'block';
+            } else {
+                document.getElementById('partnerDetails').style.display = 'none';
+            }
+        }
+
+        async function submitDispatch(event) {
+            event.preventDefault();
+            
+            const orderId = document.getElementById('dispatchOrderId').value;
+            const partnerId = document.getElementById('dispatchPartnerId').value;
+            const awbNumber = document.getElementById('awbNumber').value.toUpperCase();
+            const trackingId = document.getElementById('trackingId').value || awbNumber;
+            const estimatedDate = document.getElementById('estimatedDeliveryDate').value;
+            const notes = document.getElementById('dispatchNotes').value;
+
+            try {
+                const response = await fetch(`${API_URL}/dispatches`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        orderId,
+                        logisticPartnerId: partnerId,
+                        awbNumber,
+                        trackingId,
+                        estimatedDeliveryDate: estimatedDate || undefined,
+                        notes: notes || undefined
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Failed to create dispatch');
+                }
+
+                const dispatch = await response.json();
+                alert(`✅ Dispatch Created Successfully!\n\nDispatch ID: ${dispatch.dispatchId}\nAWB: ${dispatch.awbNumber}\nPartner: ${dispatch.logisticPartnerName}`);
+                
+                closeModal('dispatchModal');
+                document.querySelector('#dispatchModal form').reset();
+                document.getElementById('orderDetails').style.display = 'none';
+                document.getElementById('partnerDetails').style.display = 'none';
+                loadDispatches();
+            } catch (error) {
+                alert('❌ Failed to create dispatch: ' + error.message);
+            }
+        }
+
+        // ============================================
+        // LOGISTIC PARTNER FUNCTIONS
+        // ============================================
+
+        async function openLogisticPartnersModal() {
+            await loadAllPartners();
+            document.getElementById('logisticPartnersModal').classList.add('show');
+        }
+
+        function openAddPartnerModal() {
+            document.getElementById('addPartnerModal').classList.add('show');
+        }
+
+        function toggleApiFields() {
+            const enabled = document.getElementById('enableApiIntegration').checked;
+            const apiFields = document.getElementById('apiFields');
+            apiFields.style.display = enabled ? 'block' : 'none';
+            
+            // Make API fields required if enabled
+            const apiInputs = apiFields.querySelectorAll('input, select');
+            apiInputs.forEach(input => {
+                if (input.id === 'apiType' || input.id === 'apiKey') {
+                    input.required = enabled;
+                }
+            });
+        }
+
+        async function submitPartner(event) {
+            event.preventDefault();
+            
+            const apiEnabled = document.getElementById('enableApiIntegration').checked;
+            const partnerData = {
+                partnerName: document.getElementById('partnerName').value,
+                partnerCode: document.getElementById('partnerCode').value.toUpperCase(),
+                contactPerson: document.getElementById('contactPerson').value,
+                email: document.getElementById('partnerEmail').value,
+                phone: document.getElementById('partnerPhone').value,
+                address: document.getElementById('partnerAddress').value,
+                serviceType: document.getElementById('serviceType').value,
+                trackingUrl: document.getElementById('trackingUrl').value,
+                apiIntegration: {
+                    enabled: apiEnabled,
+                    apiType: apiEnabled ? document.getElementById('apiType').value : 'custom',
+                    apiEndpoint: apiEnabled ? document.getElementById('apiEndpoint').value : '',
+                    apiKey: apiEnabled ? document.getElementById('apiKey').value : '',
+                    apiSecret: apiEnabled ? document.getElementById('apiSecret').value : '',
+                    trackingEndpoint: apiEnabled ? document.getElementById('trackingEndpoint').value : '',
+                    webhookUrl: apiEnabled ? document.getElementById('webhookUrl').value : ''
+                }
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/logistic-partners`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(partnerData)
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Failed to onboard partner');
+                }
+
+                const partner = await response.json();
+                alert(`✅ Partner Onboarded Successfully!\n\nPartner: ${partner.partnerName}\nCode: ${partner.partnerCode}\nAPI Integration: ${apiEnabled ? 'Enabled' : 'Disabled'}`);
+                
+                closeModal('addPartnerModal');
+                document.querySelector('#addPartnerModal form').reset();
+                document.getElementById('apiFields').style.display = 'none';
+                loadAllPartners();
+            } catch (error) {
+                alert('❌ Failed to onboard partner: ' + error.message);
+            }
+        }
+
+        async function loadAllPartners() {
+            const list = document.getElementById('partnersList');
+            list.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading partners...</p></div>';
+
+            try {
+                const response = await fetch(`${API_URL}/logistic-partners`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const allPartners = await response.json();
+
+                if (allPartners.length === 0) {
+                    list.innerHTML = '<p style="text-align: center; color: #718096; padding: 2rem;">No partners onboarded yet. Click "Onboard New Partner" to add one.</p>';
+                    return;
+                }
+
+                list.innerHTML = allPartners.map(partner => `
+                    <div class="content-item">
+                        <div>
+                            <strong>${partner.partnerName}</strong> (${partner.partnerCode})<br>
+                            <span style="color: #718096; font-size: 0.9rem;">
+                                ${partner.serviceType} | 
+                                Contact: ${partner.contactPerson} | 
+                                ${partner.apiIntegration?.enabled ? '✅ API Enabled' : '❌ API Disabled'}
+                            </span>
+                        </div>
+                        <span class="badge ${partner.active ? 'badge-approved' : 'badge-pending'}">
+                            ${partner.active ? 'Active' : 'Inactive'}
+                        </span>
+                    </div>
+                `).join('');
+            } catch (error) {
+                list.innerHTML = '<p style="text-align: center; color: #fc8181;">Failed to load partners</p>';
+            }
+        }
+
+        // ============================================
+        // DISPATCHES LIST
+        // ============================================
+
+        async function loadDispatches() {
+            const loading = document.getElementById('loading');
+            const list = document.getElementById('dispatchesList');
+
+            loading.style.display = 'block';
+            if (list) list.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_URL}/dispatches`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const dispatches = await response.json();
+
+                if (!list) {
+                    const dispatchesList = document.createElement('div');
+                    dispatchesList.id = 'dispatchesList';
+                    document.querySelector('.content-list').appendChild(dispatchesList);
+                }
+
+                const dispatchesList = document.getElementById('dispatchesList');
+                
+                if (dispatches.length === 0) {
+                    dispatchesList.innerHTML = '<p style="text-align: center; color: #718096; padding: 2rem;">No dispatches yet. Create your first dispatch!</p>';
+                } else {
+                    dispatchesList.innerHTML = dispatches.map(dispatch => `
+                        <div class="content-item">
+                            <div>
+                                <strong>${dispatch.dispatchId}</strong> - Order: ${dispatch.orderNumber}<br>
+                                <span style="color: #718096; font-size: 0.9rem;">
+                                    Partner: ${dispatch.logisticPartnerName} | 
+                                    AWB: ${dispatch.awbNumber} | 
+                                    ${dispatch.trackingUrl ? `<a href="${dispatch.trackingUrl}" target="_blank">Track</a>` : ''}
+                                </span>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <span class="badge badge-${getStatusBadgeClass(dispatch.status)}">${dispatch.status}</span>
+                                ${dispatch.logisticPartnerId?.apiIntegration?.enabled ? 
+                                    `<button class="btn btn-secondary" onclick="trackShipment('${dispatch._id}')" style="padding: 0.25rem 0.75rem; font-size: 0.85rem;">🔄 Track via API</button>` : 
+                                    ''
+                                }
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                dispatchesList.style.display = 'block';
+            } catch (error) {
+                const dispatchesList = document.getElementById('dispatchesList');
+                if (dispatchesList) {
+                    dispatchesList.innerHTML = '<p style="text-align: center; color: #fc8181;">Failed to load dispatches</p>';
+                    dispatchesList.style.display = 'block';
+                }
+            }
+
+            loading.style.display = 'none';
+        }
+
+        function getStatusBadgeClass(status) {
+            const statusMap = {
+                'dispatched': 'badge-pending',
+                'in-transit': 'badge-pending',
+                'out-for-delivery': 'badge-pending',
+                'delivered': 'badge-approved',
+                'failed': 'badge-pending',
+                'returned': 'badge-pending'
+            };
+            return statusMap[status] || 'badge-pending';
+        }
+
+        async function trackShipment(dispatchId) {
+            try {
+                const response = await fetch(`${API_URL}/dispatches/${dispatchId}/track`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const data = await response.json();
+
+                if (data.tracking?.success) {
+                    alert(`📦 Tracking Information\n\nStatus: ${data.tracking.status}\nLocation: ${data.tracking.location || 'N/A'}\nEstimated Delivery: ${data.tracking.estimatedDelivery || 'N/A'}`);
+                    loadDispatches(); // Refresh to show updated status
+                } else {
+                    alert(`⚠️ Tracking: ${data.tracking?.error || 'Unable to fetch tracking information'}`);
+                }
+            } catch (error) {
+                alert('❌ Failed to track shipment: ' + error.message);
+            }
+        }
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = '/login.html';
+        }
+
+        // Load dispatches on page load
+        window.addEventListener('DOMContentLoaded', loadDispatches);
+
+        // ============================================
+        // END OF DELIVERIES PAGE FUNCTIONS
+        // ============================================
+    </script>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Service Request - Iconic Smart CRM</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7fafc;
+            color: #2d3748;
+        }
+        .header {
+            background: white;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #667eea; }
+        .nav { display: flex; gap: 1rem; }
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-secondary { background: #f7fafc; color: #2d3748; border: 1px solid #e2e8f0; }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .container { max-width: 800px; margin: 2rem auto; padding: 0 2rem; }
+        .form-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .form-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .form-header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .form-header p { color: #718096; }
+
+        .form-step {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f7fafc;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+        .form-group select, .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+        .form-group select:focus, .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .form-group select:disabled, .form-group input:disabled {
+            background: #f7fafc;
+            cursor: not-allowed;
+        }
+
+        .info-box {
+            background: #e6fffa;
+            border-left: 4px solid #38b2ac;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+        }
+        .info-box p { margin: 0.5rem 0; color: #234e52; }
+
+        .loading {
+            text-align: center;
+            padding: 1rem;
+            color: #718096;
+        }
+        .spinner {
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🚀 Iconic Smart CRM</div>
+            <div class="nav">
+                <a href="/services.html" class="btn btn-secondary">← Back to Services</a>
+                <button class="btn btn-primary" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="form-card">
+            <div class="form-header">
+                <h1>🎫 Create Service Request</h1>
+                <p>Fill in the details below to create a new service request</p>
+            </div>
+
+            <form id="serviceRequestForm" onsubmit="submitRequest(event)">
+                <!-- Step 1: Select Service Center -->
+                <div class="form-step">
+                    <div class="step-title">
+                        <span class="step-number">1</span>
+                        Select Service Center
+                    </div>
+                    <div class="form-group">
+                        <label for="serviceCenter">Service Center *</label>
+                        <select id="serviceCenter" required onchange="loadServiceTypes()">
+                            <option value="">-- Select Service Center --</option>
+                        </select>
+                    </div>
+                    <div id="centerInfo" class="info-box" style="display: none;"></div>
+                </div>
+
+                <!-- Step 2: Select Service Type -->
+                <div class="form-step">
+                    <div class="step-title">
+                        <span class="step-number">2</span>
+                        Select Service Type
+                    </div>
+                    <div class="form-group">
+                        <label for="serviceType">Service Type *</label>
+                        <select id="serviceType" required disabled onchange="enableProductSelect()">
+                            <option value="">-- Select Service Type --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 3: Select Product Type -->
+                <div class="form-step">
+                    <div class="step-title">
+                        <span class="step-number">3</span>
+                        Select Product
+                    </div>
+                    <div class="form-group">
+                        <label for="productType">Product Type *</label>
+                        <select id="productType" required disabled onchange="enableSerialNumber()">
+                            <option value="">-- Select Product Type --</option>
+                            <option value="LED TV">LED TV</option>
+                            <option value="Washing Machine">Washing Machine</option>
+                            <option value="Refrigerator">Refrigerator</option>
+                            <option value="Audio">Audio System</option>
+                            <option value="Cooler">Air Cooler</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 4: Product Serial Number -->
+                <div class="form-step">
+                    <div class="step-title">
+                        <span class="step-number">4</span>
+                        Product Details
+                    </div>
+                    <div class="form-group">
+                        <label for="serialNumber">Product Serial Number *</label>
+                        <input type="text" id="serialNumber" required disabled placeholder="Enter product serial number">
+                    </div>
+                    <div class="form-group">
+                        <label for="issueDescription">Issue Description *</label>
+                        <textarea id="issueDescription" required rows="4" placeholder="Describe the issue..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="priority">Priority *</label>
+                        <select id="priority" required>
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        ✅ Submit Service Request
+                    </button>
+                    <a href="/services.html" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Submitting request...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:7000/api';
+        let authToken = localStorage.getItem('authToken');
+        let serviceCenters = [];
+
+        if (!authToken) window.location.href = '/login.html';
+
+        async function apiRequest(endpoint, options = {}) {
+            const response = await fetch(`${API_URL}${endpoint}`, {
+                ...options,
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                }
+            });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return await response.json();
+        }
+
+        async function loadServiceCenters() {
+            try {
+                serviceCenters = await apiRequest('/service-centers');
+                const select = document.getElementById('serviceCenter');
+                
+                serviceCenters.forEach(center => {
+                    if (center.active) {
+                        const option = document.createElement('option');
+                        option.value = center._id;
+                        option.textContent = center.name;
+                        option.dataset.services = JSON.stringify(center.servicesOffered);
+                        option.dataset.email = center.email;
+                        select.appendChild(option);
+                    }
+                });
+            } catch (error) {
+                alert('Failed to load service centers. Please refresh the page.');
+            }
+        }
+
+        function loadServiceTypes() {
+            const select = document.getElementById('serviceCenter');
+            const selectedOption = select.options[select.selectedIndex];
+            const serviceTypeSelect = document.getElementById('serviceType');
+            const centerInfo = document.getElementById('centerInfo');
+
+            // Reset dependent fields
+            serviceTypeSelect.innerHTML = '<option value="">-- Select Service Type --</option>';
+            serviceTypeSelect.disabled = true;
+            document.getElementById('productType').disabled = true;
+            document.getElementById('serialNumber').disabled = true;
+
+            if (selectedOption.value) {
+                const services = JSON.parse(selectedOption.dataset.services);
+                const email = selectedOption.dataset.email;
+
+                // Show center info
+                centerInfo.style.display = 'block';
+                centerInfo.innerHTML = `
+                    <p><strong>📧 Email:</strong> ${email}</p>
+                    <p><strong>🛠️ Available Services:</strong> ${services.join(', ')}</p>
+                `;
+
+                // Add service options
+                services.forEach(service => {
+                    const option = document.createElement('option');
+                    option.value = service;
+                    option.textContent = service.charAt(0).toUpperCase() + service.slice(1);
+                    serviceTypeSelect.appendChild(option);
+                });
+
+                serviceTypeSelect.disabled = false;
+            } else {
+                centerInfo.style.display = 'none';
+            }
+        }
+
+        function enableProductSelect() {
+            const serviceType = document.getElementById('serviceType').value;
+            const productSelect = document.getElementById('productType');
+            
+            if (serviceType) {
+                productSelect.disabled = false;
+            } else {
+                productSelect.disabled = true;
+                document.getElementById('serialNumber').disabled = true;
+            }
+        }
+
+        function enableSerialNumber() {
+            const productType = document.getElementById('productType').value;
+            const serialInput = document.getElementById('serialNumber');
+            
+            if (productType) {
+                serialInput.disabled = false;
+                serialInput.focus();
+            } else {
+                serialInput.disabled = true;
+            }
+        }
+
+        async function submitRequest(event) {
+            event.preventDefault();
+
+            const form = document.getElementById('serviceRequestForm');
+            const loading = document.getElementById('loading');
+            const submitBtn = document.getElementById('submitBtn');
+
+            const requestData = {
+                serviceCenterId: document.getElementById('serviceCenter').value,
+                serviceCenterName: document.getElementById('serviceCenter').options[document.getElementById('serviceCenter').selectedIndex].text,
+                serviceCenterEmail: document.getElementById('serviceCenter').options[document.getElementById('serviceCenter').selectedIndex].dataset.email,
+                serviceType: document.getElementById('serviceType').value,
+                productType: document.getElementById('productType').value,
+                serialNumber: document.getElementById('serialNumber').value,
+                description: document.getElementById('issueDescription').value,
+                priority: document.getElementById('priority').value,
+                status: 'open',
+                issueType: document.getElementById('serviceType').value
+            };
+
+            form.style.display = 'none';
+            loading.style.display = 'block';
+
+            try {
+                const response = await apiRequest('/service-requests', {
+                    method: 'POST',
+                    body: JSON.stringify(requestData)
+                });
+
+                alert(`✅ Service Request Created Successfully!\n\nRequest ID: ${response.serviceId}\n\nThe service center has been notified via email.\n\nYou will be redirected to the services page.`);
+                window.location.href = '/services.html';
+            } catch (error) {
+                alert('❌ Failed to create service request: ' + error.message);
+                form.style.display = 'block';
+                loading.style.display = 'none';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = '/login.html';
+        }
+
+        window.addEventListener('DOMContentLoaded', loadServiceCenters);
+    </script>
+</body>
+</html>

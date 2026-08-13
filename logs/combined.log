@@ -1,0 +1,83 @@
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2025-11-06 23:32:13"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2025-11-06 23:32:13"}
+{"level":"info","message":"\n🚀 Server running on http://localhost:7000","service":"iconic-crm","timestamp":"2025-11-06 23:32:13"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7000","service":"iconic-crm","timestamp":"2025-11-06 23:32:13"}
+{"level":"info","message":"🔐 Login page: http://localhost:7000/login.html","service":"iconic-crm","timestamp":"2025-11-06 23:32:13"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications\n","service":"iconic-crm","timestamp":"2025-11-06 23:32:13"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2025-11-06 23:32:14"}
+{"0":"i","1":"c","2":"o","3":"n","4":"i","5":"c","6":"-","7":"c","8":"r","9":"m","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2025-11-06 23:32:14"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2025-11-06 23:43:55"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2025-11-06 23:43:56"}
+{"level":"info","message":"\n🚀 Server running on http://localhost:7000","service":"iconic-crm","timestamp":"2025-11-06 23:43:56"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7000","service":"iconic-crm","timestamp":"2025-11-06 23:43:56"}
+{"level":"info","message":"🔐 Login page: http://localhost:7000/login.html","service":"iconic-crm","timestamp":"2025-11-06 23:43:56"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications\n","service":"iconic-crm","timestamp":"2025-11-06 23:43:56"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2025-11-06 23:43:56"}
+{"0":"i","1":"c","2":"o","3":"n","4":"i","5":"c","6":"-","7":"c","8":"r","9":"m","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2025-11-06 23:43:56"}
+{"level":"info","message":"✅ Order Created: ORD000007","service":"iconic-crm","timestamp":"2025-11-06 23:44:13"}
+{"level":"info","message":"   Retailer: Direct","service":"iconic-crm","timestamp":"2025-11-06 23:44:13"}
+{"level":"info","message":"   Items: 1","service":"iconic-crm","timestamp":"2025-11-06 23:44:13"}
+{"level":"info","message":"   Total: ₹236.00 (incl. 18% GST)","service":"iconic-crm","timestamp":"2025-11-06 23:44:13"}
+{"level":"info","message":"✅ Order Created: ORD000008","service":"iconic-crm","timestamp":"2025-11-06 23:46:59"}
+{"level":"info","message":"   Retailer: Direct","service":"iconic-crm","timestamp":"2025-11-06 23:46:59"}
+{"level":"info","message":"   Items: 1","service":"iconic-crm","timestamp":"2025-11-06 23:46:59"}
+{"level":"info","message":"   Total: ₹236.00 (incl. 18% GST)","service":"iconic-crm","timestamp":"2025-11-06 23:46:59"}
+{"level":"info","message":"✅ Order Created: ORD000009","service":"iconic-crm","timestamp":"2025-11-06 23:48:09"}
+{"level":"info","message":"   Retailer: Direct","service":"iconic-crm","timestamp":"2025-11-06 23:48:09"}
+{"level":"info","message":"   Items: 1","service":"iconic-crm","timestamp":"2025-11-06 23:48:09"}
+{"level":"info","message":"   Total: ₹236.00 (incl. 18% GST)","service":"iconic-crm","timestamp":"2025-11-06 23:48:09"}
+{"level":"info","message":"✅ Order Created: ORD000010","service":"iconic-crm","timestamp":"2025-11-06 23:50:05"}
+{"level":"info","message":"   Retailer: Direct","service":"iconic-crm","timestamp":"2025-11-06 23:50:05"}
+{"level":"info","message":"   Items: 1","service":"iconic-crm","timestamp":"2025-11-06 23:50:05"}
+{"level":"info","message":"   Total: ₹236.00 (incl. 18% GST)","service":"iconic-crm","timestamp":"2025-11-06 23:50:05"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2025-11-06 23:51:40"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2025-11-06 23:51:40"}
+{"level":"info","message":"\n🚀 Server running on http://localhost:7000","service":"iconic-crm","timestamp":"2025-11-06 23:51:41"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7000","service":"iconic-crm","timestamp":"2025-11-06 23:51:41"}
+{"level":"info","message":"🔐 Login page: http://localhost:7000/login.html","service":"iconic-crm","timestamp":"2025-11-06 23:51:41"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications\n","service":"iconic-crm","timestamp":"2025-11-06 23:51:41"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2025-11-06 23:51:41"}
+{"0":"i","1":"c","2":"o","3":"n","4":"i","5":"c","6":"-","7":"c","8":"r","9":"m","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2025-11-06 23:51:41"}
+{"level":"info","message":"✅ Order Created: ORD000011","service":"iconic-crm","timestamp":"2025-11-06 23:51:48"}
+{"level":"info","message":"   Retailer: Direct","service":"iconic-crm","timestamp":"2025-11-06 23:51:48"}
+{"level":"info","message":"   Items: 1","service":"iconic-crm","timestamp":"2025-11-06 23:51:48"}
+{"level":"info","message":"   Total: ₹236.00 (incl. 18% GST)","service":"iconic-crm","timestamp":"2025-11-06 23:51:48"}
+{"level":"info","message":"📧 Email (not sent - service not configured):","service":"iconic-crm","timestamp":"2025-11-06 23:51:49"}
+{"level":"info","message":"   To: test-service@example.com","service":"iconic-crm","timestamp":"2025-11-06 23:51:49"}
+{"level":"info","message":"   Subject: New Service Request - SR000001","service":"iconic-crm","timestamp":"2025-11-06 23:51:49"}
+{"level":"warn","message":"⚠️ Service request email not sent: Email service not configured","service":"iconic-crm","timestamp":"2025-11-06 23:51:49"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2025-11-07 00:19:30"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2025-11-07 00:19:30"}
+{"level":"info","message":"\n🚀 Server running on http://localhost:7000","service":"iconic-crm","timestamp":"2025-11-07 00:19:31"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7000","service":"iconic-crm","timestamp":"2025-11-07 00:19:31"}
+{"level":"info","message":"🔐 Login page: http://localhost:7000/login.html","service":"iconic-crm","timestamp":"2025-11-07 00:19:31"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications\n","service":"iconic-crm","timestamp":"2025-11-07 00:19:31"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2025-11-07 00:19:31"}
+{"0":"i","1":"c","2":"o","3":"n","4":"i","5":"c","6":"-","7":"c","8":"r","9":"m","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2025-11-07 00:19:31"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2025-11-08 14:12:58"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2025-11-08 14:13:04"}
+{"level":"info","message":"\n🚀 Server running on http://localhost:7000","service":"iconic-crm","timestamp":"2025-11-08 14:13:17"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7000","service":"iconic-crm","timestamp":"2025-11-08 14:13:17"}
+{"level":"info","message":"🔐 Login page: http://localhost:7000/login.html","service":"iconic-crm","timestamp":"2025-11-08 14:13:17"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications\n","service":"iconic-crm","timestamp":"2025-11-08 14:13:17"}
+{"0":"S","1":"e","10":"e","11":"c","12":"t","13":"i","14":"o","15":"n","16":" ","17":"t","18":"i","19":"m","2":"r","20":"e","21":"d","22":" ","23":"o","24":"u","25":"t","26":" ","27":"a","28":"f","29":"t","3":"v","30":"e","31":"r","32":" ","33":"5","34":"0","35":"0","36":"0","37":" ","38":"m","39":"s","4":"e","5":"r","6":" ","7":"s","8":"e","9":"l","level":"error","message":"❌ MongoDB connection error:","service":"iconic-crm","timestamp":"2025-11-08 14:13:17"}
+{"level":"error","message":"💡 Make sure MongoDB is running: docker-compose up -d mongodb","service":"iconic-crm","timestamp":"2025-11-08 14:13:17"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2025-11-08 14:14:43"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2025-11-08 14:14:43"}
+{"level":"info","message":"\n🚀 Server running on http://localhost:7000","service":"iconic-crm","timestamp":"2025-11-08 14:14:44"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7000","service":"iconic-crm","timestamp":"2025-11-08 14:14:44"}
+{"level":"info","message":"🔐 Login page: http://localhost:7000/login.html","service":"iconic-crm","timestamp":"2025-11-08 14:14:44"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications\n","service":"iconic-crm","timestamp":"2025-11-08 14:14:44"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2025-11-08 14:14:44"}
+{"0":"i","1":"c","2":"o","3":"n","4":"i","5":"c","6":"-","7":"c","8":"r","9":"m","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2025-11-08 14:14:44"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2025-11-08 14:14:52"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2025-11-08 14:16:17"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2025-11-08 14:27:36"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2025-11-08 14:28:08"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2025-11-08 14:28:08"}
+{"level":"info","message":"\n🚀 Server running on http://localhost:7000","service":"iconic-crm","timestamp":"2025-11-08 14:28:08"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7000","service":"iconic-crm","timestamp":"2025-11-08 14:28:08"}
+{"level":"info","message":"🔐 Login page: http://localhost:7000/login.html","service":"iconic-crm","timestamp":"2025-11-08 14:28:08"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications\n","service":"iconic-crm","timestamp":"2025-11-08 14:28:08"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2025-11-08 14:28:08"}
+{"0":"i","1":"c","2":"o","3":"n","4":"i","5":"c","6":"-","7":"c","8":"r","9":"m","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2025-11-08 14:28:08"}

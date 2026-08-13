@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center - Iconic Smart CRM</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7fafc;
+            color: #2d3748;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .search-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .help-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .help-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .help-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .help-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .help-card h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .help-card ul {
+            list-style: none;
+        }
+
+        .help-card li {
+            padding: 0.5rem 0;
+        }
+
+        .help-card a {
+            color: #4a5568;
+            text-decoration: none;
+        }
+
+        .help-card a:hover {
+            color: #667eea;
+        }
+
+        .faq-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1.5rem 0;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-question:hover {
+            color: #667eea;
+        }
+
+        .faq-answer {
+            color: #4a5568;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .faq-answer.show {
+            display: block;
+        }
+
+        .contact-section {
+            background: #667eea;
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .contact-section h2 {
+            margin-bottom: 1rem;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .contact-card {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .contact-card h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .help-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>💡 Help Center</h1>
+        <p>Find answers and get support</p>
+    </header>
+
+    <div class="container">
+        <!-- Search -->
+        <div class="search-box">
+            <input 
+                type="search" 
+                class="search-input" 
+                placeholder="🔍 Search for help..."
+                aria-label="Search help articles"
+                onkeyup="searchHelp(event)"
+            >
+        </div>
+
+        <!-- Help Categories -->
+        <div class="help-grid">
+            <div class="help-card">
+                <div class="help-icon">📚</div>
+                <h3>Getting Started</h3>
+                <ul>
+                    <li><a href="/login.html">How to login</a></li>
+                    <li><a href="/dashboard.html">Dashboard overview</a></li>
+                    <li><a href="/orders.html">Create your first order</a></li>
+                    <li><a href="/dashboard.html">Navigation basics</a></li>
+                    <li><a href="javascript:void(0)" onclick="showKeyboardShortcuts()">Keyboard shortcuts</a></li>
+                </ul>
+            </div>
+
+            <div class="help-card">
+                <div class="help-icon">📦</div>
+                <h3>Orders & Deliveries</h3>
+                <ul>
+                    <li><a href="/orders.html">Create an order</a></li>
+                    <li><a href="/orders.html">Track an order</a></li>
+                    <li><a href="/orders.html">Update order status</a></li>
+                    <li><a href="/deliveries.html">Manage deliveries</a></li>
+                    <li><a href="/orders.html">View order history</a></li>
+                </ul>
+            </div>
+
+            <div class="help-card">
+                <div class="help-icon">🎫</div>
+                <h3>Service Requests</h3>
+                <ul>
+                    <li><a href="/services.html">Create service request</a></li>
+                    <li><a href="/services.html">Track your request</a></li>
+                    <li><a href="/services.html">Priority levels</a></li>
+                    <li><a href="/services.html">Assign requests (Admin)</a></li>
+                    <li><a href="/services.html">Resolve requests</a></li>
+                </ul>
+            </div>
+
+            <div class="help-card">
+                <div class="help-icon">📋</div>
+                <h3>Lead Management</h3>
+                <ul>
+                    <li><a href="/leads.html">Add new leads</a></li>
+                    <li><a href="/leads.html">Qualify leads</a></li>
+                    <li><a href="/leads.html">Convert to opportunity</a></li>
+                    <li><a href="/leads.html">Sales pipeline</a></li>
+                    <li><a href="/leads.html">Reports & analytics</a></li>
+                </ul>
+            </div>
+
+            <div class="help-card">
+                <div class="help-icon">🔌</div>
+                <h3>API & Integrations</h3>
+                <ul>
+                    <li><a href="javascript:void(0)" onclick="showApiKeyHelp()">Generate API key</a></li>
+                    <li><a href="javascript:void(0)" onclick="showAndroidHelp()">Android app setup</a></li>
+                    <li><a href="javascript:void(0)" onclick="showWebhookHelp()">Configure webhooks</a></li>
+                    <li><a href="javascript:void(0)" onclick="showShopifyHelp()">Shopify integration</a></li>
+                    <li><a href="javascript:void(0)" onclick="showWooCommerceHelp()">WooCommerce integration</a></li>
+                </ul>
+            </div>
+
+            <div class="help-card">
+                <div class="help-icon">♿</div>
+                <h3>Accessibility</h3>
+                <ul>
+                    <li><a href="javascript:void(0)" onclick="showAccessibilityHelp('keyboard')">Keyboard navigation</a></li>
+                    <li><a href="javascript:void(0)" onclick="showAccessibilityHelp('screen-reader')">Screen reader support</a></li>
+                    <li><a href="/dashboard.html">Mobile accessibility</a></li>
+                    <li><a href="javascript:void(0)" onclick="showAccessibilityHelp('text-size')">Adjust text size</a></li>
+                    <li><a href="javascript:void(0)" onclick="showAccessibilityHelp('contrast')">High contrast mode</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- FAQs -->
+        <div class="faq-section">
+            <h2 style="margin-bottom: 1.5rem;">❓ Frequently Asked Questions</h2>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    How do I reset my password?
+                    <span>▼</span>
+                </div>
+                <div class="faq-answer">
+                    Click "Forgot Password" on the login page, enter your email, and follow the instructions sent to your inbox.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    What are the demo credentials?
+                    <span>▼</span>
+                </div>
+                <div class="faq-answer">
+                    <strong>Admin:</strong> admin@iconic-crm.com / admin123<br>
+                    <strong>Manager:</strong> manager@iconic-crm.com / manager123<br>
+                    <strong>Sales:</strong> sales@iconic-crm.com / sales123
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    How do I create an API key?
+                    <span>▼</span>
+                </div>
+                <div class="faq-answer">
+                    Go to Settings → API Keys → Create New Key. Choose your permissions and expiration date. Save the key securely as you won't be able to see it again.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    Can I use this on mobile devices?
+                    <span>▼</span>
+                </div>
+                <div class="faq-answer">
+                    Yes! The CRM is fully responsive and works on all devices (phones, tablets, desktops). Touch targets are optimized for mobile use.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    How do I integrate with Shopify?
+                    <span>▼</span>
+                </div>
+                <div class="faq-answer">
+                    Create an API key, then use our Shopify webhook integration. Check the API_INTEGRATION_GUIDE.md for complete code examples.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    Is there keyboard navigation support?
+                    <span>▼</span>
+                </div>
+                <div class="faq-answer">
+                    Yes! Use Tab to navigate, Enter to activate, Escape to close dialogs. Press Alt+A on login to auto-fill demo credentials.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    Where can I find the documentation?
+                    <span>▼</span>
+                </div>
+                <div class="faq-answer">
+                    All documentation is available in the project folder:
+                    <ul style="margin-top: 0.5rem;">
+                        <li>WORKFLOW_GUIDE.md - Complete workflows</li>
+                        <li>API_INTEGRATION_GUIDE.md - API documentation</li>
+                        <li>ACCESSIBILITY_GUIDE.md - Accessibility features</li>
+                        <li>INTEGRATION_QUICK_START.md - Quick setup</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Support -->
+        <div class="contact-section">
+            <h2>📞 Still Need Help?</h2>
+            <p>Our support team is here to help you</p>
+
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <h4>📧 Email Support</h4>
+                    <p>support@iconic-crm.com</p>
+                    <p><small>Response within 24 hours</small></p>
+                </div>
+
+                <div class="contact-card">
+                    <h4>💬 Live Chat</h4>
+                    <p>Available 9 AM - 5 PM EST</p>
+                    <p><small>Instant support online</small></p>
+                </div>
+
+                <div class="contact-card">
+                    <h4>📱 Phone Support</h4>
+                    <p>+1-555-0100</p>
+                    <p><small>Monday - Friday</small></p>
+                </div>
+
+                <div class="contact-card">
+                    <h4>🌐 Documentation</h4>
+                    <p>Complete guides & tutorials</p>
+                    <p><small>Self-service resources</small></p>
+                </div>
+            </div>
+
+            <button onclick="window.location.href='/dashboard.html'" style="
+                background: white;
+                color: #667eea;
+                border: none;
+                padding: 1rem 2rem;
+                border-radius: 8px;
+                font-size: 1.1rem;
+                font-weight: 600;
+                cursor: pointer;
+                margin-top: 2rem;
+            ">← Back to Dashboard</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleFaq(element) {
+            const answer = element.nextElementSibling;
+            const arrow = element.querySelector('span');
+            
+            answer.classList.toggle('show');
+            arrow.textContent = answer.classList.contains('show') ? '▲' : '▼';
+        }
+
+        function searchHelp(event) {
+            const searchTerm = event.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.help-card, .faq-item');
+
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Help modal functions
+        function showKeyboardShortcuts() {
+            alert(`⌨️ Keyboard Shortcuts:
+
+• Tab - Navigate forward
+• Shift+Tab - Navigate backward
+• Enter/Space - Activate element
+• Escape - Close dialogs
+• Alt+A - Auto-fill login (on login page)
+• Ctrl+K - Quick search (coming soon)
+
+All pages support full keyboard navigation!`);
+        }
+
+        function showApiKeyHelp() {
+            alert(`🔑 Generate API Key:
+
+1. Login to dashboard
+2. Go to Settings (coming soon)
+3. Click "API Keys"
+4. Click "Create New Key"
+5. Set permissions and expiration
+6. Copy and save the key securely
+
+Or use the API tester at:
+http://localhost:7000/index.html
+
+Documentation: API_INTEGRATION_GUIDE.md`);
+        }
+
+        function showAndroidHelp() {
+            alert(`📱 Android App Setup:
+
+1. Add dependencies to build.gradle:
+   implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+
+2. Create API client with your API key
+
+3. Make requests to:
+   http://your-server:7000/api
+
+Full code examples in:
+API_INTEGRATION_GUIDE.md
+
+Test your API at:
+http://localhost:7000/index.html`);
+        }
+
+        function showWebhookHelp() {
+            alert(`🔔 Configure Webhooks:
+
+1. Login to dashboard
+2. Go to Settings → Webhooks
+3. Click "Create Webhook"
+4. Enter your webhook URL
+5. Select events to subscribe to
+6. Save the secret for verification
+
+Events available:
+• order.created
+• order.shipped
+• service.created
+• And more...
+
+See: API_INTEGRATION_GUIDE.md`);
+        }
+
+        function showShopifyHelp() {
+            alert(`🛒 Shopify Integration:
+
+1. Generate API key in CRM
+2. Install webhook in Shopify admin
+3. Point to: your-server/webhooks/shopify
+4. Add API key to integration code
+
+Full code example in:
+API_INTEGRATION_GUIDE.md
+
+Contact support for assistance!`);
+        }
+
+        function showWooCommerceHelp() {
+            alert(`🛍️ WooCommerce Integration:
+
+1. Generate API key in CRM
+2. Install plugin or add custom code
+3. Configure webhook URL
+4. Add API key to settings
+
+PHP code examples available in:
+API_INTEGRATION_GUIDE.md
+
+Need help? Contact support!`);
+        }
+
+        function showAccessibilityHelp(type) {
+            const messages = {
+                'keyboard': `⌨️ Keyboard Navigation:
+
+• Tab - Move to next element
+• Shift+Tab - Move to previous
+• Enter/Space - Activate
+• Escape - Close/Cancel
+• Arrow keys - Navigate lists
+
+All pages fully keyboard accessible!`,
+                'screen-reader': `🔊 Screen Reader Support:
+
+✅ WCAG 2.1 Level AA compliant
+✅ Proper ARIA labels
+✅ Semantic HTML
+✅ Live regions for updates
+✅ Descriptive alt text
+
+Tested with NVDA, JAWS, VoiceOver`,
+                'text-size': `🔍 Adjust Text Size:
+
+Browser zoom:
+• Ctrl/Cmd + Plus (+) - Zoom in
+• Ctrl/Cmd + Minus (-) - Zoom out
+• Ctrl/Cmd + 0 - Reset zoom
+
+Works up to 200% zoom!
+All content remains readable.`,
+                'contrast': `🎨 High Contrast:
+
+Current design meets WCAG AA:
+• 4.5:1 contrast ratio
+• Clear focus indicators
+• Color-coded badges
+
+For higher contrast:
+• Use browser/OS settings
+• Enable high contrast mode
+• Adjust display settings`
+            };
+
+            alert(messages[type] || 'Help information coming soon!');
+        }
+    </script>
+</body>
+</html>

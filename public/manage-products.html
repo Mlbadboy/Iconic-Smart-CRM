@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products - Iconic Smart CRM</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7fafc;
+            color: #2d3748;
+        }
+        .header {
+            background: white;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #667eea; }
+        .nav { display: flex; gap: 1rem; }
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-secondary { background: #f7fafc; color: #2d3748; border: 1px solid #e2e8f0; }
+        .btn-success { background: #48bb78; color: white; }
+        .btn-danger { background: #fc8181; color: white; }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th {
+            background: #f7fafc;
+            font-weight: 600;
+        }
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #2d3748;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+        }
+        .toast.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">📦 Product Management</div>
+            <div class="nav">
+                <a href="/orders.html" class="btn btn-secondary">← Back to Orders</a>
+                <a href="/dashboard.html" class="btn btn-secondary">Dashboard</a>
+                <button class="btn btn-primary" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>📺 Manage Products - Consumer Durables</h1>
+        <p style="color: #718096; margin-bottom: 2rem;">Add your consumer durables products (LED TVs, Refrigerators, Washing Machines, etc.). These will be used when creating orders.</p>
+
+        <!-- Add Single Product -->
+        <div class="card">
+            <h2>➕ Add New Product</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                <div class="form-group">
+                    <label>Product Name *</label>
+                    <input type="text" id="productName" placeholder="e.g., Samsung 43 inch Smart LED TV">
+                </div>
+                <div class="form-group">
+                    <label>Brand *</label>
+                    <input type="text" id="productBrand" placeholder="e.g., Samsung, LG, Sony">
+                </div>
+                <div class="form-group">
+                    <label>Model Number *</label>
+                    <input type="text" id="productSku" placeholder="e.g., UA43T5400AKXXL">
+                </div>
+                <div class="form-group">
+                    <label>Price (₹) *</label>
+                    <input type="number" id="productPrice" placeholder="e.g., 25999" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>MRP (₹)</label>
+                    <input type="number" id="productMrp" placeholder="e.g., 32999" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Category *</label>
+                    <select id="productCategory">
+                        <option value="">Select Category</option>
+                        <option value="LED TV">LED TV</option>
+                        <option value="Smart TV">Smart TV</option>
+                        <option value="Refrigerator">Refrigerator</option>
+                        <option value="Washing Machine">Washing Machine</option>
+                        <option value="Air Conditioner">Air Conditioner</option>
+                        <option value="Microwave">Microwave</option>
+                        <option value="Water Heater">Water Heater</option>
+                        <option value="Air Cooler">Air Cooler</option>
+                        <option value="Kitchen Appliances">Kitchen Appliances</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Specifications</label>
+                    <input type="text" id="productSpecs" placeholder="e.g., 43 inch, 4K Ultra HD, Smart TV">
+                </div>
+                <div class="form-group">
+                    <label>Warranty</label>
+                    <input type="text" id="productWarranty" placeholder="e.g., 1 Year Comprehensive">
+                </div>
+                <div class="form-group">
+                    <label>Stock Quantity</label>
+                    <input type="number" id="productStock" placeholder="e.g., 10" value="10">
+                </div>
+            </div>
+            <button class="btn btn-success" onclick="addProduct()">➕ Add Product</button>
+        </div>
+
+        <!-- Bulk Import -->
+        <div class="card">
+            <h2>📋 Bulk Import Products</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div>
+                    <p style="margin-bottom: 0.5rem;"><strong>Format:</strong> Name, Model Number, Price, Brand, Category</p>
+                    <p style="color: #718096; font-size: 0.9rem;">One product per line, comma-separated</p>
+                </div>
+                <button class="btn btn-secondary" onclick="downloadSampleCSV()" style="white-space: nowrap;">
+                    📥 Download Sample CSV
+                </button>
+            </div>
+            <textarea id="bulkProducts" rows="10" placeholder="Samsung 43 inch Smart LED TV, UA43T5400AKXXL, 25999, Samsung, LED TV
+LG 32 inch HD Ready LED TV, 32LM563BPTC, 15999, LG, LED TV
+Sony 55 inch 4K Ultra HD Smart LED TV, KD-55X74, 52990, Sony, Smart TV
+Samsung 192 L Direct Cool Refrigerator, RR20A2Y2B11, 14990, Samsung, Refrigerator
+LG 6.5 kg Fully Automatic Washing Machine, T65SJSF1Z, 16990, LG, Washing Machine"></textarea>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button class="btn btn-success" onclick="bulkImport()">📥 Import All Products</button>
+                <label class="btn btn-secondary" style="cursor: pointer;">
+                    📁 Upload CSV File
+                    <input type="file" id="csvFileInput" accept=".csv" style="display: none;" onchange="handleCSVUpload(event)">
+                </label>
+            </div>
+        </div>
+
+        <!-- Product List -->
+        <div class="card">
+            <h2>📦 All Products</h2>
+            <button class="btn btn-primary" onclick="loadProducts()" style="margin-bottom: 1rem;">🔄 Refresh List</button>
+            <table id="productsTable">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Brand</th>
+                        <th>Model Number</th>
+                        <th>Price</th>
+                        <th>Category</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="productsBody">
+                    <tr>
+                        <td colspan="7" style="text-align: center;">Loading...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        const API_URL = 'http://localhost:7000/api';
+        const token = localStorage.getItem('authToken');
+        
+        if (!token) {
+            window.location.href = '/login.html';
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Add single product
+        async function addProduct() {
+            const name = document.getElementById('productName').value.trim();
+            const brand = document.getElementById('productBrand').value.trim();
+            const sku = document.getElementById('productSku').value.trim();
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const mrp = parseFloat(document.getElementById('productMrp').value) || price;
+            const category = document.getElementById('productCategory').value;
+            const specs = document.getElementById('productSpecs').value.trim();
+            const warranty = document.getElementById('productWarranty').value.trim();
+            const stock = parseInt(document.getElementById('productStock').value) || 10;
+
+            if (!name || !brand || !sku || !price || !category) {
+                showToast('❌ Please fill all required fields (Name, Brand, Model, Price, Category)');
+                return;
+            }
+
+            try {
+                const productData = {
+                    name,
+                    sku,
+                    price,
+                    mrp,
+                    brand,
+                    category,
+                    inStock: true,
+                    stockQuantity: stock
+                };
+
+                // Add optional fields if provided
+                if (specs) {
+                    productData.description = specs;
+                    productData.specifications = specs.split(',').map(s => ({
+                        key: 'Specification',
+                        value: s.trim()
+                    }));
+                }
+                if (warranty) productData.warranty = warranty;
+
+                const response = await fetch(`${API_URL}/products`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(productData)
+                });
+
+                if (response.ok) {
+                    const product = await response.json();
+                    showToast('✅ Product added successfully!');
+                    
+                    // Clear form
+                    document.getElementById('productName').value = '';
+                    document.getElementById('productBrand').value = '';
+                    document.getElementById('productSku').value = '';
+                    document.getElementById('productPrice').value = '';
+                    document.getElementById('productMrp').value = '';
+                    document.getElementById('productCategory').value = '';
+                    document.getElementById('productSpecs').value = '';
+                    document.getElementById('productWarranty').value = '';
+                    document.getElementById('productStock').value = '10';
+                    
+                    // Wait a moment for database to commit, then refresh
+                    setTimeout(() => {
+                        loadProducts();
+                    }, 500);
+                } else {
+                    const error = await response.json();
+                    showToast(`❌ ${error.message}`);
+                }
+            } catch (error) {
+                showToast('❌ Failed to add product');
+                console.error(error);
+            }
+        }
+
+        // Bulk import products
+        async function bulkImport() {
+            const bulkText = document.getElementById('bulkProducts').value.trim();
+            
+            if (!bulkText) {
+                showToast('❌ Please enter products to import');
+                return;
+            }
+
+            const lines = bulkText.split('\n').filter(line => line.trim());
+            const products = [];
+            const errors = [];
+
+            console.log('Processing', lines.length, 'lines');
+
+            // Handle both formats: 5 columns (Name, Model, Price, Brand, Category) or 6 columns (ID, Name, Model, Price, Brand, Category)
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+
+                try {
+                    // Handle both comma and comma-space separators
+                    const parts = line.split(',').map(p => p.trim());
+
+                    console.log(`Line ${i + 1} parts:`, parts); // Debug log
+
+                    let name, sku, priceStr, brand, category;
+
+                    if (parts.length === 5) {
+                        // Format: Name, Model, Price, Brand, Category
+                        [name, sku, priceStr, brand, category] = parts;
+                    } else if (parts.length === 6) {
+                        // Format: ProductID, Name, Model, Price, Brand, Category
+                        [, name, sku, priceStr, brand, category] = parts; // Skip first element (ProductID)
+                    } else {
+                        errors.push(`Line ${i + 1}: Invalid number of fields. Expected 5 or 6 fields, found ${parts.length}`);
+                        continue;
+                    }
+
+                    priceStr = priceStr.replace(/[₹,\s]/g, ''); // Remove currency symbols and commas
+                    const price = parseFloat(priceStr);
+                    brand = brand || 'Generic';
+                    category = category || 'Other';
+
+                    console.log(`Line ${i + 1} parsed: name="${name}", sku="${sku}", priceStr="${priceStr}", price=${price}`); // Debug log
+
+                    // Validation
+                    if (!name || name.length < 2) {
+                        errors.push(`Line ${i + 1}: Invalid product name "${name}"`);
+                        continue;
+                    }
+                    if (!sku || sku.length < 2) {
+                        errors.push(`Line ${i + 1}: Invalid model number "${sku}"`);
+                        continue;
+                    }
+                    if (isNaN(price) || price <= 0) {
+                        errors.push(`Line ${i + 1}: Invalid price "${priceStr}" (parsed as ${price})`);
+                        continue;
+                    }
+
+                    products.push({
+                        name: name,
+                        sku: sku,
+                        price: price,
+                        brand: brand,
+                        category: category,
+                        mrp: price * 1.2,
+                        inStock: true,
+                        stockQuantity: 10
+                    });
+
+                    console.log(`✅ Line ${i + 1}: ${name} - ${sku} - ₹${price}`);
+                } catch (err) {
+                    errors.push(`Line ${i + 1}: ${err.message}`);
+                    console.error(`❌ Line ${i + 1} error:`, err);
+                }
+            }
+
+            console.log('Valid products:', products.length);
+            console.log('Errors:', errors.length);
+
+            if (errors.length > 0) {
+                console.warn('Import errors:', errors);
+            }
+
+            if (products.length === 0) {
+                showToast(`❌ No valid products found. ${errors.length} errors.`);
+                alert('Import Errors:\n\n' + errors.join('\n'));
+                return;
+            }
+
+            try {
+                showToast(`⏳ Importing ${products.length} products...`);
+                
+                const response = await fetch(`${API_URL}/products/bulk-import`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ products })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                console.log('Import result:', result);
+                
+                if (result.success > 0) {
+                    showToast(`✅ Imported ${result.success} products successfully!`);
+                    if (result.errors && result.errors.length > 0) {
+                        console.warn('Some products failed:', result.errors);
+                    }
+                    document.getElementById('bulkProducts').value = '';
+                    
+                    // Wait a moment for database to commit, then refresh
+                    setTimeout(() => {
+                        loadProducts();
+                    }, 500);
+                } else {
+                    const errorMessages = result.errors?.map(e => `${e.product}: ${e.error}`).join('\n') || 'Unknown error';
+                    showToast(`❌ No products imported`);
+                    alert('Import failed:\n\n' + errorMessages);
+                }
+            } catch (error) {
+                showToast('❌ Failed to import products');
+                console.error('Bulk import error:', error);
+                alert('Import error: ' + error.message);
+            }
+        }
+
+        // Load all products
+        async function loadProducts() {
+            const tbody = document.getElementById('productsBody');
+            
+            try {
+                // Show loading state
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;"><div class="spinner" style="display: inline-block;"></div><br>Loading products...</td></tr>';
+                
+                const response = await fetch(`${API_URL}/products`, {
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    cache: 'no-cache' // Force fresh data
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const products = await response.json();
+                console.log('Loaded products:', products.length); // Debug log
+                
+                if (products.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: #718096;">No products found. Add some above!</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = products.map(p => `
+                    <tr>
+                        <td><strong>${p.name}</strong></td>
+                        <td>${p.brand || 'N/A'}</td>
+                        <td><code>${p.sku}</code></td>
+                        <td><strong>₹${p.price.toFixed(2)}</strong>${p.mrp ? `<br><small style="color: #718096; text-decoration: line-through;">₹${p.mrp.toFixed(2)}</small>` : ''}</td>
+                        <td><span style="background: #e6f7ff; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem;">${p.category}</span></td>
+                        <td>${p.stockQuantity || 0}</td>
+                        <td>
+                            <button class="btn btn-danger" onclick="deleteProduct('${p._id}')" style="padding: 0.25rem 0.75rem; font-size: 0.85rem;">🗑️ Delete</button>
+                        </td>
+                    </tr>
+                `).join('');
+                
+                showToast(`✅ ${products.length} products loaded`);
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: #fc8181;">❌ Failed to load products. Please try again.</td></tr>';
+                showToast('❌ Failed to load products');
+                console.error('Error loading products:', error);
+            }
+        }
+
+        // Delete product
+        async function deleteProduct(id) {
+            if (!confirm('Delete this product?')) return;
+
+            try {
+                const response = await fetch(`${API_URL}/products/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    showToast('✅ Product deleted');
+                    loadProducts();
+                } else {
+                    showToast('❌ Failed to delete product');
+                }
+            } catch (error) {
+                showToast('❌ Failed to delete product');
+                console.error(error);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = '/login.html';
+        }
+
+        // Download sample CSV file
+        function downloadSampleCSV() {
+            const sampleData = `Product Name,Model Number,Price,Brand,Category
+Samsung 43 inch Smart LED TV,UA43T5400AKXXL,25999,Samsung,LED TV
+LG 32 inch HD Ready LED TV,32LM563BPTC,15999,LG,LED TV
+Sony 55 inch 4K Ultra HD Smart LED TV,KD-55X74,52990,Sony,Smart TV
+Mi 32 inch HD Ready Smart LED TV,4A PRO,13999,Mi,Smart TV
+OnePlus 43 inch Full HD Smart LED TV,43Y1,24999,OnePlus,Smart TV
+Samsung 192 L Direct Cool Refrigerator,RR20A2Y2B11,14990,Samsung,Refrigerator
+LG 235 L Frost Free Refrigerator,GL-T292RPZN,23990,LG,Refrigerator
+Whirlpool 265 L Frost Free Refrigerator,IF 278 ELT,27990,Whirlpool,Refrigerator
+LG 6.5 kg Fully Automatic Washing Machine,T65SJSF1Z,16990,LG,Washing Machine
+Samsung 7 kg Fully Automatic Washing Machine,WA70A4002GS,18990,Samsung,Washing Machine
+IFB 6 kg Front Load Washing Machine,Diva Aqua SX,22990,IFB,Washing Machine
+Whirlpool 1.5 Ton 3 Star Split AC,1.5T MAGICOOL PRO+ 3S,32990,Whirlpool,Air Conditioner
+LG 1.5 Ton 5 Star Inverter Split AC,MS-Q18YNZA,42990,LG,Air Conditioner
+Daikin 1.5 Ton 3 Star Split AC,MTKL50TV,36990,Daikin,Air Conditioner
+Samsung 28 L Convection Microwave,MC28H5013AK,12990,Samsung,Microwave
+LG 20 L Solo Microwave,MS2043DB,5990,LG,Microwave
+Bajaj 15L Water Heater,New Shakti Storage,6990,Bajaj,Water Heater
+Havells 25L Water Heater,Monza EC,8990,Havells,Water Heater
+Symphony 70L Air Cooler,Diet 70i,7990,Symphony,Air Cooler
+Bajaj 36L Air Cooler,Platini PX36 TORQUE,5990,Bajaj,Air Cooler`;
+
+            // Create blob and download
+            const blob = new Blob([sampleData], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'sample_products.csv');
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showToast('✅ Sample CSV downloaded! Fill it with your products.');
+        }
+
+        // Handle CSV file upload
+        function handleCSVUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!file.name.endsWith('.csv')) {
+                showToast('❌ Please upload a CSV file');
+                event.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    console.log('CSV file loaded, size:', content.length);
+                    
+                    // Split by newline and filter empty lines
+                    const lines = content.split(/\r?\n/).filter(line => line.trim());
+                    console.log('Total lines:', lines.length);
+                    
+                    // Check if first line is header (contains "Product Name" or similar)
+                    let dataLines = lines;
+                    if (lines.length > 0 && lines[0].toLowerCase().includes('product name')) {
+                        console.log('Detected header, skipping first line');
+                        dataLines = lines.slice(1);
+                    }
+                    
+                    // Process CSV lines - handle quoted fields properly
+                    const formattedData = dataLines.map((line, index) => {
+                        // Handle quoted fields in CSV (fields with commas inside)
+                        const parts = [];
+                        let current = '';
+                        let inQuotes = false;
+
+                        for (let i = 0; i < line.length; i++) {
+                            const char = line[i];
+                            if (char === '"') {
+                                inQuotes = !inQuotes;
+                            } else if (char === ',' && !inQuotes) {
+                                parts.push(current.trim());
+                                current = '';
+                            } else {
+                                current += char;
+                            }
+                        }
+                        parts.push(current.trim());
+
+                        // Clean up parts and rejoin with comma (no space)
+                        return parts.map(p => p.replace(/^"|"$/g, '').trim()).join(',');
+                    }).filter(line => line.trim()).join('\n');
+                    
+                    // Set to textarea
+                    document.getElementById('bulkProducts').value = formattedData;
+                    
+                    console.log('Formatted data lines:', dataLines.length);
+                    showToast(`✅ CSV loaded! ${dataLines.length} rows ready to import.`);
+                } catch (error) {
+                    console.error('CSV parse error:', error);
+                    showToast('❌ Failed to parse CSV file');
+                }
+            };
+            
+            reader.onerror = function() {
+                showToast('❌ Failed to read CSV file');
+                console.error('FileReader error');
+            };
+            
+            reader.readAsText(file, 'UTF-8');
+            
+            // Reset file input
+            event.target.value = '';
+        }
+
+        // Load products on page load
+        loadProducts();
+    </script>
+</body>
+</html>

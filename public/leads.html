@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leads Management - Iconic Smart CRM</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7fafc;
+            color: #2d3748;
+        }
+        .header {
+            background: white;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #667eea; }
+        .nav { display: flex; gap: 1rem; }
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-secondary { background: #f7fafc; color: #2d3748; border: 1px solid #e2e8f0; }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .container { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .filters {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .filter-group { flex: 1; min-width: 200px; }
+        .filter-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .filter-group select, .filter-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+        }
+        .leads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem; }
+        .lead-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border-left: 4px solid #667eea;
+        }
+        .lead-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+        .lead-header { margin-bottom: 1rem; }
+        .lead-name { font-size: 1.3rem; font-weight: 600; color: #2d3748; margin-bottom: 0.5rem; }
+        .lead-id { font-size: 0.9rem; color: #718096; }
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        .badge-new { background: #bee3f8; color: #2c5282; }
+        .badge-contacted { background: #feebc8; color: #c05621; }
+        .badge-qualified { background: #c6f6d5; color: #2f855a; }
+        .badge-converted { background: #d6bcfa; color: #553c9a; }
+        .badge-lost { background: #e2e8f0; color: #4a5568; }
+        .lead-details { margin: 1rem 0; }
+        .lead-details p { margin: 0.5rem 0; color: #4a5568; display: flex; align-items: center; gap: 0.5rem; }
+        .loading, .empty-state { text-align: center; padding: 3rem; }
+        .spinner {
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🚀 Iconic Smart CRM</div>
+            <div class="nav">
+                <a href="/dashboard.html" class="btn btn-secondary">← Back to Dashboard</a>
+                <button class="btn btn-primary" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>📋 Leads Management</h1>
+            <p>Track and manage your sales pipeline</p>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>Status</label>
+                <select id="statusFilter" onchange="filterLeads()">
+                    <option value="">All Statuses</option>
+                    <option value="new">New</option>
+                    <option value="contacted">Contacted</option>
+                    <option value="qualified">Qualified</option>
+                    <option value="converted">Converted</option>
+                    <option value="lost">Lost</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Source</label>
+                <select id="sourceFilter" onchange="filterLeads()">
+                    <option value="">All Sources</option>
+                    <option value="website">Website</option>
+                    <option value="referral">Referral</option>
+                    <option value="linkedin">LinkedIn</option>
+                    <option value="social_media">Social Media</option>
+                    <option value="email">Email</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Search</label>
+                <input type="text" id="searchInput" placeholder="Search by name or email..." onkeyup="filterLeads()">
+            </div>
+            <div class="filter-group" style="display: flex; align-items: flex-end;">
+                <button class="btn btn-primary" onclick="loadLeads()">🔄 Refresh</button>
+            </div>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading leads...</p>
+        </div>
+
+        <div id="leadsGrid" class="leads-grid" style="display: none;"></div>
+
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">📋</div>
+            <h2>No Leads Found</h2>
+            <p>There are no leads matching your criteria.</p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:7000/api';
+        let authToken = localStorage.getItem('authToken');
+        let allLeads = [];
+
+        if (!authToken) window.location.href = '/login.html';
+
+        async function apiRequest(endpoint, options = {}) {
+            const response = await fetch(`${API_URL}${endpoint}`, {
+                ...options,
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                }
+            });
+            return response.ok ? await response.json() : null;
+        }
+
+        async function loadLeads() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('leadsGrid').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+
+            const leads = await apiRequest('/leads');
+            if (leads && leads.length > 0) {
+                allLeads = leads;
+                displayLeads(leads);
+            } else {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+            }
+        }
+
+        function displayLeads(leads) {
+            const grid = document.getElementById('leadsGrid');
+            grid.innerHTML = leads.map(lead => `
+                <div class="lead-card">
+                    <div class="lead-header">
+                        <div class="lead-name">${lead.name}</div>
+                        <div class="lead-id">${lead.leadId}</div>
+                        <span class="badge badge-${lead.status}">${lead.status.toUpperCase()}</span>
+                    </div>
+
+                    <div class="lead-details">
+                        <p>📧 ${lead.email}</p>
+                        <p>📞 ${lead.phone || 'No phone'}</p>
+                        <p>📍 Source: <strong>${lead.source}</strong></p>
+                        <p>📅 Created: ${new Date(lead.createdAt).toLocaleDateString()}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('leadsGrid').style.display = 'grid';
+        }
+
+        function filterLeads() {
+            const status = document.getElementById('statusFilter').value;
+            const source = document.getElementById('sourceFilter').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+
+            const filtered = allLeads.filter(l => {
+                const matchesStatus = !status || l.status === status;
+                const matchesSource = !source || l.source === source;
+                const matchesSearch = !search || 
+                    l.name.toLowerCase().includes(search) ||
+                    l.email.toLowerCase().includes(search);
+                return matchesStatus && matchesSource && matchesSearch;
+            });
+
+            if (filtered.length > 0) {
+                displayLeads(filtered);
+                document.getElementById('emptyState').style.display = 'none';
+            } else {
+                document.getElementById('leadsGrid').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = '/login.html';
+        }
+
+        window.addEventListener('DOMContentLoaded', loadLeads);
+    </script>
+</body>
+</html>

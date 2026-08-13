@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Configuration - Iconic Smart CRM</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            margin-top: 10px;
+        }
+
+        .status {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            display: block;
+        }
+
+        .test-btn {
+            background: #28a745;
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        .help-text {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        .help-text h3 {
+            margin-bottom: 10px;
+            color: #856404;
+        }
+
+        .help-text ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .help-text li {
+            margin-bottom: 5px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ System Configuration</h1>
+            <p>Configure Email & DNS Settings</p>
+        </div>
+
+        <div class="content">
+            <div id="status" class="status"></div>
+
+            <!-- Email Configuration -->
+            <div class="section">
+                <h2>
+                    <span class="section-icon">📧</span>
+                    Email Configuration
+                </h2>
+                <form id="emailForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="emailHost">SMTP Host *</label>
+                            <input type="text" id="emailHost" name="emailHost" 
+                                   value="smtp.gmail.com" required>
+                            <small>e.g., smtp.gmail.com, smtp.outlook.com</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="emailPort">SMTP Port *</label>
+                            <input type="number" id="emailPort" name="emailPort" 
+                                   value="587" required>
+                            <small>587 (TLS) or 465 (SSL)</small>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="emailUser">Email Address *</label>
+                            <input type="email" id="emailUser" name="emailUser" 
+                                   placeholder="your-email@gmail.com" required>
+                            <small>Your email address</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="emailPassword">App Password *</label>
+                            <input type="password" id="emailPassword" name="emailPassword" 
+                                   placeholder="Your app password" required>
+                            <small>App-specific password (not regular password)</small>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn">💾 Save Email Configuration</button>
+                    <button type="button" class="btn test-btn" onclick="testEmail()">
+                        ✉️ Test Email Connection
+                    </button>
+                </form>
+            </div>
+
+            <!-- DNS Configuration -->
+            <div class="section">
+                <h2>
+                    <span class="section-icon">🌐</span>
+                    DNS & Domain Settings
+                </h2>
+                <form id="dnsForm">
+                    <div class="form-group">
+                        <label for="domainName">Domain Name</label>
+                        <input type="text" id="domainName" name="domainName" 
+                               placeholder="iconicsmart.co.in">
+                        <small>Your production domain</small>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="frontendUrl">Frontend URL</label>
+                            <input type="url" id="frontendUrl" name="frontendUrl" 
+                                   placeholder="https://www.iconicsmart.co.in">
+                            <small>Frontend application URL</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="apiUrl">API URL</label>
+                            <input type="url" id="apiUrl" name="apiUrl" 
+                                   placeholder="https://api.iconicsmart.co.in">
+                            <small>Backend API URL</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="corsOrigins">CORS Allowed Origins</label>
+                        <input type="text" id="corsOrigins" name="corsOrigins" 
+                               placeholder="https://www.iconicsmart.co.in,https://iconicsmart.co.in">
+                        <small>Comma-separated list of allowed origins</small>
+                    </div>
+
+                    <button type="submit" class="btn">💾 Save DNS Configuration</button>
+                </form>
+            </div>
+
+            <!-- Current Configuration -->
+            <div class="section">
+                <h2>
+                    <span class="section-icon">📋</span>
+                    Current Configuration
+                </h2>
+                <button type="button" class="btn btn-secondary" onclick="loadCurrentConfig()">
+                    🔄 Load Current Settings
+                </button>
+                <div id="currentConfig" style="margin-top: 15px; padding: 15px; background: white; border-radius: 6px; font-family: monospace; font-size: 12px; display: none;"></div>
+            </div>
+
+            <!-- Help Section -->
+            <div class="help-text">
+                <h3>📖 Configuration Help</h3>
+                <p><strong>Email Setup (Gmail Example):</strong></p>
+                <ul>
+                    <li>Enable 2-Factor Authentication on your Google account</li>
+                    <li>Go to: <a href="https://myaccount.google.com/apppasswords" target="_blank">Google App Passwords</a></li>
+                    <li>Generate an app password for "Mail"</li>
+                    <li>Use the generated password (not your regular password)</li>
+                    <li>Host: smtp.gmail.com, Port: 587</li>
+                </ul>
+                <p style="margin-top: 10px;"><strong>Note:</strong> Configuration is saved to your .env file. Restart the server after saving.</p>
+            </div>
+
+            <a href="/dashboard.html" class="back-link">← Back to Dashboard</a>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api';
+        let authToken = localStorage.getItem('authToken');
+
+        // Check authentication
+        if (!authToken) {
+            window.location.href = '/login.html';
+        }
+
+        // Load current configuration on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadCurrentConfig();
+        });
+
+        // Email form submission
+        document.getElementById('emailForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                EMAIL_HOST: document.getElementById('emailHost').value,
+                EMAIL_PORT: document.getElementById('emailPort').value,
+                EMAIL_USER: document.getElementById('emailUser').value,
+                EMAIL_PASSWORD: document.getElementById('emailPassword').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/config/email`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showStatus('success', '✅ Email configuration saved successfully! Restart server to apply changes.');
+                    // Clear password field
+                    document.getElementById('emailPassword').value = '';
+                } else {
+                    showStatus('error', `❌ Error: ${data.message || 'Failed to save configuration'}`);
+                }
+            } catch (error) {
+                showStatus('error', `❌ Error: ${error.message}`);
+            }
+        });
+
+        // DNS form submission
+        document.getElementById('dnsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                DOMAIN_NAME: document.getElementById('domainName').value,
+                FRONTEND_URL: document.getElementById('frontendUrl').value,
+                API_URL: document.getElementById('apiUrl').value,
+                CORS_ORIGINS: document.getElementById('corsOrigins').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/config/dns`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showStatus('success', '✅ DNS configuration saved successfully! Restart server to apply changes.');
+                } else {
+                    showStatus('error', `❌ Error: ${data.message || 'Failed to save configuration'}`);
+                }
+            } catch (error) {
+                showStatus('error', `❌ Error: ${error.message}`);
+            }
+        });
+
+        // Load current configuration
+        async function loadCurrentConfig() {
+            try {
+                const response = await fetch(`${API_URL}/config/current`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const config = await response.json();
+                    displayCurrentConfig(config);
+                    
+                    // Populate forms with current values
+                    if (config.email) {
+                        document.getElementById('emailHost').value = config.email.EMAIL_HOST || 'smtp.gmail.com';
+                        document.getElementById('emailPort').value = config.email.EMAIL_PORT || '587';
+                        document.getElementById('emailUser').value = config.email.EMAIL_USER || '';
+                        // Don't populate password for security
+                    }
+                    
+                    if (config.dns) {
+                        document.getElementById('domainName').value = config.dns.DOMAIN_NAME || '';
+                        document.getElementById('frontendUrl').value = config.dns.FRONTEND_URL || '';
+                        document.getElementById('apiUrl').value = config.dns.API_URL || '';
+                        document.getElementById('corsOrigins').value = config.dns.CORS_ORIGINS || '';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading config:', error);
+            }
+        }
+
+        // Display current configuration
+        function displayCurrentConfig(config) {
+            const configDiv = document.getElementById('currentConfig');
+            configDiv.style.display = 'block';
+            configDiv.innerHTML = '<strong>Current Settings:</strong><br><br>' + 
+                JSON.stringify(config, null, 2);
+        }
+
+        // Test email connection
+        async function testEmail() {
+            const emailHost = document.getElementById('emailHost').value;
+            const emailPort = document.getElementById('emailPort').value;
+            const emailUser = document.getElementById('emailUser').value;
+            const emailPassword = document.getElementById('emailPassword').value;
+
+            if (!emailHost || !emailPort || !emailUser || !emailPassword) {
+                showStatus('error', '❌ Please fill in all email fields before testing');
+                return;
+            }
+
+            showStatus('info', '🔄 Testing email connection...');
+
+            try {
+                const response = await fetch(`${API_URL}/config/test-email`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        EMAIL_HOST: emailHost,
+                        EMAIL_PORT: emailPort,
+                        EMAIL_USER: emailUser,
+                        EMAIL_PASSWORD: emailPassword
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    showStatus('success', '✅ Email connection successful! Test email sent.');
+                } else {
+                    showStatus('error', `❌ Email test failed: ${data.message || 'Connection error'}`);
+                }
+            } catch (error) {
+                showStatus('error', `❌ Error: ${error.message}`);
+            }
+        }
+
+        // Show status message
+        function showStatus(type, message) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
+
+            // Auto-hide after 5 seconds for success/info
+            if (type === 'success' || type === 'info') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beat Tracker - Field Employee Monitoring</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7fafc;
+            color: #2d3748;
+        }
+        .header {
+            background: white;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #667eea; }
+        .nav { display: flex; gap: 1rem; }
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-secondary { background: #f7fafc; color: #2d3748; border: 1px solid #e2e8f0; }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
+        .container {
+            max-width: 1600px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+        }
+        
+        .sidebar {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+        
+        .sidebar h2 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .employee-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .employee-item {
+            padding: 1rem;
+            background: #f7fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .employee-item:hover {
+            background: #edf2f7;
+        }
+        
+        .employee-item.active {
+            background: #ebf4ff;
+            border-color: #667eea;
+        }
+        
+        .employee-item strong {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        
+        .employee-item small {
+            color: #718096;
+        }
+        
+        .main-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+        
+        .stat-card.green {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+        
+        .stat-card.blue {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+        }
+        
+        .stat-card.orange {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .section {
+            margin-bottom: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-header h3 {
+            font-size: 1.3rem;
+        }
+        
+        .month-selector {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .month-selector select {
+            padding: 0.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+        }
+        
+        .attendance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        
+        .attendance-day {
+            padding: 1rem;
+            background: #f7fafc;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #48bb78;
+        }
+        
+        .attendance-day.absent {
+            border-left-color: #fc8181;
+            opacity: 0.6;
+        }
+        
+        .attendance-day-date {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .attendance-day-time {
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+        
+        .attendance-day-location {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-top: 0.5rem;
+        }
+        
+        .visits-list {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        .visit-card {
+            background: #f7fafc;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .visit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+        
+        .visit-retailer {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .visit-time {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        
+        .visit-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .visit-detail-item {
+            padding: 0.75rem;
+            background: white;
+            border-radius: 6px;
+        }
+        
+        .visit-detail-label {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 0.25rem;
+        }
+        
+        .visit-detail-value {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .visit-image {
+            margin-top: 1rem;
+        }
+        
+        .visit-image img {
+            max-width: 200px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .performance-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+        
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .performance-item {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+        
+        .performance-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+        
+        .performance-bar {
+            background: rgba(255,255,255,0.2);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .performance-bar-fill {
+            background: white;
+            height: 100%;
+            transition: width 0.3s;
+        }
+        
+        .performance-values {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #718096;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #718096;
+        }
+        
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .badge-success { background: #d1fae5; color: #047857; }
+        .badge-danger { background: #fee2e2; color: #dc2626; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        
+        .map-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .map-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">📍 Beat Tracker - Field Employee Monitoring</div>
+            <div class="nav">
+                <a href="/dashboard.html" class="btn btn-secondary">← Dashboard</a>
+                <button class="btn btn-primary" onclick="refreshData()">🔄 Refresh</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="layout">
+            <!-- Sidebar - Employee List -->
+            <div class="sidebar">
+                <h2>👥 Field Employees</h2>
+                <div id="employeeList" class="employee-list">
+                    <div class="loading">Loading employees...</div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <div id="welcomeState" class="empty-state">
+                    <h2>👈 Select an employee to view details</h2>
+                    <p style="margin-top: 1rem;">Click on any employee from the left sidebar to view their attendance, visits, and performance.</p>
+                </div>
+
+                <div id="employeeDetails" style="display: none;">
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Today's Check-in</div>
+                            <div class="stat-value" id="todayCheckIn">--:--</div>
+                        </div>
+                        <div class="stat-card green">
+                            <div class="stat-label">Month Attendance</div>
+                            <div class="stat-value" id="monthAttendance">0 days</div>
+                        </div>
+                        <div class="stat-card blue">
+                            <div class="stat-label">Store Visits</div>
+                            <div class="stat-value" id="monthVisits">0</div>
+                        </div>
+                        <div class="stat-card orange">
+                            <div class="stat-label">Orders Generated</div>
+                            <div class="stat-value" id="monthOrders">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Section -->
+                    <div class="performance-section">
+                        <h3>🎯 Target vs Achievement</h3>
+                        <div class="performance-grid" id="performanceGrid">
+                            <div class="loading">Loading performance...</div>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Section -->
+                    <div class="section">
+                        <div class="section-header">
+                            <h3>📅 Attendance Tracking</h3>
+                            <div class="month-selector">
+                                <select id="attendanceMonth" onchange="loadAttendance()">
+                                    <option value="1">January</option>
+                                    <option value="2">February</option>
+                                    <option value="3">March</option>
+                                    <option value="4">April</option>
+                                    <option value="5">May</option>
+                                    <option value="6">June</option>
+                                    <option value="7">July</option>
+                                    <option value="8">August</option>
+                                    <option value="9">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                                <select id="attendanceYear" onchange="loadAttendance()">
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="attendanceGrid" class="attendance-grid">
+                            <div class="loading">Loading attendance...</div>
+                        </div>
+                    </div>
+
+                    <!-- Store Visits Section -->
+                    <div class="section">
+                        <div class="section-header">
+                            <h3>🏪 Store Visits</h3>
+                        </div>
+                        <div id="visitsList" class="visits-list">
+                            <div class="loading">Loading visits...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:7000/api';
+        const token = localStorage.getItem('authToken');
+        let selectedEmployeeId = null;
+
+        if (!token) {
+            window.location.href = '/login.html';
+        }
+
+        // Initialize
+        async function init() {
+            await loadEmployees();
+            setCurrentMonth();
+        }
+
+        function setCurrentMonth() {
+            const now = new Date();
+            document.getElementById('attendanceMonth').value = now.getMonth() + 1;
+            document.getElementById('attendanceYear').value = now.getFullYear();
+        }
+
+        async function loadEmployees() {
+            try {
+                const response = await fetch(`${API_URL}/beat-tracker/employees`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) throw new Error('Failed to load employees');
+                
+                const employees = await response.json();
+                const list = document.getElementById('employeeList');
+                
+                if (employees.length === 0) {
+                    list.innerHTML = '<div class="empty-state">No field employees found</div>';
+                    return;
+                }
+                
+                list.innerHTML = employees.map(emp => `
+                    <div class="employee-item" onclick="selectEmployee('${emp._id}', '${emp.name}')">
+                        <strong>${emp.name}</strong>
+                        <small>${emp.role || 'Sales'} | ${emp.email}</small>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading employees:', error);
+                document.getElementById('employeeList').innerHTML = '<div class="empty-state">Failed to load employees</div>';
+            }
+        }
+
+        async function selectEmployee(employeeId, employeeName) {
+            selectedEmployeeId = employeeId;
+            
+            // Update UI
+            document.querySelectorAll('.employee-item').forEach(item => item.classList.remove('active'));
+            event.target.closest('.employee-item').classList.add('active');
+            
+            document.getElementById('welcomeState').style.display = 'none';
+            document.getElementById('employeeDetails').style.display = 'block';
+            
+            // Load data
+            await Promise.all([
+                loadSummary(employeeId),
+                loadPerformance(employeeId),
+                loadAttendance(),
+                loadVisits()
+            ]);
+        }
+
+        async function loadSummary(employeeId) {
+            try {
+                const month = document.getElementById('attendanceMonth').value;
+                const year = document.getElementById('attendanceYear').value;
+                
+                const response = await fetch(`${API_URL}/beat-tracker/summary/${employeeId}?month=${month}&year=${year}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) throw new Error('Failed to load summary');
+                
+                const data = await response.json();
+                
+                // Update stats
+                if (data.todayAttendance) {
+                    const checkIn = new Date(data.todayAttendance.checkInTime);
+                    document.getElementById('todayCheckIn').textContent = checkIn.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+                } else {
+                    document.getElementById('todayCheckIn').textContent = 'Not marked';
+                }
+                
+                document.getElementById('monthAttendance').textContent = `${data.monthStats.attendance} days`;
+                document.getElementById('monthVisits').textContent = data.monthStats.visits;
+                document.getElementById('monthOrders').textContent = data.monthStats.orders;
+            } catch (error) {
+                console.error('Error loading summary:', error);
+            }
+        }
+
+        async function loadPerformance(employeeId) {
+            try {
+                const month = document.getElementById('attendanceMonth').value;
+                const year = document.getElementById('attendanceYear').value;
+                
+                const response = await fetch(`${API_URL}/beat-tracker/performance/${employeeId}?month=${month}&year=${year}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) throw new Error('Failed to load performance');
+                
+                const data = await response.json();
+                const grid = document.getElementById('performanceGrid');
+                
+                if (!data.targets || data.targets.length === 0) {
+                    grid.innerHTML = '<div class="empty-state" style="color: white;">No targets set for this month</div>';
+                    return;
+                }
+                
+                grid.innerHTML = data.targets.map(target => {
+                    const percentage = target.targetValue > 0 ? (target.achievedValue / target.targetValue * 100).toFixed(1) : 0;
+                    return `
+                        <div class="performance-item">
+                            <div class="performance-label">${target.targetType.toUpperCase()} Target</div>
+                            <div class="performance-bar">
+                                <div class="performance-bar-fill" style="width: ${Math.min(percentage, 100)}%"></div>
+                            </div>
+                            <div class="performance-values">
+                                <span>${target.achievedValue}</span>
+                                <span>/ ${target.targetValue}</span>
+                            </div>
+                            <div style="margin-top: 0.5rem; font-size: 0.9rem;">${percentage}% Achieved</div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading performance:', error);
+            }
+        }
+
+        async function loadAttendance() {
+            if (!selectedEmployeeId) return;
+            
+            try {
+                const month = document.getElementById('attendanceMonth').value;
+                const year = document.getElementById('attendanceYear').value;
+                
+                const response = await fetch(`${API_URL}/beat-tracker/attendance/${selectedEmployeeId}?month=${month}&year=${year}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) throw new Error('Failed to load attendance');
+                
+                const attendance = await response.json();
+                const grid = document.getElementById('attendanceGrid');
+                
+                if (attendance.length === 0) {
+                    grid.innerHTML = '<div class="empty-state">No attendance records found</div>';
+                    return;
+                }
+                
+                grid.innerHTML = attendance.map(record => {
+                    const date = new Date(record.date);
+                    const checkIn = new Date(record.checkInTime);
+                    return `
+                        <div class="attendance-day ${record.status !== 'present' ? 'absent' : ''}">
+                            <div class="attendance-day-date">${date.getDate()} ${date.toLocaleDateString('en-IN', { month: 'short' })}</div>
+                            <div class="attendance-day-time">⏰ ${checkIn.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</div>
+                            ${record.checkInLocation ? `
+                                <div class="attendance-day-location">
+                                    📍 ${record.checkInLocation.city || record.checkInLocation.address || 'Location'}
+                                    <br>
+                                    <a href="https://www.google.com/maps?q=${record.checkInLocation.latitude},${record.checkInLocation.longitude}" target="_blank" class="map-link">View Map</a>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading attendance:', error);
+            }
+        }
+
+        async function loadVisits() {
+            if (!selectedEmployeeId) return;
+            
+            try {
+                const month = document.getElementById('attendanceMonth').value;
+                const year = document.getElementById('attendanceYear').value;
+                
+                const response = await fetch(`${API_URL}/beat-tracker/visits/${selectedEmployeeId}?month=${month}&year=${year}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) throw new Error('Failed to load visits');
+                
+                const visits = await response.json();
+                const list = document.getElementById('visitsList');
+                
+                if (visits.length === 0) {
+                    list.innerHTML = '<div class="empty-state">No store visits found</div>';
+                    return;
+                }
+                
+                list.innerHTML = visits.map(visit => {
+                    const visitTime = new Date(visit.visitTime);
+                    return `
+                        <div class="visit-card">
+                            <div class="visit-header">
+                                <div>
+                                    <div class="visit-retailer">🏪 ${visit.retailerName}</div>
+                                    <div class="visit-time">📅 ${visitTime.toLocaleDateString('en-IN')} | ⏰ ${visitTime.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</div>
+                                </div>
+                                ${visit.orderPlaced ? '<span class="badge badge-success">Order Placed</span>' : '<span class="badge badge-warning">No Order</span>'}
+                            </div>
+                            <div class="visit-details">
+                                <div class="visit-detail-item">
+                                    <div class="visit-detail-label">Location</div>
+                                    <div class="visit-detail-value">
+                                        📍 ${visit.location.city || visit.location.address || 'N/A'}
+                                        <br>
+                                        <a href="https://www.google.com/maps?q=${visit.location.latitude},${visit.location.longitude}" target="_blank" class="map-link">
+                                            ${visit.location.latitude.toFixed(4)}, ${visit.location.longitude.toFixed(4)}
+                                        </a>
+                                    </div>
+                                </div>
+                                ${visit.orderValue ? `
+                                <div class="visit-detail-item">
+                                    <div class="visit-detail-label">Order Value</div>
+                                    <div class="visit-detail-value">₹${visit.orderValue.toLocaleString('en-IN')}</div>
+                                </div>
+                                ` : ''}
+                                ${visit.visitPurpose ? `
+                                <div class="visit-detail-item">
+                                    <div class="visit-detail-label">Purpose</div>
+                                    <div class="visit-detail-value">${visit.visitPurpose}</div>
+                                </div>
+                                ` : ''}
+                            </div>
+                            ${visit.feedback ? `
+                            <div style="margin-top: 1rem; padding: 1rem; background: white; border-radius: 6px;">
+                                <strong>Feedback:</strong> ${visit.feedback}
+                            </div>
+                            ` : ''}
+                            ${visit.selfieImage ? `
+                            <div class="visit-image">
+                                <img src="${visit.selfieImage}" alt="Store Visit Selfie" onclick="window.open(this.src, '_blank')">
+                            </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading visits:', error);
+            }
+        }
+
+        function refreshData() {
+            if (selectedEmployeeId) {
+                selectEmployee(selectedEmployeeId);
+            } else {
+                loadEmployees();
+            }
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>

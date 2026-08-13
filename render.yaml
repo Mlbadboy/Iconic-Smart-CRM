@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: iconic-smart-crm
+    env: node
+    region: oregon
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: JWT_EXPIRE
+        value: 7d
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false
+
+databases:
+  - name: iconic-crm-mongodb
+    databaseName: iconicCRM
+    user: iconicUser
+    region: oregon
+    plan: starter

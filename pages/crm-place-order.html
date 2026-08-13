@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CRM - Place Order</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "foreground-light": "#101922",
+                        "foreground-dark": "#f6f7f8",
+                        "card-light": "#ffffff",
+                        "card-dark": "#1c2a38",
+                        "border-light": "#e5e7eb",
+                        "border-dark": "#374151",
+                        "input-light": "#f9fafb",
+                        "input-dark": "#2d3748",
+                        "placeholder-light": "#6b7280",
+                        "placeholder-dark": "#a0aec0",
+                        "success-light": "#22c55e",
+                        "success-dark": "#4ade80"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .group:focus-within .group-focus-within\:flex {
+            display: flex;
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark">
+<div class="flex flex-col min-h-screen">
+<header class="bg-card-light dark:bg-card-dark border-b border-border-light dark:border-border-dark sticky top-0 z-10">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center gap-4">
+<div class="text-primary w-8 h-8">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z" fill="currentColor"></path>
+</svg>
+</div>
+<h1 class="text-xl font-bold">CRM</h1>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium text-primary" href="#">Orders</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Services</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Deliveries</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Marketing</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="md:hidden p-2 rounded-lg hover:bg-primary/10">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 6h16M4 12h16m-7 6h7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<div class="w-10 h-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB0WU3HzcFsmezq6Vr0Ad-pLCStqtCmxeOrQzQvqIVSNbRdSiMrDqe_0wve9C2G6IZVfGbZ3EbbH1-7An41NTksiaEc3rAkNqOJCbIngUql4TDgC8VeB6cWraZfFnLTGUUboNNtMsjygl0E4Gcp1REoDUMpfKEcNc094hOCM8IrYcOVr2V4a2_FLE1Ieptib2u1kiQtdKeAHJ9lOYjCx6we9fLv_ULWHEU7tYMEu89SSMpR5gXp38WvmRjAx_dKrFoIVWZ9ZAD-wqI");'></div>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+<div class="max-w-xl mx-auto">
+<div class="bg-card-light dark:bg-card-dark rounded-xl shadow-lg p-6 sm:p-8">
+<h2 class="text-2xl md:text-3xl font-bold mb-6">Place New Order</h2>
+<form class="space-y-6">
+<div>
+<label class="block text-sm font-medium mb-2" for="items">Items (JSON format)</label>
+<textarea class="block w-full rounded-lg border-border-light dark:border-border-dark bg-input-light dark:bg-input-dark placeholder:text-placeholder-light dark:placeholder:text-placeholder-dark focus:ring-primary focus:border-primary transition" id="items" name="items" placeholder='[
+  { "item_id": "prod_123", "quantity": 2 },
+  { "item_id": "prod_456", "quantity": 1 }
+]' rows="6"></textarea>
+</div>
+<div>
+<label class="block text-sm font-medium mb-2" for="amount">Amount</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-placeholder-light dark:text-placeholder-dark">$</span>
+<input class="block w-full pl-7 rounded-lg border-border-light dark:border-border-dark bg-input-light dark:bg-input-dark placeholder:text-placeholder-light dark:placeholder:text-placeholder-dark focus:ring-primary focus:border-primary transition" id="amount" name="amount" placeholder="0.00" type="number"/>
+</div>
+</div>
+<div class="pt-2">
+<button class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-background-dark transition-all duration-300" type="submit">
+                                Submit Order
+                            </button>
+</div>
+</form>
+</div>
+<div class="mt-6 p-4 rounded-lg bg-success-light/10 dark:bg-success-dark/10 border border-success-light/30 dark:border-success-dark/30 flex items-center gap-3 hidden" id="success-message">
+<svg class="w-6 h-6 text-success-light dark:text-success-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<p class="text-sm font-medium text-success-light dark:text-success-dark">Order submitted successfully!</p>
+</div>
+</div>
+</main>
+</div>
+<script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('success-message').classList.remove('hidden');
+            // In a real app, you would submit the form data here.
+        });
+    </script>
+
+
+</body></html>
