@@ -9,7 +9,7 @@
     "test-login": "node test-login-only.js",
     "test-server": "node test-server.js",
     "client": "cd client && npm start",
-    "build": "cd client && npm install --legacy-peer-deps && npm run build",
+    "build": "npm --prefix client run build",
     "install-client": "cd client && npm install",
     "heroku-postbuild": "npm run install-client && npm run build",
     "test:audit": "node test-crm-audit-regression.js"
