@@ -27,6 +27,10 @@ const apiKeySchema = new mongoose.Schema({
     type: String,
     enum: ['read', 'write', 'delete', 'admin', 'serial_validation.validate', 'serial_validation.import']
   }],
+  dealerScope: [{
+    type: String,
+    trim: true
+  }],
   allowedOrigins: [String],
   rateLimit: {
     requestsPerHour: { type: Number, default: 1000 },

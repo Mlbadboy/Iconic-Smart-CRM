@@ -25,15 +25,33 @@ router.post('/validate', apiKeyAuth, requirePermission('serial_validation.valida
     dealerCode = dealerCode.trim();
 
     if (!materialCode || !serialNumber || !dealerCode) {
-      return res.status(400).json({ valid: false, status: 'INVALID_INPUT', message: 'All validation fields must contain non-empty text.' });
+      return res.status(400).json({ valid: false, verified: false, canProceed: false, status: 'INVALID_INPUT', message: 'All validation fields must contain non-empty text.' });
+    }
+
+    // Check API Key Dealer Scope Authorization
+    if (req.apiKey && req.apiKey.dealerScope && req.apiKey.dealerScope.length > 0) {
+      if (!req.apiKey.dealerScope.includes(dealerCode)) {
+        return res.status(200).json({
+          valid: false,
+          verified: false,
+          canProceed: false,
+          statusCode: '4',
+          status: 'DEALER_MISMATCH',
+          message: `API key is not authorized for dealer '${dealerCode}'.`
+        });
+      }
     }
 
     const result = await validateSerialNumber(req, { materialCode, serialNumber, dealerCode });
 
     return res.status(200).json({
-      valid: result.success,
+      valid: result.verified || false,
+      verified: result.verified || false,
+      canProceed: result.canProceed || false,
+      statusCode: result.statusCode || (result.verified ? '0' : '1'),
       status: result.status,
-      message: result.message
+      message: result.message,
+      details: result.details || null
     });
   } catch (err) {
     return res.status(500).json({

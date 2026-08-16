@@ -46,7 +46,8 @@ const apiKeyAuth = async (req, res, next) => {
     req.apiKey = {
       id: keyDoc._id,
       name: keyDoc.name,
-      permissions: keyDoc.permissions
+      permissions: keyDoc.permissions,
+      dealerScope: keyDoc.dealerScope || []
     };
 
     next();

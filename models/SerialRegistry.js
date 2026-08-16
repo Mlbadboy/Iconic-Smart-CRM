@@ -10,8 +10,8 @@ const serialRegistrySchema = new mongoose.Schema({
   serialNumber: {
     type: String,
     required: true,
-    unique: true,
-    trim: true
+    trim: true,
+    index: true
   },
   dealerCode: {
     type: String,
@@ -25,13 +25,29 @@ const serialRegistrySchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['ACTIVE', 'VALIDATED'],
+    enum: ['ACTIVE', 'VALIDATED', 'EXPIRED', 'DEACTIVATED'],
     default: 'ACTIVE',
     required: true
+  },
+  registrationStatus: {
+    type: String,
+    enum: ['REGISTERED', 'PENDING', 'DEACTIVATED'],
+    default: 'REGISTERED'
+  },
+  activationStatus: {
+    type: String,
+    enum: ['ACTIVE', 'SUSPENDED', 'EXPIRED'],
+    default: 'ACTIVE'
   },
   registrationDate: {
     type: Date
   },
+  ownershipHistory: [{
+    dealerCode: String,
+    assignedAt: { type: Date, default: Date.now },
+    changedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    reason: String
+  }],
   uploadedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
@@ -39,5 +55,8 @@ const serialRegistrySchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+
+// Compound unique index on materialCode + serialNumber
+serialRegistrySchema.index({ materialCode: 1, serialNumber: 1 }, { unique: true });
 
 module.exports = mongoose.model('SerialRegistry', serialRegistrySchema);

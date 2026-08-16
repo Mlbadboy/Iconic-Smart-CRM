@@ -87,7 +87,92 @@ function parseCSV(text) {
   return records;
 }
 
-// Bulk import serial master data
+// Bulk import CSV preview endpoint (Validation & Preview before Commit)
+router.post('/import-preview', auth, requirePermission('serial_validation.import'), async (req, res) => {
+  try {
+    const { csvData } = req.body;
+    if (!csvData || typeof csvData !== 'string') {
+      return error(res, { status: 400, message: 'csvData text string is required.' });
+    }
+
+    const rawRecords = parseCSV(csvData);
+    if (rawRecords.length === 0) {
+      return error(res, { status: 400, message: 'No valid data rows found in CSV.' });
+    }
+
+    const totalRows = rawRecords.length;
+    let validRows = 0;
+    let invalidRows = 0;
+    const errors = [];
+    const validRecords = [];
+    const seenSerials = new Set();
+    let internalDuplicates = 0;
+
+    for (let idx = 0; idx < rawRecords.length; idx++) {
+      const rec = rawRecords[idx];
+      const rowNum = idx + 2; // Line index (1-based header)
+
+      const materialCode = rec.materialCode ? rec.materialCode.trim() : '';
+      const serialNumber = rec.serialNumber ? rec.serialNumber.trim() : '';
+      const dealerCode = rec.dealerCode ? rec.dealerCode.trim() : '';
+
+      if (!materialCode || !serialNumber || !dealerCode) {
+        invalidRows++;
+        errors.push({ row: rowNum, message: 'Missing required field (materialCode, serialNumber, dealerCode)' });
+        continue;
+      }
+
+      if (seenSerials.has(serialNumber)) {
+        internalDuplicates++;
+        invalidRows++;
+        errors.push({ row: rowNum, message: `Duplicate serial number '${serialNumber}' in file` });
+        continue;
+      }
+      seenSerials.add(serialNumber);
+
+      validRows++;
+      validRecords.push({ row: rowNum, materialCode, serialNumber, dealerCode, customer: rec.customer || '' });
+    }
+
+    // Check existing records in DB to calculate new vs updates
+    const serialList = validRecords.map(r => r.serialNumber);
+    const existingRecords = await SerialRegistry.find({ serialNumber: { $in: serialList } }).lean();
+    const existingMap = new Map(existingRecords.map(item => [item.serialNumber, item]));
+
+    let newCount = 0;
+    let updateCount = 0;
+    let unchangedCount = 0;
+
+    for (const rec of validRecords) {
+      const existing = existingMap.get(rec.serialNumber);
+      if (!existing) {
+        newCount++;
+      } else if (existing.materialCode !== rec.materialCode || existing.dealerCode !== rec.dealerCode) {
+        updateCount++;
+      } else {
+        unchangedCount++;
+      }
+    }
+
+    return success(res, {
+      summary: {
+        totalRows,
+        validRows,
+        invalidRows,
+        internalDuplicates,
+        newCount,
+        updateCount,
+        unchangedCount
+      },
+      errors: errors.slice(0, 50), // Return top 50 errors if any
+      canCommit: validRows > 0
+    });
+  } catch (err) {
+    return error(res, { status: 500, message: err.message });
+  }
+});
+
+// Bulk import serial master data commit
 router.post('/import', auth, requirePermission('serial_validation.import'), async (req, res) => {
   try {
     const { csvData } = req.body;
@@ -100,37 +185,96 @@ router.post('/import', auth, requirePermission('serial_validation.import'), asyn
       return error(res, { status: 400, message: 'No valid rows found in CSV data.' });
     }
 
-    const validRecords = [];
-    for (const rec of records) {
-      if (!rec.materialCode || !rec.serialNumber || !rec.dealerCode) {
-        return error(res, {
-          status: 400,
-          message: `Missing required field (materialCode, serialNumber, dealerCode) in row: ${JSON.stringify(rec)}`
-        });
-      }
-      validRecords.push({
-        materialCode: rec.materialCode.trim(),
-        serialNumber: rec.serialNumber.trim(),
-        dealerCode: rec.dealerCode.trim(),
-        customer: rec.customer ? rec.customer.trim() : '',
-        status: 'ACTIVE',
-        uploadedBy: req.user.id
-      });
-    }
-
     let insertedCount = 0;
-    for (const rec of validRecords) {
-      await SerialRegistry.updateOne(
-        { serialNumber: rec.serialNumber },
-        { $set: rec },
-        { upsert: true }
-      );
-      insertedCount++;
+    let updatedCount = 0;
+    let unchangedCount = 0;
+    let rejectedCount = 0;
+    const errors = [];
+
+    const importSessionId = 'IMP-' + Date.now();
+
+    for (let idx = 0; idx < records.length; idx++) {
+      const rec = records[idx];
+      const rowNum = idx + 2;
+
+      if (!rec.materialCode || !rec.serialNumber || !rec.dealerCode) {
+        rejectedCount++;
+        errors.push({ row: rowNum, message: 'Missing materialCode, serialNumber, or dealerCode' });
+        continue;
+      }
+
+      const materialCode = rec.materialCode.trim();
+      const serialNumber = rec.serialNumber.trim();
+      const dealerCode = rec.dealerCode.trim();
+      const customer = rec.customer ? rec.customer.trim() : '';
+
+      const existingRecord = await SerialRegistry.findOne({ serialNumber });
+
+      if (!existingRecord) {
+        // Create new record
+        const newRecord = new SerialRegistry({
+          materialCode,
+          serialNumber,
+          dealerCode,
+          customer,
+          status: 'ACTIVE',
+          registrationStatus: 'REGISTERED',
+          activationStatus: 'ACTIVE',
+          uploadedBy: req.user.id,
+          ownershipHistory: [{
+            dealerCode,
+            assignedAt: new Date(),
+            changedBy: req.user.id,
+            reason: `Initial import (Session: ${importSessionId})`
+          }]
+        });
+        await newRecord.save();
+        insertedCount++;
+      } else {
+        // Record exists - check if dealerCode changed to log ownership history
+        let isChanged = false;
+        if (existingRecord.dealerCode !== dealerCode) {
+          existingRecord.ownershipHistory.push({
+            dealerCode: dealerCode,
+            assignedAt: new Date(),
+            changedBy: req.user.id,
+            reason: `Dealer transfer via CSV import (Session: ${importSessionId})`
+          });
+          existingRecord.dealerCode = dealerCode;
+          isChanged = true;
+        }
+
+        if (existingRecord.materialCode !== materialCode) {
+          existingRecord.materialCode = materialCode;
+          isChanged = true;
+        }
+
+        if (customer && existingRecord.customer !== customer) {
+          existingRecord.customer = customer;
+          isChanged = true;
+        }
+
+        if (isChanged) {
+          existingRecord.uploadedBy = req.user.id;
+          await existingRecord.save();
+          updatedCount++;
+        } else {
+          unchangedCount++;
+        }
+      }
     }
 
     return success(res, {
-      message: `Successfully imported ${insertedCount} serial registry records.`,
-      count: insertedCount
+      message: `Import processed: ${insertedCount} created, ${updatedCount} updated, ${unchangedCount} unchanged, ${rejectedCount} rejected.`,
+      stats: {
+        totalProcessed: records.length,
+        insertedCount,
+        updatedCount,
+        unchangedCount,
+        rejectedCount,
+        importSessionId
+      },
+      errors: errors.slice(0, 50)
     });
   } catch (err) {
     return error(res, { status: 500, message: err.message });
