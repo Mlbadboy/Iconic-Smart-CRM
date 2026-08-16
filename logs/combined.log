@@ -562,3 +562,35 @@
 {"0":"t","1":"e","2":"s","3":"t","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2026-08-13 21:05:00"}
 {"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 21:05:37"}
 {"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 21:05:46"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 21:06:08"}
+{"level":"info","message":"URI resolved to: mongodb://127.0.0.1:64894/","service":"iconic-crm","timestamp":"2026-08-13 21:06:08"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 21:06:08"}
+{"level":"info","message":"\n🚀 Server running on port 7000","service":"iconic-crm","timestamp":"2026-08-13 21:06:09"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7000","service":"iconic-crm","timestamp":"2026-08-13 21:06:09"}
+{"level":"info","message":"🔐 Login page: http://localhost:7000/login.html","service":"iconic-crm","timestamp":"2026-08-13 21:06:09"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications","service":"iconic-crm","timestamp":"2026-08-13 21:06:09"}
+{"level":"info","message":"🔧 Development mode: localhost:7000\n","service":"iconic-crm","timestamp":"2026-08-13 21:06:09"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2026-08-13 21:06:09"}
+{"0":"t","1":"e","2":"s","3":"t","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2026-08-13 21:06:09"}
+{"level":"info","message":"🔌 Local Registry Validation: materialCode: MC12345, serialNumber: *******H-99, dealerCode: DLR001","service":"iconic-crm","timestamp":"2026-08-13 21:06:34"}
+{"level":"info","message":"🔌 Validation result for serial *******H-99: VALID (Latency: 5ms)","service":"iconic-crm","timestamp":"2026-08-13 21:06:34"}
+{"level":"info","message":"🔌 Local Registry Validation: materialCode: MC12345, serialNumber: *******H-99, dealerCode: DLR001","service":"iconic-crm","timestamp":"2026-08-13 21:06:34"}
+{"level":"info","message":"🔌 Validation result for serial *******H-99: ALREADY_VALIDATED (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-13 21:06:34"}
+{"level":"info","message":"🔌 Local Registry Validation: materialCode: MC56789, serialNumber: ***********ATCH, dealerCode: DLR999","service":"iconic-crm","timestamp":"2026-08-13 21:06:34"}
+{"level":"info","message":"🔌 Validation result for serial ***********ATCH: DEALER_MISMATCH (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-13 21:06:34"}
+{"level":"info","message":"🔌 Local Registry Validation: materialCode: MC99999, serialNumber: ***********ATCH, dealerCode: DLR003","service":"iconic-crm","timestamp":"2026-08-13 21:06:34"}
+{"level":"info","message":"🔌 Validation result for serial ***********ATCH: MODEL_SERIAL_MISMATCH (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-13 21:06:34"}
+{"level":"info","message":"🔌 Local Registry Validation: materialCode: MC12345, serialNumber: ***********TENT, dealerCode: DLR001","service":"iconic-crm","timestamp":"2026-08-13 21:06:34"}
+{"level":"info","message":"🔌 Validation result for serial ***********TENT: INVALID_SERIAL (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-13 21:06:34"}
+{"level":"info","message":"🔌 Local Registry Validation: materialCode: MAT-394995, serialNumber: *****1741, dealerCode: DLR-560178","service":"iconic-crm","timestamp":"2026-08-16 13:51:55"}
+{"level":"info","message":"🔌 Validation result for serial *****1741: VALID (Latency: 23ms)","service":"iconic-crm","timestamp":"2026-08-16 13:51:55"}
+{"level":"info","message":"🔌 Local Registry Validation: materialCode: MAT-394995, serialNumber: *****1741, dealerCode: DLR-560178","service":"iconic-crm","timestamp":"2026-08-16 13:51:55"}
+{"level":"info","message":"🔌 Validation result for serial *****1741: ALREADY_VALIDATED (Latency: 3ms)","service":"iconic-crm","timestamp":"2026-08-16 13:51:55"}
+{"level":"info","message":"🔌 Local Registry Validation: materialCode: MAT-394995, serialNumber: ***************-999, dealerCode: DLR-560178","service":"iconic-crm","timestamp":"2026-08-16 13:51:55"}
+{"level":"info","message":"🔌 Validation result for serial ***************-999: INVALID_SERIAL (Latency: 3ms)","service":"iconic-crm","timestamp":"2026-08-16 13:51:55"}
+{"level":"info","message":"🔌 Local Registry Validation: materialCode: MAT-569553, serialNumber: *****1740, dealerCode: DLR-548968","service":"iconic-crm","timestamp":"2026-08-16 13:52:37"}
+{"level":"info","message":"🔌 Validation result for serial *****1740: VALID (Latency: 7ms)","service":"iconic-crm","timestamp":"2026-08-16 13:52:37"}
+{"level":"info","message":"🔌 Local Registry Validation: materialCode: MAT-569553, serialNumber: *****1740, dealerCode: DLR-548968","service":"iconic-crm","timestamp":"2026-08-16 13:52:37"}
+{"level":"info","message":"🔌 Validation result for serial *****1740: ALREADY_VALIDATED (Latency: 3ms)","service":"iconic-crm","timestamp":"2026-08-16 13:52:37"}
+{"level":"info","message":"🔌 Local Registry Validation: materialCode: MAT-569553, serialNumber: ***************-999, dealerCode: DLR-548968","service":"iconic-crm","timestamp":"2026-08-16 13:52:37"}
+{"level":"info","message":"🔌 Validation result for serial ***************-999: INVALID_SERIAL (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-16 13:52:37"}
