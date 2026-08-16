@@ -1,652 +1,217 @@
-# 🔄 Iconic Smart CRM - Complete Workflow Guide
+# 🔄 Iconic Smart CRM - Comprehensive Architecture & Workflow Guide
 
-**Date**: October 18, 2025  
-**Version**: 1.0
-
----
-
-## 📊 System Overview
-
-The Iconic Smart CRM supports **two main user roles** with distinct workflows:
-
-1. **👤 Customer/User** - Places orders, tracks deliveries, submits service requests
-2. **👨‍💼 Admin** - Manages orders, services, leads, marketing, and deliveries
+**Last Updated**: August 16, 2026  
+**Version**: 2.0 (Production Release)  
+**Live Application URL**: [https://iconicsmartcrm.up.railway.app](https://iconicsmartcrm.up.railway.app)  
+**API Health Check**: [https://iconicsmartcrm.up.railway.app/api/health](https://iconicsmartcrm.up.railway.app/api/health)  
 
 ---
 
-## 🎯 Customer Workflow
+## 📊 1. System Overview & Key Purpose
 
-### **Journey 1: New Customer Registration & First Order**
+**Iconic Smart CRM** is an enterprise-grade Customer Relationship Management system designed to manage the end-to-end customer lifecycle, order fulfillment, post-sales service ticketing, SLA management, and serial number inventory verification.
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    CUSTOMER JOURNEY                         │
-└─────────────────────────────────────────────────────────────┘
-
-Step 1: Landing Page
-   ↓
-   📄 Home Page (crm_home_page)
-   • View company info
-   • Browse features
-   • Click "Get Started"
-   
-Step 2: Registration
-   ↓
-   🔐 POST /api/auth/register
-   Body: {
-     name: "John Doe",
-     email: "john@example.com",
-     password: "secure123"
-   }
-   Response: {
-     user: { id, name, email, role: "user" }
-   }
-   
-Step 3: Login
-   ↓
-   🔐 POST /api/auth/login
-   Body: {
-     email: "john@example.com",
-     password: "secure123"
-   }
-   Response: {
-     token: "eyJhbGc...",
-     user: { id, name, email, role }
-   }
-   💾 Store token in localStorage
-   
-Step 4: Browse & Place Order
-   ↓
-   📦 Place Order Page (crm_place_order_page)
-   • Select products/services
-   • Enter quantity
-   • Add shipping address
-   • Review total amount
-   
-   POST /api/orders
-   Headers: { Authorization: "Bearer <token>" }
-   Body: {
-     items: [
-       { name: "CRM License", quantity: 5, price: 99.99 }
-     ],
-     amount: 499.95,
-     shippingAddress: "123 Main St, City, ST 12345"
-   }
-   Response: {
-     orderId: "ORD-1760778...",
-     userId: "68f34f76...",
-     orderStatus: "placed",
-     paymentStatus: "pending",
-     ...
-   }
-   
-Step 5: Payment Processing
-   ↓
-   💳 Payment Gateway Integration
-   • Process payment
-   • Update order: paymentStatus = "paid"
-   
-Step 6: Track Order
-   ↓
-   🔍 Track Order Page (crm_track_order_page)
-   
-   GET /api/orders/:id
-   Response: {
-     orderId: "ORD-xxx",
-     orderStatus: "processing",
-     paymentStatus: "paid",
-     items: [...],
-     shippingAddress: "..."
-   }
-   
-   GET /api/deliveries?orderRef=ORD-xxx
-   Response: {
-     deliveryId: "DEL-xxx",
-     currentStatus: "in-transit",
-     courier: "FedEx",
-     eta: "2025-10-20",
-     history: [
-       { status: "pending", timestamp: "..." },
-       { status: "picked-up", timestamp: "..." },
-       { status: "in-transit", timestamp: "..." }
-     ]
-   }
-   
-Step 7: View Order History
-   ↓
-   📜 Order History Page (crm_order_history_page)
-   
-   GET /api/orders
-   Response: [
-     { orderId: "ORD-xxx", status: "delivered", ... },
-     { orderId: "ORD-yyy", status: "processing", ... }
-   ]
-```
+### 🌟 Key Core Capabilities
+1. **Master Serial Number Registry & Verification Service**: Serves as the central source of truth for customer/dealer registered serial numbers, eliminating direct external calls to manufacturer ERPs.
+2. **External Integration API**: Exposes secured partner REST endpoints using hashed API Keys (`X-API-Key`).
+3. **Role-Based Access Control (RBAC)**: Fine-grained permission model for 5 user roles (`admin`, `manager`, `sales`, `support`, `customer`).
+4. **SLA & Escalation Engine**: Automated tracking of response/resolution times with real-time escalation triggers.
+5. **Approval Workflow Engine**: Multi-tier request approval system for discounts, refunds, and special overrides.
+6. **Customer 360 & Manager Dashboard**: Unified view of customer purchase history, service tickets, and key performance indicators.
 
 ---
 
-### **Journey 2: Customer Support Request**
+## 🔑 2. Live Production Demo Credentials
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│              CUSTOMER SUPPORT WORKFLOW                      │
-└─────────────────────────────────────────────────────────────┘
+The database auto-seeds default accounts upon initial deployment. You can log in at `https://iconicsmartcrm.up.railway.app` using any of the following credentials:
 
-Step 1: Customer Has Issue
-   ↓
-   ⚠️ Issue with order/product
-   • Product defect
-   • Delivery problem
-   • Technical question
-   • Billing inquiry
-   
-Step 2: Create Service Request
-   ↓
-   🎫 Service Request Page (crm_service_request_page)
-   • Select issue type
-   • Link to order (optional)
-   • Set priority
-   • Describe problem
-   
-   POST /api/services
-   Headers: { Authorization: "Bearer <token>" }
-   Body: {
-     issueType: "technical",
-     description: "Unable to activate license",
-     priority: "high",
-     orderRef: "ORD-xxx"
-   }
-   Response: {
-     serviceId: "SVC-xxx",
-     status: "open",
-     priority: "high",
-     userId: "...",
-     ...
-   }
-   
-Step 3: Track Service Request
-   ↓
-   📋 My Service Requests (crm_my_service_requests_page)
-   
-   GET /api/services?userId=<myId>
-   Response: [
-     {
-       serviceId: "SVC-xxx",
-       status: "in-progress",
-       priority: "high",
-       assignedTo: "Support Agent John",
-       serviceHistory: [
-         { status: "open", timestamp: "...", note: "Ticket created" },
-         { status: "in-progress", timestamp: "...", note: "Assigned to John" }
-       ]
-     }
-   ]
-   
-Step 4: Receive Updates
-   ↓
-   🔔 Status Updates
-   • open → in-progress → resolved → closed
-   • Email notifications (optional)
-   
-Step 5: Request Resolved
-   ↓
-   ✅ Service Closed
-   • View resolution notes
-   • Rate service (optional)
-```
+| Role | Email | Password | Primary Permissions & Responsibilities |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin@iconic-crm.com` | `admin123` | Full system access, API Key management, user roles, system config |
+| **Manager** | `manager@iconic-crm.com` | `manager123` | Approvals management, SLA performance analytics, team oversight |
+| **Sales** | `sales@iconic-crm.com` | `sales123` | Leads management, Opportunities pipeline, Order placement |
+| **Support** | `support@iconic-crm.com` | `support123` | Service ticket resolution, Serial validation verification |
+| **Customer** | `customer@example.com` | `demo123` | Own order tracking, service ticket submission, profile management |
 
 ---
 
-## 👨‍💼 Admin Workflow
+## 🛡️ 3. Serial Number Validation Module (Source of Truth)
 
-### **Journey 1: Daily Dashboard Review**
+### 🎯 Architecture & Purpose
+Instead of external applications querying manufacturer APIs directly, **Iconic Smart CRM acts as the Master Registry**. 
 
+```text
+                    YOUR ICONIC SMART CRM
+                         │
+          Upload / Import Serial Master Data (CSV)
+                         │
+                         ▼
+              ┌─────────────────────┐
+              │   Serial Registry   │
+              │   (Master DB)       │
+              └──────────┬──────────┘
+                         │
+      ┌──────────────────┴──────────────────┐
+      │                                     │
+      ▼                                     ▼
+ CRM Web App                           External Apps
+ (Internal Staff)                   (Third-Party Partners)
+ POST /api/serial-validation/validate  POST /api/v1/serial-validation/validate
+ (Bearer JWT Token)                    (X-API-Key Header)
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                   ADMIN DAILY WORKFLOW                      │
-└─────────────────────────────────────────────────────────────┘
 
-Step 1: Admin Login
-   ↓
-   🔐 POST /api/auth/login
-   Body: {
-     email: "admin@iconic-crm.com",
-     password: "admin123"
-   }
-   Response: {
-     token: "...",
-     user: { role: "admin", ... }
-   }
-   
-Step 2: View Dashboard
-   ↓
-   📊 Dashboard Page (crm_dashboard_page)
-   
-   GET /api/orders?limit=100           # Count today's orders
-   GET /api/services?status=open       # Count open tickets
-   GET /api/deliveries?status=pending  # Count pending deliveries
-   GET /api/marketing?active=true      # Count active campaigns
-   
-   Display: {
-     Orders Today: 125
-     Open Services: 45
-     Pending Deliveries: 30
-     Active Campaigns: 8
-   }
-   
-Step 3: Check Critical Items
-   ↓
-   🚨 High Priority Review
-   • Urgent service requests
-   • Failed payments
-   • Delayed deliveries
-   • Expiring campaigns
-```
+### 🔍 Verification Matching Criteria
+Validation requires 3 parameters:
+1. `materialCode` (e.g., `MAT-569553`)
+2. `serialNumber` (e.g., `SN-771740`)
+3. `dealerCode` (e.g., `DLR-548968`)
+
+### 🚦 Response Codes & Status Mapping Matrix
+
+| Status Code | Status String | Meaning / Action | `verified` | `canProceed` |
+| :---: | :--- | :--- | :---: | :---: |
+| **0** | `VALID` | Serial, Material, and Dealer match active registry record. | `true` | `true` |
+| **1** | `INVALID` | Serial format or registration is invalid. | `false` | `false` |
+| **2** | `UNREGISTERED` | Serial number is valid format but not found in CRM registry. | `false` | `false` |
+| **3** | `EXPIRED` | Serial warranty or activation period has expired. | `false` | `false` |
+| **4** | `DEALER_MISMATCH` | Serial exists but dealer code does not match registered dealer. | `false` | `false` |
+| **5** | `MATERIAL_MISMATCH`| Serial exists but material code does not match registered model. | `false` | `false` |
 
 ---
 
-### **Journey 2: Order Management**
+## 🔌 4. Partner API Key Integration Layer
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                ORDER MANAGEMENT WORKFLOW                    │
-└─────────────────────────────────────────────────────────────┘
+External partner applications consume the CRM Serial Verification service via secured API keys.
 
-Step 1: View All Orders
-   ↓
-   📦 Orders List Page (crm_orders_list_page)
-   
-   GET /api/orders
-   Response: [
-     {
-       orderId: "ORD-xxx",
-       userId: { name: "John Doe", email: "..." },
-       orderStatus: "processing",
-       paymentStatus: "paid",
-       amount: 499.95
-     },
-     ...
-   ]
-   
-Step 2: Filter Orders
-   ↓
-   🔍 Filter by Status
-   GET /api/orders?status=processing
-   GET /api/orders?status=pending
-   
-Step 3: Update Order Status
-   ↓
-   ✏️ Change Status
-   
-   PUT /api/orders/:id/status
-   Body: { status: "shipped" }
-   Response: { orderId: "...", orderStatus: "shipped", ... }
-   
-Step 4: Manage Delivery
-   ↓
-   🚚 Create/Update Delivery
-   
-   POST /api/deliveries
-   Body: {
-     orderRef: "ORD-xxx",
-     courier: "FedEx",
-     eta: "2025-10-22",
-     currentStatus: "picked-up"
-   }
-   
-Step 5: Monitor Progress
-   ↓
-   📊 Track all deliveries
-   GET /api/deliveries
-   • Update statuses
-   • Add tracking info
-   • Handle issues
-```
+### 🔐 API Key Security
+* Keys are generated with prefixes (e.g., `crm_live_...`).
+* Only hashed versions (`SHA-256`) are stored in MongoDB.
+* Masked keys (e.g., `crm_live_...a8f2`) are displayed in management screens.
+* Rate limits are applied per API key (default: 100 requests per minute).
 
----
+### 📡 External Validation API Endpoint
+```http
+POST /api/v1/serial-validation/validate HTTP/1.1
+Host: iconicsmartcrm.up.railway.app
+Content-Type: application/json
+X-API-Key: crm_live_9a87f6e5d4c3b2a1...
 
-### **Journey 3: Service Request Management**
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│              SERVICE REQUEST MANAGEMENT                     │
-└─────────────────────────────────────────────────────────────┘
-
-Step 1: View All Service Requests
-   ↓
-   🎫 Services List Page (crm_services_list_page)
-   
-   GET /api/services
-   Response: [
-     {
-       serviceId: "SVC-xxx",
-       userId: { name: "Jane Doe", ... },
-       issueType: "technical",
-       status: "open",
-       priority: "high",
-       description: "..."
-     },
-     ...
-   ]
-   
-Step 2: Filter by Priority
-   ↓
-   🔥 High Priority First
-   GET /api/services?priority=urgent
-   GET /api/services?priority=high
-   
-Step 3: Assign to Agent
-   ↓
-   👤 Assign Request
-   
-   PUT /api/services/:id/status
-   Body: {
-     status: "in-progress",
-     assignedTo: "Agent John Smith"
-   }
-   
-Step 4: Work on Issue
-   ↓
-   🔧 Resolve Problem
-   • Investigate issue
-   • Provide solution
-   • Test fix
-   
-Step 5: Close Request
-   ↓
-   ✅ Mark Resolved
-   
-   PUT /api/services/:id/status
-   Body: { status: "resolved" }
-   
-   Later: { status: "closed" }
-```
-
----
-
-### **Journey 4: Lead Management**
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                 LEAD MANAGEMENT WORKFLOW                    │
-└─────────────────────────────────────────────────────────────┘
-
-Step 1: Import/Create Leads
-   ↓
-   📝 Leads Page (crm_leads_page)
-   
-   POST /api/leads
-   Body: {
-     name: "Acme Corporation",
-     email: "contact@acme.com",
-     phone: "+1-555-0100",
-     source: "website",
-     status: "new"
-   }
-   
-Step 2: Qualify Leads
-   ↓
-   🔍 Review & Filter
-   GET /api/leads?status=new
-   
-   • Research company
-   • Check fit
-   • Assess potential
-   
-Step 3: Update Status
-   ↓
-   ⬆️ Move Through Pipeline
-   
-   new → contacted → qualified → converted/lost
-   
-   PUT /api/leads/:id
-   Body: { status: "contacted" }
-   
-Step 4: Convert to Opportunity
-   ↓
-   💼 Create Opportunity
-   
-   POST /api/opportunities
-   Body: {
-     name: "Acme Corp - Enterprise Deal",
-     value: 50000,
-     stage: "qualification",
-     leadId: "LEAD-xxx"
-   }
-   
-Step 5: Track in Pipeline
-   ↓
-   📊 Sales Pipeline
-   • qualification → proposal → negotiation → closed-won
-```
-
----
-
-### **Journey 5: Marketing Campaign Management**
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│            MARKETING CAMPAIGN WORKFLOW                      │
-└─────────────────────────────────────────────────────────────┘
-
-Step 1: Create Campaign
-   ↓
-   📢 Marketing Manager (crm_marketing_manager_page)
-   
-   POST /api/marketing
-   Body: {
-     title: "Summer Sale 2025",
-     imageRef: "summer-banner.jpg",
-     active: true,
-     startDate: "2025-06-01",
-     endDate: "2025-06-30"
-   }
-   
-Step 2: Activate Campaign
-   ↓
-   ✅ Launch
-   • Set active: true
-   • Monitor performance
-   
-Step 3: Track Results
-   ↓
-   📊 Analytics
-   GET /api/marketing?active=true
-   • View impressions
-   • Track conversions
-   • Calculate ROI
-   
-Step 4: Deactivate When Done
-   ↓
-   ⏸️ End Campaign
-   
-   PUT /api/marketing/:id
-   Body: { active: false }
-```
-
----
-
-## 📊 Complete Data Flow Diagram
-
-```
-┌──────────────────────────────────────────────────────────────┐
-│                     SYSTEM DATA FLOW                         │
-└──────────────────────────────────────────────────────────────┘
-
-   USER REGISTRATION
-         ↓
-   [User Model]
-         ↓
-    USER LOGIN → JWT Token → Stored in Browser
-         ↓                        ↓
-         ├──────────────────────────────────┐
-         ↓                                  ↓
-   PLACE ORDER                      CREATE SERVICE REQUEST
-         ↓                                  ↓
-   [Order Model] ←──────────────────→ [Service Model]
-    orderId                              serviceId
-    userId                               userId
-    items                                orderRef
-    amount                               issueType
-    orderStatus                          priority
-    paymentStatus                        status
-    shippingAddress                      
-         ↓                                  ↓
-   CREATE DELIVERY                   ADMIN ASSIGNS
-         ↓                                  ↓
-   [Delivery Model]              [Service Updated]
-    deliveryId                       assignedTo
-    orderRef ──→ Links to Order      status: in-progress
-    currentStatus                         ↓
-    courier                          RESOLVE ISSUE
-    eta                                   ↓
-    history[]                        status: resolved
-         ↓                                ↓
-   TRACK DELIVERY                    status: closed
-         ↓
-   STATUS UPDATES
-   pending → picked-up → in-transit → delivered
-
-
-   MARKETING SIDE                   SALES SIDE
-         ↓                               ↓
-   [MarketingAsset]                [Lead Model]
-    assetId                          leadId
-    title                            name
-    active                           email
-    startDate                        status
-    endDate                          source
-         ↓                               ↓
-   CAMPAIGN ACTIVE              QUALIFY LEAD
-         ↓                               ↓
-   TRACK PERFORMANCE            [Opportunity Model]
-                                    opportunityId
-                                    name
-                                    value
-                                    stage
-                                    leadId
-                                         ↓
-                                    CLOSE DEAL
-                                         ↓
-                                    CREATE ORDER
-```
-
----
-
-## 🔄 Status Transitions
-
-### **Order Status Flow**
-```
-pending → placed → processing → shipped → delivered → completed
-                                     ↓
-                                cancelled
-```
-
-### **Payment Status Flow**
-```
-pending → paid
-    ↓
-  failed
-```
-
-### **Service Status Flow**
-```
-open → in-progress → resolved → closed
-```
-
-### **Delivery Status Flow**
-```
-pending → picked-up → in-transit → delivered
-```
-
-### **Lead Status Flow**
-```
-new → contacted → qualified → converted
-                           ↓
-                         lost
-```
-
-### **Opportunity Stage Flow**
-```
-prospecting → qualification → proposal → negotiation → closed-won
-                                                    ↓
-                                              closed-lost
-```
-
----
-
-## 🔐 Role-Based Access Summary
-
-| Feature | Customer | Admin |
-|---------|----------|-------|
-| **View Own Orders** | ✅ | ✅ |
-| **View All Orders** | ❌ | ✅ |
-| **Update Order Status** | ❌ | ✅ |
-| **Create Service Request** | ✅ | ✅ |
-| **View Own Requests** | ✅ | ✅ |
-| **View All Requests** | ❌ | ✅ |
-| **Assign Services** | ❌ | ✅ |
-| **Manage Leads** | ❌ | ✅ |
-| **Manage Marketing** | ❌ | ✅ |
-| **View Deliveries** | Own Only | All |
-
----
-
-## 🎯 Key Integration Points
-
-### **1. Order → Delivery**
-```javascript
-// When order status = "shipped"
-const order = await Order.findById(orderId);
-if (order.orderStatus === 'shipped') {
-  await Delivery.create({
-    orderRef: order.orderId,
-    currentStatus: 'picked-up',
-    courier: 'FedEx'
-  });
+{
+  "materialCode": "MAT-569553",
+  "serialNumber": "SN-771740",
+  "dealerCode": "DLR-548968"
 }
 ```
 
-### **2. Service → Order**
-```javascript
-// Link service request to order
-await Service.create({
-  userId: req.user.id,
-  issueType: 'technical',
-  orderRef: 'ORD-xxx', // Links to specific order
-  priority: 'high'
-});
-```
-
-### **3. Lead → Opportunity**
-```javascript
-// Convert lead to opportunity
-const lead = await Lead.findById(leadId);
-await Opportunity.create({
-  name: lead.name + ' - Deal',
-  leadId: lead._id,
-  value: estimatedValue,
-  stage: 'qualification'
-});
-await Lead.findByIdAndUpdate(leadId, { status: 'converted' });
+#### Sample Success Response (`200 OK`)
+```json
+{
+  "success": true,
+  "data": {
+    "success": true,
+    "verified": true,
+    "canProceed": true,
+    "statusCode": "0",
+    "status": "VALID",
+    "message": "Serial number validated successfully",
+    "details": {
+      "materialCode": "MAT-569553",
+      "serialNumber": "SN-771740",
+      "dealerCode": "DLR-548968",
+      "warrantyMonths": 24
+    }
+  }
+}
 ```
 
 ---
 
-## ✅ Workflow Summary
+## 🔄 5. End-to-End User Workflows
 
-**Customer Journey**: 5-7 steps  
-**Admin Daily Tasks**: 10-15 operations  
-**Average API Calls per Session**:
-- Customer: 3-5 calls
-- Admin: 20-30 calls
+### 🛠️ Workflow A: Admin Bulk Data Import & API Key Provisioning
+1. **Login**: Admin logs in at `/login.html` with `admin@iconic-crm.com`.
+2. **Import Serial Master Data**:
+   - Navigates to `/serial-validation`.
+   - Uploads or pastes CSV data formatted as:
+     `materialCode,serialNumber,dealerCode,warrantyMonths`
+   - System upserts records into `SerialRegistry`.
+3. **Provision Partner API Key**:
+   - Navigates to `/api-keys`.
+   - Clicks **Create Key**, enters Client Name (e.g., `QERP Verification Service`).
+   - Copies generated API Key and provides it to partner integration team.
 
-**Response Times**:
-- Health Check: < 10ms
-- Authentication: < 50ms
-- Data Queries: < 100ms
-- Updates: < 150ms
+### 💼 Workflow B: Sales Pipeline to Order Fulfillment
+1. **Lead Creation**: Sales Rep receives lead inquiry and logs it via `POST /api/leads`.
+2. **Qualification & Opportunity**: Lead status changes to `qualified`, creating an Opportunity via `POST /api/opportunities`.
+3. **Closing Deal**: Opportunity stage updated to `closed-won`.
+4. **Order Placement**: Order created via `POST /api/orders`.
+5. **Delivery Dispatch**: System updates order to `shipped` and creates a tracking record via `POST /api/deliveries`.
+
+### 🎫 Workflow C: Support Service Ticketing & SLA Tracking
+1. **Ticket Creation**: Customer or Support Agent creates ticket via `POST /api/services`.
+2. **SLA Timer Initialized**: System attaches an SLA timer with response threshold (e.g., 2 hours).
+3. **Agent Assignment**: Support Manager assigns ticket to agent.
+4. **Resolution & Verification**:
+   - Agent validates serial number using Serial Validation route.
+   - Ticket marked `resolved` and closed.
 
 ---
 
-**🎉 Your CRM workflow is complete, efficient, and production-ready!**
+## 🏗️ 6. System Architecture & Tech Stack
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│                 REACT SPA (Vite / Tailwind CSS)              │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ HTTP REST / WebSocket
+┌──────────────────────────────▼──────────────────────────────┐
+│                  EXPRESS.JS NODE SERVER                      │
+│ ┌───────────────────┬───────────────────┬─────────────────┐ │
+│ │ Auth & RBAC       │ Serial Engine     │ API Key Auth    │ │
+│ ├───────────────────┼───────────────────┼─────────────────┤ │
+│ │ Orders & Services │ SLA Engine        │ Webhooks        │ │
+│ └───────────────────┴───────────────────┴─────────────────┘ │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ Mongoose ODM
+┌──────────────────────────────▼──────────────────────────────┐
+│                    MONGODB DATABASE                         │
+│ (User, Order, Service, SerialRegistry, ApiKey, Task, etc.)   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🛠️ 7. Development & Deployment Reference
+
+### Local Setup
+```bash
+# Install root and client dependencies
+npm install
+npm run install-client
+
+# Seed database with initial data
+npm run seed
+
+# Run local development server (Backend: 7000, Frontend: 5173)
+npm run dev
+```
+
+### Docker & Railway Production Build
+The project uses a multi-stage `Dockerfile`:
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --only=production
+COPY client/package*.json ./client/
+RUN cd client && npm install --legacy-peer-deps
+COPY client ./client
+RUN cd client && npm run build
+COPY . .
+EXPOSE 7000
+CMD ["node", "server.js"]
+```
+
+---
+
+**🎉 Iconic Smart CRM is fully documented, tested, and operational in production!**
