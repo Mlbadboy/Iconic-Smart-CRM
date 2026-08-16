@@ -11,6 +11,7 @@ const logger = require('./services/logger');
 dotenv.config();
 
 const app = express();
+app.set('trust proxy', 1);
 const server = http.createServer(app);
 
 // Initialize Socket.IO for real-time notifications
@@ -97,6 +98,14 @@ app.use(cors({
   credentials: true
 }));
 
+const { v4: uuidv4 } = require('uuid');
+app.use((req, res, next) => {
+  const correlationId = req.headers['x-correlation-id'] || uuidv4();
+  req.correlationId = correlationId;
+  res.setHeader('X-Correlation-ID', correlationId);
+  next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -123,22 +132,34 @@ app.use('/api', getRateLimiter);
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Serve React build if it exists
+const fs = require('fs');
+if (fs.existsSync(path.join(__dirname, 'client', 'dist'))) {
+  app.use(express.static(path.join(__dirname, 'client', 'dist')));
+}
+
 // Serve uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // MongoDB connection with better error handling
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://admin:admin123@localhost:27017/iconic-crm?authSource=admin';
+const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://admin:admin123@localhost:27017/iconic-crm?authSource=admin';
 
 logger.info('🔌 Attempting MongoDB connection...');
-logger.debug('URI:', MONGO_URI.replace(/:[^:@]+@/, ':****@'));
+logger.info(`URI resolved to: ${MONGO_URI.replace(/:[^:@]+@/, ':****@')}`);
 
 mongoose.connect(MONGO_URI, {
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000,
 })
-.then(() => {
+.then(async () => {
   logger.info('✅ MongoDB connected successfully!');
   logger.info('📊 Database:', mongoose.connection.name);
+  try {
+    const { autoSeedIfEmpty } = require('./seed');
+    await autoSeedIfEmpty();
+  } catch (err) {
+    logger.warn('Auto-seed check failed:', err.message);
+  }
 })
 .catch(err => {
   logger.error('❌ MongoDB connection error:', err.message);
@@ -178,6 +199,11 @@ app.use('/api/contacts', require('./routes/contacts'));
 app.use('/api/invoices', require('./routes/invoices'));
 app.use('/api/config', require('./routes/config'));
 app.use('/api/v1/customers', require('./routes/v1/customers'));
+app.use('/api/slas', require('./routes/slas'));
+app.use('/api/approvals', require('./routes/approvals'));
+app.use('/api/tasks', require('./routes/tasks'));
+app.use('/api/serial-validation', require('./routes/serialValidation'));
+app.use('/api/v1/serial-validation', require('./routes/externalSerialValidation'));
 
 // Health check endpoint for Railway
 app.get('/api/health', (req, res) => {
@@ -195,6 +221,12 @@ app.use((req, res) => {
   // If it's an API route that wasn't found, return 404 JSON
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'API endpoint not found' });
+  }
+  
+  // SPA routing fallback for React client if it exists
+  const distIndex = path.join(__dirname, 'client', 'dist', 'index.html');
+  if (fs.existsSync(distIndex) && !req.path.includes('.')) {
+    return res.sendFile(distIndex);
   }
   
   // If it's not a file request, redirect to login

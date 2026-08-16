@@ -3,12 +3,12 @@ const ApiKey = require('../models/ApiKey');
 // API Key Authentication Middleware
 const apiKeyAuth = async (req, res, next) => {
   try {
-    // Check for API key in header
-    const apiKey = req.header('X-API-Key') || req.query.apiKey;
+    // Check for API key in header (strictly X-API-Key header; query parameter is disabled for security)
+    const apiKey = req.header('X-API-Key');
     
     if (!apiKey) {
       return res.status(401).json({ 
-        message: 'API Key required. Include X-API-Key header or apiKey query parameter.' 
+        message: 'API Key required. Include X-API-Key header.' 
       });
     }
 

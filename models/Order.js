@@ -67,4 +67,9 @@ orderSchema.pre('save', async function(next) {
   next();
 });
 
+orderSchema.index({ userId: 1 });
+orderSchema.index({ retailerId: 1 });
+orderSchema.index({ status: 1 });
+orderSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model('Order', orderSchema);

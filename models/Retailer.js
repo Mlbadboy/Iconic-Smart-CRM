@@ -67,4 +67,8 @@ const retailerSchema = new mongoose.Schema({
     timestamps: true
 });
 
+retailerSchema.index({ email: 1 }, { unique: true });
+retailerSchema.index({ phone: 1 });
+retailerSchema.index({ retailerName: 1 });
+
 module.exports = mongoose.model('Retailer', retailerSchema);

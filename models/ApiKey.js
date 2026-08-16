@@ -25,7 +25,7 @@ const apiKeySchema = new mongoose.Schema({
   },
   permissions: [{
     type: String,
-    enum: ['read', 'write', 'delete', 'admin']
+    enum: ['read', 'write', 'delete', 'admin', 'serial_validation.validate', 'serial_validation.import']
   }],
   allowedOrigins: [String],
   rateLimit: {

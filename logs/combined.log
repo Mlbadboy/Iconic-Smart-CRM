@@ -81,3 +81,484 @@
 {"level":"info","message":"🔌 Socket.IO ready for real-time notifications\n","service":"iconic-crm","timestamp":"2025-11-08 14:28:08"}
 {"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2025-11-08 14:28:08"}
 {"0":"i","1":"c","2":"o","3":"n","4":"i","5":"c","6":"-","7":"c","8":"r","9":"m","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2025-11-08 14:28:08"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 12:18:00"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 12:33:18"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 12:33:19"}
+{"level":"info","message":"\n🚀 Server running on port 7001","service":"iconic-crm","timestamp":"2026-08-13 12:33:27"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7001","service":"iconic-crm","timestamp":"2026-08-13 12:33:27"}
+{"level":"info","message":"🔐 Login page: http://localhost:7001/login.html","service":"iconic-crm","timestamp":"2026-08-13 12:33:27"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications","service":"iconic-crm","timestamp":"2026-08-13 12:33:27"}
+{"level":"info","message":"🔧 Development mode: localhost:7001\n","service":"iconic-crm","timestamp":"2026-08-13 12:33:27"}
+{"0":"S","1":"e","10":"e","11":"c","12":"t","13":"i","14":"o","15":"n","16":" ","17":"t","18":"i","19":"m","2":"r","20":"e","21":"d","22":" ","23":"o","24":"u","25":"t","26":" ","27":"a","28":"f","29":"t","3":"v","30":"e","31":"r","32":" ","33":"5","34":"0","35":"0","36":"0","37":" ","38":"m","39":"s","4":"e","5":"r","6":" ","7":"s","8":"e","9":"l","level":"error","message":"❌ MongoDB connection error:","service":"iconic-crm","timestamp":"2026-08-13 12:33:27"}
+{"level":"error","message":"💡 Make sure MongoDB is running: docker-compose up -d mongodb","service":"iconic-crm","timestamp":"2026-08-13 12:33:27"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 12:33:32"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 12:33:52"}
+{"level":"info","message":"URI resolved to: mongodb://127.0.0.1:52318/","service":"iconic-crm","timestamp":"2026-08-13 12:33:52"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 12:33:53"}
+{"level":"info","message":"\n🚀 Server running on port 7001","service":"iconic-crm","timestamp":"2026-08-13 12:33:54"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7001","service":"iconic-crm","timestamp":"2026-08-13 12:33:54"}
+{"level":"info","message":"🔐 Login page: http://localhost:7001/login.html","service":"iconic-crm","timestamp":"2026-08-13 12:33:54"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications","service":"iconic-crm","timestamp":"2026-08-13 12:33:54"}
+{"level":"info","message":"🔧 Development mode: localhost:7001\n","service":"iconic-crm","timestamp":"2026-08-13 12:33:54"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2026-08-13 12:33:54"}
+{"0":"t","1":"e","2":"s","3":"t","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2026-08-13 12:33:54"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 12:33:59"}
+{"level":"info","message":"✅ Order Created: ORD000006","service":"iconic-crm","timestamp":"2026-08-13 12:34:35"}
+{"level":"info","message":"   Retailer: Direct","service":"iconic-crm","timestamp":"2026-08-13 12:34:35"}
+{"level":"info","message":"   Items: 1","service":"iconic-crm","timestamp":"2026-08-13 12:34:35"}
+{"level":"info","message":"   Total: ₹236.00 (incl. 18% GST)","service":"iconic-crm","timestamp":"2026-08-13 12:34:35"}
+{"level":"info","message":"📧 Email (not sent - service not configured):","service":"iconic-crm","timestamp":"2026-08-13 12:34:36"}
+{"level":"info","message":"   To: test-service@example.com","service":"iconic-crm","timestamp":"2026-08-13 12:34:36"}
+{"level":"info","message":"   Subject: New Service Request - SR000001","service":"iconic-crm","timestamp":"2026-08-13 12:34:36"}
+{"level":"warn","message":"⚠️ Service request email not sent: Email service not configured","service":"iconic-crm","timestamp":"2026-08-13 12:34:36"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 12:36:52"}
+{"level":"info","message":"URI resolved to: mongodb://127.0.0.1:63159/","service":"iconic-crm","timestamp":"2026-08-13 12:36:52"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 12:36:53"}
+{"level":"info","message":"\n🚀 Server running on port 7001","service":"iconic-crm","timestamp":"2026-08-13 12:36:56"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7001","service":"iconic-crm","timestamp":"2026-08-13 12:36:56"}
+{"level":"info","message":"🔐 Login page: http://localhost:7001/login.html","service":"iconic-crm","timestamp":"2026-08-13 12:36:56"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications","service":"iconic-crm","timestamp":"2026-08-13 12:36:56"}
+{"level":"info","message":"🔧 Development mode: localhost:7001\n","service":"iconic-crm","timestamp":"2026-08-13 12:36:56"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2026-08-13 12:36:56"}
+{"0":"t","1":"e","2":"s","3":"t","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2026-08-13 12:36:56"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 12:37:01"}
+{"level":"info","message":"📊 /stats requested","service":"iconic-crm","timestamp":"2026-08-13 12:37:03"}
+{"level":"info","message":"📊 /stats: canViewAll = true","service":"iconic-crm","timestamp":"2026-08-13 12:37:03"}
+{"level":"info","message":"📊 /stats: filter = {}","service":"iconic-crm","timestamp":"2026-08-13 12:37:03"}
+{"level":"info","message":"📊 /stats: counting orders...","service":"iconic-crm","timestamp":"2026-08-13 12:37:03"}
+{"level":"info","message":"📊 /stats: totalOrders = 5","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: calculating revenue...","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: totalRevenue = 2459.78","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: getting unique retailers...","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: retailerCount = 0","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: counting active services...","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: activeServices = 0","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: getting recent orders...","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: recentOrders count = 5","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: aggregating sales by day...","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: salesByDay count = 1","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: aggregating status distribution...","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: statusDistribution count = 1","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: counting previous week orders...","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: prevWeekOrders = 0","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: aggregating previous week revenue...","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: prevWeekRevenue = 0","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: getting previous week retailers...","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: prevWeekRetailers count = 0","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: counting previous week services...","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: prevWeekServices = 0","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"📊 /stats: sending response","service":"iconic-crm","timestamp":"2026-08-13 12:37:04"}
+{"level":"info","message":"✅ Order Created: ORD000006","service":"iconic-crm","timestamp":"2026-08-13 12:37:05"}
+{"level":"info","message":"   Retailer: Direct","service":"iconic-crm","timestamp":"2026-08-13 12:37:05"}
+{"level":"info","message":"   Items: 1","service":"iconic-crm","timestamp":"2026-08-13 12:37:05"}
+{"level":"info","message":"   Total: ₹236.00 (incl. 18% GST)","service":"iconic-crm","timestamp":"2026-08-13 12:37:05"}
+{"level":"info","message":"📧 Email (not sent - service not configured):","service":"iconic-crm","timestamp":"2026-08-13 12:37:06"}
+{"level":"info","message":"   To: test-service@example.com","service":"iconic-crm","timestamp":"2026-08-13 12:37:06"}
+{"level":"info","message":"   Subject: New Service Request - SR000001","service":"iconic-crm","timestamp":"2026-08-13 12:37:06"}
+{"level":"warn","message":"⚠️ Service request email not sent: Email service not configured","service":"iconic-crm","timestamp":"2026-08-13 12:37:06"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 12:41:13"}
+{"level":"info","message":"URI resolved to: mongodb://127.0.0.1:59457/","service":"iconic-crm","timestamp":"2026-08-13 12:41:13"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 12:41:13"}
+{"level":"info","message":"\n🚀 Server running on port 7001","service":"iconic-crm","timestamp":"2026-08-13 12:41:14"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7001","service":"iconic-crm","timestamp":"2026-08-13 12:41:14"}
+{"level":"info","message":"🔐 Login page: http://localhost:7001/login.html","service":"iconic-crm","timestamp":"2026-08-13 12:41:14"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications","service":"iconic-crm","timestamp":"2026-08-13 12:41:14"}
+{"level":"info","message":"🔧 Development mode: localhost:7001\n","service":"iconic-crm","timestamp":"2026-08-13 12:41:14"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2026-08-13 12:41:14"}
+{"0":"t","1":"e","2":"s","3":"t","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2026-08-13 12:41:14"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 12:41:18"}
+{"level":"info","message":"⏰ SLA Timer created for service-request 507f1f77bcf86cd799439099 (response). Target: 2026-08-13T08:11:19.107Z","service":"iconic-crm","timestamp":"2026-08-13 12:41:19"}
+{"level":"info","message":"⏰ SLA Timer completed for service-request 507f1f77bcf86cd799439099 (response)","service":"iconic-crm","timestamp":"2026-08-13 12:41:19"}
+{"level":"info","message":"⏰ SLA Timer created for service-request 507f1f77bcf86cd799439098 (resolution). Target: 2026-08-13T11:11:19.212Z","service":"iconic-crm","timestamp":"2026-08-13 12:41:19"}
+{"level":"warn","message":"🚨 Escalation recorded: service-request 507f1f77bcf86cd799439098 escalated to manager","service":"iconic-crm","timestamp":"2026-08-13 12:41:19"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 12:41:44"}
+{"level":"info","message":"URI resolved to: mongodb://127.0.0.1:55351/","service":"iconic-crm","timestamp":"2026-08-13 12:41:44"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 12:41:45"}
+{"level":"info","message":"\n🚀 Server running on port 7001","service":"iconic-crm","timestamp":"2026-08-13 12:41:46"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7001","service":"iconic-crm","timestamp":"2026-08-13 12:41:46"}
+{"level":"info","message":"🔐 Login page: http://localhost:7001/login.html","service":"iconic-crm","timestamp":"2026-08-13 12:41:46"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications","service":"iconic-crm","timestamp":"2026-08-13 12:41:46"}
+{"level":"info","message":"🔧 Development mode: localhost:7001\n","service":"iconic-crm","timestamp":"2026-08-13 12:41:46"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2026-08-13 12:41:46"}
+{"0":"t","1":"e","2":"s","3":"t","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2026-08-13 12:41:46"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 12:41:51"}
+{"level":"info","message":"⏰ SLA Timer created for service-request 507f1f77bcf86cd799439099 (response). Target: 2026-08-13T08:11:51.170Z","service":"iconic-crm","timestamp":"2026-08-13 12:41:51"}
+{"level":"info","message":"⏰ SLA Timer completed for service-request 507f1f77bcf86cd799439099 (response)","service":"iconic-crm","timestamp":"2026-08-13 12:41:51"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 12:42:39"}
+{"level":"info","message":"URI resolved to: mongodb://127.0.0.1:57238/","service":"iconic-crm","timestamp":"2026-08-13 12:42:39"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 12:42:39"}
+{"level":"info","message":"\n🚀 Server running on port 7001","service":"iconic-crm","timestamp":"2026-08-13 12:42:40"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7001","service":"iconic-crm","timestamp":"2026-08-13 12:42:40"}
+{"level":"info","message":"🔐 Login page: http://localhost:7001/login.html","service":"iconic-crm","timestamp":"2026-08-13 12:42:40"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications","service":"iconic-crm","timestamp":"2026-08-13 12:42:40"}
+{"level":"info","message":"🔧 Development mode: localhost:7001\n","service":"iconic-crm","timestamp":"2026-08-13 12:42:40"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2026-08-13 12:42:40"}
+{"0":"t","1":"e","2":"s","3":"t","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2026-08-13 12:42:40"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 12:42:44"}
+{"level":"info","message":"⏰ SLA Timer created for service-request 507f1f77bcf86cd799439099 (response). Target: 2026-08-13T08:12:45.083Z","service":"iconic-crm","timestamp":"2026-08-13 12:42:45"}
+{"level":"info","message":"⏰ SLA Timer completed for service-request 507f1f77bcf86cd799439099 (response)","service":"iconic-crm","timestamp":"2026-08-13 12:42:45"}
+{"level":"info","message":"⏰ SLA Timer created for service-request 507f1f77bcf86cd799439098 (resolution). Target: 2026-08-13T11:12:45.263Z","service":"iconic-crm","timestamp":"2026-08-13 12:42:45"}
+{"level":"warn","message":"🚨 Escalation recorded: service-request 507f1f77bcf86cd799439098 escalated to service-manager","service":"iconic-crm","timestamp":"2026-08-13 12:42:45"}
+{"level":"info","message":"🚨 Escalation 6a7d6e6d510f91ccd90cba11 resolved by admin@iconic-crm.com","service":"iconic-crm","timestamp":"2026-08-13 12:42:45"}
+{"level":"info","message":"📝 Approval request created for order ORD-999 by user 6a7d6e6d510f91ccd90cba16","service":"iconic-crm","timestamp":"2026-08-13 12:42:45"}
+{"level":"error","message":"Error approving request: Segregation of duties: Requesters cannot approve their own requests","service":"iconic-crm","stack":"Error: Segregation of duties: Requesters cannot approve their own requests\n    at Object.approveRequest (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\services\\approvalService.js:33:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\test-crm-audit-regression.js:220:9\n    at async waitForActual (node:assert:565:5)\n    at async ok.rejects (node:assert:686:25)\n    at async main (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\test-crm-audit-regression.js:218:5)","timestamp":"2026-08-13 12:42:45"}
+{"level":"info","message":"📝 Approval request 6a7d6e6d510f91ccd90cba17 approved by 6a7d6e6d510f91ccd90cba1a","service":"iconic-crm","timestamp":"2026-08-13 12:42:45"}
+{"level":"info","message":"📋 Task \"Follow up client\" created for user 6a7d6e6d510f91ccd90cba16","service":"iconic-crm","timestamp":"2026-08-13 12:42:45"}
+{"level":"info","message":"📋 Task \"Follow up client\" completed","service":"iconic-crm","timestamp":"2026-08-13 12:42:45"}
+{"level":"info","message":"📊 /stats requested","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: canViewAll = true","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: filter = {}","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: counting orders...","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: totalOrders = 5","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: calculating revenue...","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: totalRevenue = 2459.78","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: getting unique retailers...","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: retailerCount = 1","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: counting active services...","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: activeServices = 1","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: getting recent orders...","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: recentOrders count = 5","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: aggregating sales by day...","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: salesByDay count = 1","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: aggregating status distribution...","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: statusDistribution count = 1","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: counting previous week orders...","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: prevWeekOrders = 0","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: aggregating previous week revenue...","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: prevWeekRevenue = 0","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: getting previous week retailers...","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: prevWeekRetailers count = 0","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: counting previous week services...","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: prevWeekServices = 0","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📊 /stats: sending response","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"✅ Order Created: ORD000006","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"   Retailer: Direct","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"   Items: 1","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"   Total: ₹236.00 (incl. 18% GST)","service":"iconic-crm","timestamp":"2026-08-13 12:42:48"}
+{"level":"info","message":"📧 Email (not sent - service not configured):","service":"iconic-crm","timestamp":"2026-08-13 12:42:50"}
+{"level":"info","message":"   To: test-service@example.com","service":"iconic-crm","timestamp":"2026-08-13 12:42:50"}
+{"level":"info","message":"   Subject: New Service Request - SR000002","service":"iconic-crm","timestamp":"2026-08-13 12:42:50"}
+{"level":"warn","message":"⚠️ Service request email not sent: Email service not configured","service":"iconic-crm","timestamp":"2026-08-13 12:42:50"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 12:43:21"}
+{"level":"info","message":"URI resolved to: mongodb://127.0.0.1:56424/","service":"iconic-crm","timestamp":"2026-08-13 12:43:21"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 12:43:21"}
+{"level":"info","message":"\n🚀 Server running on port 7001","service":"iconic-crm","timestamp":"2026-08-13 12:43:22"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7001","service":"iconic-crm","timestamp":"2026-08-13 12:43:22"}
+{"level":"info","message":"🔐 Login page: http://localhost:7001/login.html","service":"iconic-crm","timestamp":"2026-08-13 12:43:22"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications","service":"iconic-crm","timestamp":"2026-08-13 12:43:22"}
+{"level":"info","message":"🔧 Development mode: localhost:7001\n","service":"iconic-crm","timestamp":"2026-08-13 12:43:22"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2026-08-13 12:43:22"}
+{"0":"t","1":"e","2":"s","3":"t","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2026-08-13 12:43:22"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 12:43:27"}
+{"level":"info","message":"⏰ SLA Timer created for service-request 507f1f77bcf86cd799439099 (response). Target: 2026-08-13T08:13:27.190Z","service":"iconic-crm","timestamp":"2026-08-13 12:43:27"}
+{"level":"info","message":"⏰ SLA Timer completed for service-request 507f1f77bcf86cd799439099 (response)","service":"iconic-crm","timestamp":"2026-08-13 12:43:27"}
+{"level":"info","message":"⏰ SLA Timer created for service-request 507f1f77bcf86cd799439098 (resolution). Target: 2026-08-13T11:13:27.320Z","service":"iconic-crm","timestamp":"2026-08-13 12:43:27"}
+{"level":"warn","message":"🚨 Escalation recorded: service-request 507f1f77bcf86cd799439098 escalated to service-manager","service":"iconic-crm","timestamp":"2026-08-13 12:43:27"}
+{"level":"info","message":"🚨 Escalation 6a7d6e97e6b960d53e9bc277 resolved by admin@iconic-crm.com","service":"iconic-crm","timestamp":"2026-08-13 12:43:27"}
+{"level":"info","message":"📝 Approval request created for order ORD-999 by user 6a7d6e97e6b960d53e9bc27c","service":"iconic-crm","timestamp":"2026-08-13 12:43:27"}
+{"level":"error","message":"Error approving request: Segregation of duties: Requesters cannot approve their own requests","service":"iconic-crm","stack":"Error: Segregation of duties: Requesters cannot approve their own requests\n    at Object.approveRequest (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\services\\approvalService.js:33:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\test-crm-audit-regression.js:220:9\n    at async waitForActual (node:assert:565:5)\n    at async ok.rejects (node:assert:686:25)\n    at async main (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\test-crm-audit-regression.js:218:5)","timestamp":"2026-08-13 12:43:27"}
+{"level":"info","message":"📝 Approval request 6a7d6e97e6b960d53e9bc27d approved by 6a7d6e97e6b960d53e9bc280","service":"iconic-crm","timestamp":"2026-08-13 12:43:27"}
+{"level":"info","message":"📋 Task \"Follow up client\" created for user 6a7d6e97e6b960d53e9bc27c","service":"iconic-crm","timestamp":"2026-08-13 12:43:27"}
+{"level":"info","message":"📋 Task \"Follow up client\" completed","service":"iconic-crm","timestamp":"2026-08-13 12:43:27"}
+{"level":"info","message":"📊 /stats requested","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: canViewAll = true","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: filter = {}","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: counting orders...","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: totalOrders = 5","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: calculating revenue...","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: totalRevenue = 2459.78","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: getting unique retailers...","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: retailerCount = 1","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: counting active services...","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: activeServices = 1","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: getting recent orders...","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: recentOrders count = 5","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: aggregating sales by day...","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: salesByDay count = 1","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: aggregating status distribution...","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: statusDistribution count = 1","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: counting previous week orders...","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: prevWeekOrders = 0","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: aggregating previous week revenue...","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: prevWeekRevenue = 0","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: getting previous week retailers...","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: prevWeekRetailers count = 0","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: counting previous week services...","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: prevWeekServices = 0","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📊 /stats: sending response","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"✅ Order Created: ORD000006","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"   Retailer: Direct","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"   Items: 1","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"   Total: ₹236.00 (incl. 18% GST)","service":"iconic-crm","timestamp":"2026-08-13 12:43:30"}
+{"level":"info","message":"📧 Email (not sent - service not configured):","service":"iconic-crm","timestamp":"2026-08-13 12:43:31"}
+{"level":"info","message":"   To: test-service@example.com","service":"iconic-crm","timestamp":"2026-08-13 12:43:31"}
+{"level":"info","message":"   Subject: New Service Request - SR000002","service":"iconic-crm","timestamp":"2026-08-13 12:43:31"}
+{"level":"warn","message":"⚠️ Service request email not sent: Email service not configured","service":"iconic-crm","timestamp":"2026-08-13 12:43:31"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 19:45:06"}
+{"level":"info","message":"URI resolved to: mongodb://127.0.0.1:51958/","service":"iconic-crm","timestamp":"2026-08-13 19:45:06"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 19:45:07"}
+{"level":"info","message":"\n🚀 Server running on port 7001","service":"iconic-crm","timestamp":"2026-08-13 19:45:09"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7001","service":"iconic-crm","timestamp":"2026-08-13 19:45:09"}
+{"level":"info","message":"🔐 Login page: http://localhost:7001/login.html","service":"iconic-crm","timestamp":"2026-08-13 19:45:09"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications","service":"iconic-crm","timestamp":"2026-08-13 19:45:09"}
+{"level":"info","message":"🔧 Development mode: localhost:7001\n","service":"iconic-crm","timestamp":"2026-08-13 19:45:09"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2026-08-13 19:45:09"}
+{"0":"t","1":"e","2":"s","3":"t","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2026-08-13 19:45:09"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 19:45:15"}
+{"level":"info","message":"⏰ SLA Timer created for service-request 507f1f77bcf86cd799439099 (response). Target: 2026-08-13T15:15:15.871Z","service":"iconic-crm","timestamp":"2026-08-13 19:45:15"}
+{"level":"info","message":"⏰ SLA Timer completed for service-request 507f1f77bcf86cd799439099 (response)","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"⏰ SLA Timer created for service-request 507f1f77bcf86cd799439098 (resolution). Target: 2026-08-13T18:15:16.073Z","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"warn","message":"🚨 Escalation recorded: service-request 507f1f77bcf86cd799439098 escalated to service-manager","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"🚨 Escalation 6a7dd174ff46380228a72548 resolved by admin@iconic-crm.com","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"📝 Approval request created for order ORD-999 by user 6a7dd174ff46380228a7254d","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"error","message":"Error approving request: Segregation of duties: Requesters cannot approve their own requests","service":"iconic-crm","stack":"Error: Segregation of duties: Requesters cannot approve their own requests\n    at Object.approveRequest (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\services\\approvalService.js:33:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\test-crm-audit-regression.js:220:9\n    at async waitForActual (node:assert:565:5)\n    at async ok.rejects (node:assert:686:25)\n    at async main (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\test-crm-audit-regression.js:218:5)","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"📝 Approval request 6a7dd174ff46380228a7254e approved by 6a7dd174ff46380228a72551","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"📋 Task \"Follow up client\" created for user 6a7dd174ff46380228a7254d","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"📋 Task \"Follow up client\" completed","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT-001, serial: *****_SNO, dealer: D-001","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"🔌 Validation result for serial *****_SNO: VALID (Latency: 4ms)","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT-001, serial: *******_SNO, dealer: D-001","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"🔌 Validation result for serial *******_SNO: INVALID_SERIAL (Latency: 1ms)","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT-001, serial: ********_SNO, dealer: D-001","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"🔌 Validation result for serial ********_SNO: MODEL_SERIAL_MISMATCH (Latency: 0ms)","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT-001, serial: *******_SNO, dealer: D-001","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"🔌 Validation result for serial *******_SNO: ALREADY_VALIDATED (Latency: 1ms)","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: INVALID_MAT, serial: *******_MAT, dealer: D-001","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"🔌 Validation result for serial *******_MAT: INVALID_MATERIAL_CODE (Latency: 0ms)","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT-001, serial: ***************_SNO, dealer: D-001","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"🔌 Validation result for serial ***************_SNO: DEALER_MISMATCH (Latency: 0ms)","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT-001, serial: *******_SNO, dealer: D-001","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"🔌 Validation result for serial *******_SNO: UNKNOWN_RESPONSE (Latency: 1ms)","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT-001, serial: *******_SNO, dealer: D-001","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"error","message":"🔌 Validation service error for serial *******_SNO: connect ETIMEDOUT","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT-001, serial: *********_SNO, dealer: D-001","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"error","message":"🔌 Validation service error for serial *********_SNO: Malformed or empty JSON response from validation partner","service":"iconic-crm","timestamp":"2026-08-13 19:45:16"}
+{"level":"info","message":"📊 /stats requested","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: canViewAll = true","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: filter = {}","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: counting orders...","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: totalOrders = 5","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: calculating revenue...","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: totalRevenue = 2459.78","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: getting unique retailers...","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: retailerCount = 1","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: counting active services...","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: activeServices = 1","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: getting recent orders...","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: recentOrders count = 5","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: aggregating sales by day...","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: salesByDay count = 1","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: aggregating status distribution...","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: statusDistribution count = 1","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: counting previous week orders...","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: prevWeekOrders = 0","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: aggregating previous week revenue...","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: prevWeekRevenue = 0","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: getting previous week retailers...","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: prevWeekRetailers count = 0","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: counting previous week services...","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: prevWeekServices = 0","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"📊 /stats: sending response","service":"iconic-crm","timestamp":"2026-08-13 19:45:19"}
+{"level":"info","message":"✅ Order Created: ORD000006","service":"iconic-crm","timestamp":"2026-08-13 19:45:20"}
+{"level":"info","message":"   Retailer: Direct","service":"iconic-crm","timestamp":"2026-08-13 19:45:20"}
+{"level":"info","message":"   Items: 1","service":"iconic-crm","timestamp":"2026-08-13 19:45:20"}
+{"level":"info","message":"   Total: ₹236.00 (incl. 18% GST)","service":"iconic-crm","timestamp":"2026-08-13 19:45:20"}
+{"level":"info","message":"📧 Email (not sent - service not configured):","service":"iconic-crm","timestamp":"2026-08-13 19:45:21"}
+{"level":"info","message":"   To: test-service@example.com","service":"iconic-crm","timestamp":"2026-08-13 19:45:21"}
+{"level":"info","message":"   Subject: New Service Request - SR000002","service":"iconic-crm","timestamp":"2026-08-13 19:45:21"}
+{"level":"warn","message":"⚠️ Service request email not sent: Email service not configured","service":"iconic-crm","timestamp":"2026-08-13 19:45:21"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 19:50:20"}
+{"level":"info","message":"URI resolved to: mongodb://127.0.0.1:60794/","service":"iconic-crm","timestamp":"2026-08-13 19:50:20"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 19:50:20"}
+{"level":"info","message":"\n🚀 Server running on port 7001","service":"iconic-crm","timestamp":"2026-08-13 19:50:20"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7001","service":"iconic-crm","timestamp":"2026-08-13 19:50:20"}
+{"level":"info","message":"🔐 Login page: http://localhost:7001/login.html","service":"iconic-crm","timestamp":"2026-08-13 19:50:20"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications","service":"iconic-crm","timestamp":"2026-08-13 19:50:20"}
+{"level":"info","message":"🔧 Development mode: localhost:7001\n","service":"iconic-crm","timestamp":"2026-08-13 19:50:20"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2026-08-13 19:50:20"}
+{"0":"t","1":"e","2":"s","3":"t","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2026-08-13 19:50:20"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"⏰ SLA Timer created for service-request 507f1f77bcf86cd799439099 (response). Target: 2026-08-13T15:20:24.575Z","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"⏰ SLA Timer completed for service-request 507f1f77bcf86cd799439099 (response)","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"⏰ SLA Timer created for service-request 507f1f77bcf86cd799439098 (resolution). Target: 2026-08-13T18:20:24.629Z","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"warn","message":"🚨 Escalation recorded: service-request 507f1f77bcf86cd799439098 escalated to service-manager","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"🚨 Escalation 6a7dd2a8182a35ca380b47ed resolved by admin@iconic-crm.com","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"📝 Approval request created for order ORD-999 by user 6a7dd2a8182a35ca380b47f2","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"error","message":"Error approving request: Segregation of duties: Requesters cannot approve their own requests","service":"iconic-crm","stack":"Error: Segregation of duties: Requesters cannot approve their own requests\n    at Object.approveRequest (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\services\\approvalService.js:33:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\test-crm-audit-regression.js:220:9\n    at async waitForActual (node:assert:565:5)\n    at async ok.rejects (node:assert:686:25)\n    at async main (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\test-crm-audit-regression.js:218:5)","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"📝 Approval request 6a7dd2a8182a35ca380b47f3 approved by 6a7dd2a8182a35ca380b47f6","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"📋 Task \"Follow up client\" created for user 6a7dd2a8182a35ca380b47f2","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"📋 Task \"Follow up client\" completed","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT-001, serial: *****_SNO, dealer: D-001","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"🔌 Validation result for serial *****_SNO: VALID (Latency: 0ms)","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT-001, serial: *******_SNO, dealer: D-001","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"🔌 Validation result for serial *******_SNO: INVALID_SERIAL (Latency: 0ms)","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT-001, serial: ********_SNO, dealer: D-001","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"🔌 Validation result for serial ********_SNO: MODEL_SERIAL_MISMATCH (Latency: 0ms)","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT-001, serial: *******_SNO, dealer: D-001","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"🔌 Validation result for serial *******_SNO: ALREADY_VALIDATED (Latency: 0ms)","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: INVALID_MAT, serial: *******_MAT, dealer: D-001","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"🔌 Validation result for serial *******_MAT: INVALID_MATERIAL_CODE (Latency: 0ms)","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT-001, serial: ***************_SNO, dealer: D-001","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"🔌 Validation result for serial ***************_SNO: DEALER_MISMATCH (Latency: 0ms)","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT-001, serial: *******_SNO, dealer: D-001","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"🔌 Validation result for serial *******_SNO: UNKNOWN_RESPONSE (Latency: 0ms)","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT-001, serial: *******_SNO, dealer: D-001","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"error","message":"🔌 Validation service error for serial *******_SNO: connect ETIMEDOUT","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT-001, serial: *********_SNO, dealer: D-001","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"error","message":"🔌 Validation service error for serial *********_SNO: Malformed or empty JSON response from validation partner","service":"iconic-crm","timestamp":"2026-08-13 19:50:24"}
+{"level":"info","message":"📊 /stats requested","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: canViewAll = true","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: filter = {}","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: counting orders...","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: totalOrders = 5","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: calculating revenue...","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: totalRevenue = 2459.78","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: getting unique retailers...","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: retailerCount = 1","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: counting active services...","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: activeServices = 1","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: getting recent orders...","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: recentOrders count = 5","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: aggregating sales by day...","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: salesByDay count = 1","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: aggregating status distribution...","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: statusDistribution count = 1","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: counting previous week orders...","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: prevWeekOrders = 0","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: aggregating previous week revenue...","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: prevWeekRevenue = 0","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: getting previous week retailers...","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: prevWeekRetailers count = 0","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: counting previous week services...","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: prevWeekServices = 0","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📊 /stats: sending response","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"✅ Order Created: ORD000006","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"   Retailer: Direct","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"   Items: 1","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"   Total: ₹236.00 (incl. 18% GST)","service":"iconic-crm","timestamp":"2026-08-13 19:50:27"}
+{"level":"info","message":"📧 Email (not sent - service not configured):","service":"iconic-crm","timestamp":"2026-08-13 19:50:28"}
+{"level":"info","message":"   To: test-service@example.com","service":"iconic-crm","timestamp":"2026-08-13 19:50:28"}
+{"level":"info","message":"   Subject: New Service Request - SR000002","service":"iconic-crm","timestamp":"2026-08-13 19:50:28"}
+{"level":"warn","message":"⚠️ Service request email not sent: Email service not configured","service":"iconic-crm","timestamp":"2026-08-13 19:50:28"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 19:54:13"}
+{"level":"info","message":"URI resolved to: mongodb://127.0.0.1:63035/","service":"iconic-crm","timestamp":"2026-08-13 19:54:13"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 19:54:14"}
+{"level":"info","message":"\n🚀 Server running on port 7001","service":"iconic-crm","timestamp":"2026-08-13 19:54:14"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7001","service":"iconic-crm","timestamp":"2026-08-13 19:54:14"}
+{"level":"info","message":"🔐 Login page: http://localhost:7001/login.html","service":"iconic-crm","timestamp":"2026-08-13 19:54:14"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications","service":"iconic-crm","timestamp":"2026-08-13 19:54:14"}
+{"level":"info","message":"🔧 Development mode: localhost:7001\n","service":"iconic-crm","timestamp":"2026-08-13 19:54:14"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2026-08-13 19:54:14"}
+{"0":"t","1":"e","2":"s","3":"t","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2026-08-13 19:54:14"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 20:15:30"}
+{"level":"info","message":"URI resolved to: mongodb://127.0.0.1:58460/","service":"iconic-crm","timestamp":"2026-08-13 20:15:30"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 20:15:33"}
+{"level":"info","message":"\n🚀 Server running on port 7000","service":"iconic-crm","timestamp":"2026-08-13 20:15:42"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7000","service":"iconic-crm","timestamp":"2026-08-13 20:15:42"}
+{"level":"info","message":"🔐 Login page: http://localhost:7000/login.html","service":"iconic-crm","timestamp":"2026-08-13 20:15:42"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications","service":"iconic-crm","timestamp":"2026-08-13 20:15:42"}
+{"level":"info","message":"🔧 Development mode: localhost:7000\n","service":"iconic-crm","timestamp":"2026-08-13 20:15:42"}
+{"0":"S","1":"e","10":"e","11":"c","12":"t","13":"i","14":"o","15":"n","16":" ","17":"t","18":"i","19":"m","2":"r","20":"e","21":"d","22":" ","23":"o","24":"u","25":"t","26":" ","27":"a","28":"f","29":"t","3":"v","30":"e","31":"r","32":" ","33":"5","34":"0","35":"0","36":"0","37":" ","38":"m","39":"s","4":"e","5":"r","6":" ","7":"s","8":"e","9":"l","level":"error","message":"❌ MongoDB connection error:","service":"iconic-crm","timestamp":"2026-08-13 20:15:42"}
+{"level":"error","message":"💡 Make sure MongoDB is running: docker-compose up -d mongodb","service":"iconic-crm","timestamp":"2026-08-13 20:15:42"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 20:15:55"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 20:16:43"}
+{"level":"info","message":"URI resolved to: mongodb://127.0.0.1:62746/","service":"iconic-crm","timestamp":"2026-08-13 20:16:43"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 20:16:43"}
+{"level":"info","message":"\n🚀 Server running on port 7000","service":"iconic-crm","timestamp":"2026-08-13 20:16:43"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7000","service":"iconic-crm","timestamp":"2026-08-13 20:16:43"}
+{"level":"info","message":"🔐 Login page: http://localhost:7000/login.html","service":"iconic-crm","timestamp":"2026-08-13 20:16:43"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications","service":"iconic-crm","timestamp":"2026-08-13 20:16:43"}
+{"level":"info","message":"🔧 Development mode: localhost:7000\n","service":"iconic-crm","timestamp":"2026-08-13 20:16:43"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2026-08-13 20:16:43"}
+{"0":"t","1":"e","2":"s","3":"t","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2026-08-13 20:16:43"}
+{"level":"info","message":"📊 /stats requested","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: canViewAll = true","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: filter = {}","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: counting orders...","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: totalOrders = 5","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: calculating revenue...","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: totalRevenue = 2459.78","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: getting unique retailers...","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: retailerCount = 1","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: counting active services...","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: activeServices = 0","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: getting recent orders...","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: recentOrders count = 5","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: aggregating sales by day...","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: salesByDay count = 1","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: aggregating status distribution...","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: statusDistribution count = 1","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: counting previous week orders...","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: prevWeekOrders = 0","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: aggregating previous week revenue...","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: prevWeekRevenue = 0","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: getting previous week retailers...","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: prevWeekRetailers count = 0","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: counting previous week services...","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: prevWeekServices = 0","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"📊 /stats: sending response","service":"iconic-crm","timestamp":"2026-08-13 20:19:08"}
+{"level":"info","message":"✅ Order Created: ORD000006","service":"iconic-crm","timestamp":"2026-08-13 20:19:09"}
+{"level":"info","message":"   Retailer: Direct","service":"iconic-crm","timestamp":"2026-08-13 20:19:09"}
+{"level":"info","message":"   Items: 1","service":"iconic-crm","timestamp":"2026-08-13 20:19:09"}
+{"level":"info","message":"   Total: ₹236.00 (incl. 18% GST)","service":"iconic-crm","timestamp":"2026-08-13 20:19:09"}
+{"level":"info","message":"📧 Email (not sent - service not configured):","service":"iconic-crm","timestamp":"2026-08-13 20:19:10"}
+{"level":"info","message":"   To: test-service@example.com","service":"iconic-crm","timestamp":"2026-08-13 20:19:10"}
+{"level":"info","message":"   Subject: New Service Request - SR000001","service":"iconic-crm","timestamp":"2026-08-13 20:19:10"}
+{"level":"warn","message":"⚠️ Service request email not sent: Email service not configured","service":"iconic-crm","timestamp":"2026-08-13 20:19:10"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT123, serial: *****9888, dealer: DLR999","service":"iconic-crm","timestamp":"2026-08-13 20:33:11"}
+{"level":"info","message":"🔌 Validation result for serial *****9888: VALID (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-13 20:33:11"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT123, serial: *****9888, dealer: DLR999","service":"iconic-crm","timestamp":"2026-08-13 20:33:11"}
+{"level":"info","message":"🔌 Validation result for serial *****9888: INVALID_SERIAL (Latency: 0ms)","service":"iconic-crm","timestamp":"2026-08-13 20:33:11"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT123, serial: *****9888, dealer: DLR999","service":"iconic-crm","timestamp":"2026-08-13 20:33:11"}
+{"level":"info","message":"🔌 Validation result for serial *****9888: MODEL_SERIAL_MISMATCH (Latency: 0ms)","service":"iconic-crm","timestamp":"2026-08-13 20:33:11"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT123, serial: *****9888, dealer: DLR999","service":"iconic-crm","timestamp":"2026-08-13 20:33:11"}
+{"level":"info","message":"🔌 Validation result for serial *****9888: ALREADY_VALIDATED (Latency: 0ms)","service":"iconic-crm","timestamp":"2026-08-13 20:33:11"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT123, serial: *****9888, dealer: DLR999","service":"iconic-crm","timestamp":"2026-08-13 20:33:11"}
+{"level":"info","message":"🔌 Validation result for serial *****9888: INVALID_MATERIAL_CODE (Latency: 0ms)","service":"iconic-crm","timestamp":"2026-08-13 20:33:11"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: MAT123, serial: *****9888, dealer: DLR999","service":"iconic-crm","timestamp":"2026-08-13 20:33:11"}
+{"level":"info","message":"🔌 Validation result for serial *****9888: DEALER_MISMATCH (Latency: 0ms)","service":"iconic-crm","timestamp":"2026-08-13 20:33:11"}
+{"level":"info","message":"📊 /stats requested","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: canViewAll = true","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: filter = {}","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: counting orders...","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: totalOrders = 6","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: calculating revenue...","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: totalRevenue = 2695.78","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: getting unique retailers...","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: retailerCount = 1","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: counting active services...","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: activeServices = 1","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: getting recent orders...","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: recentOrders count = 6","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: aggregating sales by day...","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: salesByDay count = 1","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: aggregating status distribution...","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: statusDistribution count = 1","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: counting previous week orders...","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: prevWeekOrders = 0","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: aggregating previous week revenue...","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: prevWeekRevenue = 0","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: getting previous week retailers...","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: prevWeekRetailers count = 0","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: counting previous week services...","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: prevWeekServices = 0","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"📊 /stats: sending response","service":"iconic-crm","timestamp":"2026-08-13 20:48:14"}
+{"level":"info","message":"🔌 Outbound request: Serial validation for material: dsf, serial: ******5345, dealer: sdfvdf","service":"iconic-crm","timestamp":"2026-08-13 20:54:51"}
+{"level":"info","message":"🔌 Validation result for serial ******5345: UNKNOWN_RESPONSE (Latency: 178ms)","service":"iconic-crm","timestamp":"2026-08-13 20:54:51"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 21:03:58"}
+{"level":"info","message":"URI resolved to: mongodb://127.0.0.1:52033/","service":"iconic-crm","timestamp":"2026-08-13 21:03:58"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 21:04:00"}
+{"0":"S","1":"e","10":"e","11":"c","12":"t","13":"i","14":"o","15":"n","16":" ","17":"t","18":"i","19":"m","2":"r","20":"e","21":"d","22":" ","23":"o","24":"u","25":"t","26":" ","27":"a","28":"f","29":"t","3":"v","30":"e","31":"r","32":" ","33":"5","34":"0","35":"0","36":"0","37":" ","38":"m","39":"s","4":"e","5":"r","6":" ","7":"s","8":"e","9":"l","level":"error","message":"❌ MongoDB connection error:","service":"iconic-crm","timestamp":"2026-08-13 21:04:06"}
+{"level":"error","message":"💡 Make sure MongoDB is running: docker-compose up -d mongodb","service":"iconic-crm","timestamp":"2026-08-13 21:04:06"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 21:04:59"}
+{"level":"info","message":"URI resolved to: mongodb://127.0.0.1:55528/","service":"iconic-crm","timestamp":"2026-08-13 21:04:59"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-13 21:04:59"}
+{"level":"info","message":"\n🚀 Server running on port 7000","service":"iconic-crm","timestamp":"2026-08-13 21:05:00"}
+{"level":"info","message":"📱 Access the CRM at: http://localhost:7000","service":"iconic-crm","timestamp":"2026-08-13 21:05:00"}
+{"level":"info","message":"🔐 Login page: http://localhost:7000/login.html","service":"iconic-crm","timestamp":"2026-08-13 21:05:00"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications","service":"iconic-crm","timestamp":"2026-08-13 21:05:00"}
+{"level":"info","message":"🔧 Development mode: localhost:7000\n","service":"iconic-crm","timestamp":"2026-08-13 21:05:00"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2026-08-13 21:05:00"}
+{"0":"t","1":"e","2":"s","3":"t","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2026-08-13 21:05:00"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 21:05:37"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-13 21:05:46"}

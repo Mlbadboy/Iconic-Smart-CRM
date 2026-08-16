@@ -83,4 +83,8 @@ serviceRequestSchema.pre('save', async function(next) {
     next();
 });
 
+serviceRequestSchema.index({ status: 1 });
+serviceRequestSchema.index({ assignedTo: 1 });
+serviceRequestSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model('ServiceRequest', serviceRequestSchema);

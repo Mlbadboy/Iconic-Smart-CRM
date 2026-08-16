@@ -348,7 +348,12 @@ async function seedOrders(users) {
     }
   ];
 
-  const createdOrders = await Order.insertMany(orders);
+  const createdOrders = [];
+  for (const orderData of orders) {
+    const o = new Order(orderData);
+    await o.save();
+    createdOrders.push(o);
+  }
   log.success(`Created ${createdOrders.length} orders`);
   return createdOrders;
 }
@@ -539,5 +544,33 @@ async function seedDatabase() {
   }
 }
 
-// Run seeding
-seedDatabase();
+// Auto-seed helper when running inside active server connection
+async function autoSeedIfEmpty() {
+  try {
+    const User = require('./models/User');
+    const userCount = await User.countDocuments();
+    if (userCount === 0) {
+      console.log('🌱 Database is empty. Seeding initial admin users and data...');
+      const users = await seedUsers();
+      await seedContacts();
+      await seedLeads();
+      await seedOpportunities();
+      const orders = await seedOrders(users);
+      await seedServices(users, orders);
+      await seedDeliveries(orders);
+      await seedMarketingAssets();
+      console.log('✨ Auto-seeding completed successfully!');
+    }
+  } catch (error) {
+    console.error('⚠️ Auto-seed failed:', error.message);
+  }
+}
+
+// Run seeding if run directly
+if (require.main === module) {
+  seedDatabase();
+}
+
+module.exports = seedDatabase;
+module.exports.autoSeedIfEmpty = autoSeedIfEmpty;
+

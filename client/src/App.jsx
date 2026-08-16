@@ -6,6 +6,9 @@ import Orders from './pages/Orders';
 import ServiceRequests from './pages/ServiceRequests';
 import Products from './pages/Products';
 import Users from './pages/Users';
+import Customer360 from './pages/Customer360';
+import ManagerDashboard from './pages/ManagerDashboard';
+import SerialValidation from './pages/SerialValidation';
 
 // Create React Query client
 const queryClient = new QueryClient({
@@ -71,6 +74,46 @@ function App() {
             element={
               <ProtectedRoute>
                 <Users />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/customers/:id"
+            element={
+              <ProtectedRoute>
+                <Customer360 />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/slas"
+            element={
+              <ProtectedRoute>
+                <ManagerDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/approvals"
+            element={
+              <ProtectedRoute>
+                <ManagerDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tasks"
+            element={
+              <ProtectedRoute>
+                <ManagerDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/serial-validation"
+            element={
+              <ProtectedRoute>
+                <SerialValidation />
               </ProtectedRoute>
             }
           />

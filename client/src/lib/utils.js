@@ -54,7 +54,7 @@ export function getUser() {
 
 // Get token from localStorage
 export function getToken() {
-  return localStorage.getItem('token');
+  return localStorage.getItem('authToken');
 }
 
 // Check if user is admin
@@ -70,7 +70,7 @@ export function isAuthenticated() {
 
 // Logout user
 export function logout() {
-  localStorage.removeItem('token');
+  localStorage.removeItem('authToken');
   localStorage.removeItem('user');
   window.location.href = '/login';
 }

@@ -466,6 +466,12 @@
                         <div class="action-title">Reports</div>
                         <div class="action-description">Download CRM reports in Excel/CSV format</div>
                     </a>
+
+                    <a href="#" class="action-card" onclick="goToSerialValidation(); return false;" role="listitem" tabindex="0">
+                        <div class="action-icon" aria-hidden="true">🔌</div>
+                        <div class="action-title">Serial Validation</div>
+                        <div class="action-description">Verify product serial numbers and material codes</div>
+                    </a>
                 </div>
             </section>
 
@@ -814,6 +820,10 @@
 
         function goToMarketing() {
             window.location.href = '/marketing.html';
+        }
+
+        function goToSerialValidation() {
+            window.location.href = '/serial-validation.html';
         }
 
         // Reports Functions
