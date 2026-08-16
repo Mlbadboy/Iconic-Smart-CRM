@@ -44,6 +44,14 @@ const serialRegistrySchema = new mongoose.Schema({
   },
   ownershipHistory: [{
     dealerCode: String,
+    customerId: String,
+    customerName: String,
+    source: {
+      type: String,
+      enum: ['CSV_IMPORT', 'MANUAL_EDIT', 'API_SYNC', 'DEALER_TRANSFER'],
+      default: 'CSV_IMPORT'
+    },
+    importSessionId: String,
     assignedAt: { type: Date, default: Date.now },
     changedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     reason: String

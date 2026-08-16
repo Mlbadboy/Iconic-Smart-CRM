@@ -95,6 +95,14 @@ async function validateSerialNumber(req, { materialCode, serialNumber, dealerCod
       responseStatus = '-5';
       responseMessage = 'Serial number is not registered to this dealer';
       matched = mapStatusToResult('-5');
+    } else if (record.activationStatus && record.activationStatus !== 'ACTIVE') {
+      responseStatus = '2';
+      responseMessage = `Serial number activation status is ${record.activationStatus.toLowerCase()}`;
+      matched = { verified: false, canProceed: false, resultCode: 'EXPIRED', message: responseMessage };
+    } else if (record.registrationStatus === 'DEACTIVATED') {
+      responseStatus = '2';
+      responseMessage = 'Serial number is deactivated in master registry';
+      matched = { verified: false, canProceed: false, resultCode: 'EXPIRED', message: responseMessage };
     } else if (record.status === 'VALIDATED') {
       responseStatus = '-3';
       responseMessage = 'Serial Number Already Validated';

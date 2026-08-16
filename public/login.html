@@ -382,14 +382,7 @@
             window.open('/WORKFLOW_GUIDE.md', '_blank');
         }
 
-        // Auto-fill demo credentials (for easier testing)
-        document.addEventListener('keydown', (e) => {
-            if (e.altKey && e.key === 'a') {
-                document.getElementById('email').value = 'admin@iconic-crm.com';
-                document.getElementById('password').value = 'admin123';
-                showSuccess('Demo admin credentials filled! Press Enter to login.');
-            }
-        });
+
 
         // Check if already logged in
         window.addEventListener('DOMContentLoaded', () => {

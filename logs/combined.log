@@ -594,3 +594,5 @@
 {"level":"info","message":"🔌 Validation result for serial *****1740: ALREADY_VALIDATED (Latency: 3ms)","service":"iconic-crm","timestamp":"2026-08-16 13:52:37"}
 {"level":"info","message":"🔌 Local Registry Validation: materialCode: MAT-569553, serialNumber: ***************-999, dealerCode: DLR-548968","service":"iconic-crm","timestamp":"2026-08-16 13:52:37"}
 {"level":"info","message":"🔌 Validation result for serial ***************-999: INVALID_SERIAL (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-16 13:52:37"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-16 16:39:02"}
+{"level":"info","message":"🔌 Attempting MongoDB connection...","service":"iconic-crm","timestamp":"2026-08-16 16:40:47"}

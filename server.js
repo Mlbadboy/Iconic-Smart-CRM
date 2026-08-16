@@ -204,6 +204,7 @@ app.use('/api/approvals', require('./routes/approvals'));
 app.use('/api/tasks', require('./routes/tasks'));
 app.use('/api/serial-validation', require('./routes/serialValidation'));
 app.use('/api/v1/serial-validation', require('./routes/externalSerialValidation'));
+app.use('/api/v1/serial-registry', require('./routes/serialRegistry'));
 
 // Health check endpoint for Railway
 app.get('/api/health', (req, res) => {

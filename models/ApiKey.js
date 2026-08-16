@@ -14,6 +14,20 @@ const apiKeySchema = new mongoose.Schema({
   description: { 
     type: String 
   },
+  partnerName: {
+    type: String,
+    trim: true
+  },
+  partnerType: {
+    type: String,
+    enum: ['ERP', 'DEALER_APP', 'MOBILE', 'INTEGRATOR', 'INTERNAL'],
+    default: 'INTEGRATOR'
+  },
+  contactEmail: {
+    type: String,
+    trim: true,
+    lowercase: true
+  },
   userId: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'User', 
