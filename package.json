@@ -9,7 +9,7 @@
     "test-login": "node test-login-only.js",
     "test-server": "node test-server.js",
     "client": "cd client && npm start",
-    "build": "echo 'Prebuilt client assets ready'",
+    "build": "node -e \"console.log('build ready')\"",
     "install-client": "cd client && npm install",
     "heroku-postbuild": "npm run install-client && npm run build",
     "test:audit": "node test-crm-audit-regression.js"
