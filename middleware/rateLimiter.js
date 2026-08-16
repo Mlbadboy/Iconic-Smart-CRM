@@ -12,6 +12,7 @@ const standardLimiter = rateLimit({
     message: 'Please try again after 15 minutes',
     retryAfter: '15 minutes'
   },
+  validate: { xForwardedForHeader: false },
   standardHeaders: true, // Return rate limit info in `RateLimit-*` headers
   legacyHeaders: false, // Disable `X-RateLimit-*` headers
   
@@ -43,6 +44,7 @@ const adminLimiter = rateLimit({
     message: 'Even admins have limits! Please try again after 15 minutes',
     retryAfter: '15 minutes'
   },
+  validate: { xForwardedForHeader: false },
   standardHeaders: true,
   legacyHeaders: false,
   
@@ -73,6 +75,7 @@ const authLimiter = rateLimit({
     message: 'Please try again after 15 minutes',
     retryAfter: '15 minutes'
   },
+  validate: { xForwardedForHeader: false },
   standardHeaders: true,
   legacyHeaders: false,
   
