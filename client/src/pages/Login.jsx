@@ -6,8 +6,8 @@ import api from '../lib/api';
 export default function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: 'admin@iconic-crm.com',
-    password: 'admin123'
+    email: '',
+    password: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -74,7 +74,7 @@ export default function Login() {
               value={formData.email}
               onChange={handleChange}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-              placeholder="admin@iconic-crm.com"
+              placeholder="Enter your email"
             />
           </div>
 
@@ -112,15 +112,6 @@ export default function Login() {
             )}
           </button>
         </form>
-
-        {/* Demo Credentials Info */}
-        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-blue-800 font-medium mb-2">Demo Credentials:</p>
-          <p className="text-xs text-blue-700">
-            <strong>Admin:</strong> admin@iconic-crm.com / admin123<br />
-            <strong>Manager:</strong> manager@iconic-crm.com / manager123
-          </p>
-        </div>
 
         {/* Footer */}
         <p className="mt-8 text-center text-sm text-gray-600">
