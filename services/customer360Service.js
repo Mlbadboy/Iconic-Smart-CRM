@@ -8,6 +8,7 @@ const Delivery = require('../models/Delivery');
 const ServiceRequest = require('../models/ServiceRequest');
 const Service = require('../models/Service');
 const MarketingAsset = require('../models/MarketingAsset');
+const SerialRegistry = require('../models/SerialRegistry');
 
 function escapeRegex(value = '') {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -51,6 +52,13 @@ async function getCustomer360(customerId, { includeFinance = false, limit = 10 }
     failedPayments: orders.filter(order => order.paymentStatus === 'failed').length
   } : undefined;
 
+  const serialRegistrations = await SerialRegistry.find({
+    $or: [
+      { customer: profile.retailerName },
+      { dealerCode: profile.dealerCode || profile.code || '' }
+    ]
+  }).limit(limit).lean();
+
   return {
     profile,
     contacts,
@@ -59,7 +67,11 @@ async function getCustomer360(customerId, { includeFinance = false, limit = 10 }
     orders,
     deliveries,
     products: orders.flatMap(order => order.items || []).slice(0, limit),
-    warranty: { registrations: [], claims: [], note: 'Warranty domain model is not yet implemented.' },
+    warranty: {
+      registrations: serialRegistrations,
+      claims: [],
+      totalRegistered: serialRegistrations.length
+    },
     serviceCases: [...serviceRequests, ...services].slice(0, limit),
     complaints: serviceRequests.filter(request => /complaint|issue|repair/i.test(`${request.issueType || ''} ${request.description || ''}`)).slice(0, limit),
     marketingEngagement,
