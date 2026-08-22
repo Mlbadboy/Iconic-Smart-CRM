@@ -31,41 +31,7 @@ const socketIOOrigins = [
 
 const io = new Server(server, {
   cors: {
-    origin: function(origin, callback) {
-      // Allow requests with no origin (mobile apps, etc.)
-      if (!origin) return callback(null, true);
-      
-      if (socketIOOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      try {
-        const url = new URL(origin);
-        const host = url.hostname.toLowerCase();
-        if (
-          host.endsWith('.charlieai.in') || 
-          host === 'charlieai.in' ||
-          host.endsWith('.charlieai.com') || 
-          host === 'charlieai.com' ||
-          host.endsWith('.railway.app') || 
-          host.endsWith('.up.railway.app') ||
-          host.endsWith('.charliescrm.com') || 
-          host.endsWith('.localhost') || 
-          host === 'localhost' || 
-          host === '127.0.0.1'
-        ) {
-          return callback(null, true);
-        }
-      } catch (e) {}
-
-      logger.warn('⚠️ Socket.IO CORS blocked origin:', origin);
-      // In production, block unauthorized origins
-      if (process.env.NODE_ENV === 'production') {
-        callback(new Error('Not allowed by Socket.IO CORS'));
-      } else {
-        callback(null, true); // Allow in development
-      }
-    },
+    origin: true,
     methods: ["GET", "POST"],
     credentials: true
   }
@@ -90,65 +56,9 @@ io.on('connection', (socket) => {
   });
 });
 
-// CORS Configuration for platform and tenant subdomains
-const envOrigins = (process.env.ALLOWED_ORIGINS || '')
-  .split(',')
-  .map(o => o.trim())
-  .filter(Boolean);
-
-const allowedOrigins = [
-  ...envOrigins,
-  'http://localhost:7000',
-  'http://localhost:3000',
-  'http://localhost:5173',
-  'https://www.charlieai.in',
-  'https://charlieai.in',
-  'https://crm.charlieai.in',
-  'https://app.charlieai.in',
-  'http://charlieai.in',
-  'http://www.charlieai.in',
-  'https://www.charlieai.com',
-  'https://charlieai.com',
-  'https://charlieaicrm.up.railway.app',
-  'https://iconicsmartcrm.up.railway.app'
-];
-
+// CORS Configuration - Permissive reflection with credentials for all custom domains & subdomains
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, Postman, server-to-server)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      return callback(null, true);
-    }
-
-    // Support *.charlieai.in, *.railway.app or *.localhost tenant subdomains
-    try {
-      const url = new URL(origin);
-      const host = url.hostname.toLowerCase();
-      if (
-        host.endsWith('.charlieai.in') || 
-        host === 'charlieai.in' ||
-        host.endsWith('.charlieai.com') || 
-        host === 'charlieai.com' ||
-        host.endsWith('.railway.app') || 
-        host.endsWith('.up.railway.app') ||
-        host.endsWith('.charliescrm.com') || 
-        host.endsWith('.localhost') || 
-        host === 'localhost' || 
-        host === '127.0.0.1'
-      ) {
-        return callback(null, true);
-      }
-    } catch (e) {}
-
-    logger.warn('⚠️ CORS blocked origin:', origin);
-    if (process.env.NODE_ENV === 'production') {
-      callback(new Error('Not allowed by CORS'));
-    } else {
-      callback(null, true); // Allow in development
-    }
-  },
+  origin: true,
   credentials: true
 }));
 
