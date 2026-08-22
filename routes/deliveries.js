@@ -4,8 +4,10 @@ const { auth } = require('../middleware/auth');
 const { requirePermission } = require('../middleware/rbac');
 const { recordAuditEvent } = require('../services/auditService');
 const { assertTransition } = require('../services/workflowService');
+const { requireFeature } = require('../middleware/featureGate');
 
 const router = express.Router();
+router.use(requireFeature('logistics'));
 
 router.post('/', auth, requirePermission('operations.edit'), async (req, res) => {
   try {

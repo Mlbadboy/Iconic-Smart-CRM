@@ -42,7 +42,7 @@ async function runTests() {
     // Login as admin
     console.log('\n1️⃣  Testing Admin Login...');
     const loginData = JSON.stringify({
-      email: 'admin@iconic-crm.com',
+      email: 'admin@charlieai.com',
       password: 'admin123'
     });
     const login = await request('/api/auth/login', 'POST', loginData);

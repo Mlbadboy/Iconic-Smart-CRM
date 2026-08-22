@@ -42,7 +42,7 @@ Confirmation popup shows:
 Create sales employee?
 
 Name: Shubham Kumar
-Email: shubham.kumar@iconicsmart.com
+Email: shubham.kumar@charlieai.com
 Password: sales123
 Role: Sales
 
@@ -80,7 +80,7 @@ node seedDummyEmployee.js
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 👤 Name: Shubham Kumar
-📧 Email: shubham@iconicsmart.com
+📧 Email: shubham@charlieai.com
 🔐 Password: shubham123
 📱 Phone: 9876543210
 👔 Role: Sales
@@ -100,7 +100,7 @@ node seedDummyEmployee.js
 **If already exists:**
 ```
 ⚠️  Employee "Shubham Kumar" already exists!
-📧 Email: shubham@iconicsmart.com
+📧 Email: shubham@charlieai.com
 🔐 Password: shubham123
 👤 Role: sales
 ```
@@ -114,7 +114,7 @@ node seedDummyEmployee.js
 1. Logout of admin account
 2. Go to: http://localhost:7000/login.html
 3. Enter credentials:
-   Email: shubham@iconicsmart.com
+   Email: shubham@charlieai.com
    Password: shubham123
 4. Login
 5. ✅ Opens dashboard (sales view)
@@ -136,7 +136,7 @@ node seedDummyEmployee.js
 ### **Created via Quick Add Button:**
 ```
 Name: [Your Input]
-Email: [auto-generated]@iconicsmart.com
+Email: [auto-generated]@charlieai.com
 Password: sales123 (default)
 Role: Sales
 Department: Sales
@@ -146,7 +146,7 @@ Status: Active
 ### **Created via Seed Script:**
 ```
 Name: Shubham Kumar
-Email: shubham@iconicsmart.com
+Email: shubham@charlieai.com
 Password: shubham123
 Phone: 9876543210
 Role: Sales
@@ -219,7 +219,7 @@ Click "Add User"
 
 ┌────────────────────────────────────────────┐
 │ Shubham Kumar                              │
-│ shubham@iconicsmart.com | 9876543210       │
+│ shubham@charlieai.com | 9876543210       │
 │ [Sales] [Sales Dept] [Active]             │
 │ Last Login: Never                          │
 │ [🗑️ Delete]                               │
@@ -250,7 +250,7 @@ Click to track!
 - Password: `sales123` (tell employee to change)
 
 ### **Via Seed Script:**
-- Email: `shubham@iconicsmart.com`
+- Email: `shubham@charlieai.com`
 - Password: `shubham123`
 
 ### **Security Note:**

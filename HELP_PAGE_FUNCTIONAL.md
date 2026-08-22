@@ -67,7 +67,7 @@ All FAQ items are expandable/collapsible:
 ## 📞 **Contact Support Section** ✅
 
 All contact options are displayed:
-- 📧 **Email**: support@iconic-crm.com
+- 📧 **Email**: support@charlieai.com
 - 💬 **Live Chat**: Available 9 AM - 5 PM EST
 - 📱 **Phone**: +1-555-0100
 - 🌐 **Documentation**: Complete guides

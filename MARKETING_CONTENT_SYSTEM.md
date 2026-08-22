@@ -519,7 +519,7 @@ const transporter = nodemailer.createTransport({
 
 async function notifyContentManager(request, manager) {
     await transporter.sendMail({
-        from: 'crm@iconic.com',
+        from: 'crm@charlieai.com',
         to: manager.email,
         subject: `New Content Request - ${request.requestId}`,
         html: `...`

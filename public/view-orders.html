@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Orders - Iconic Smart CRM</title>
+    <title>View Orders - Charlie's CRM</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -251,13 +251,14 @@
     <div id="toast" class="toast"></div>
 
     <script>
-        const API_URL = 'http://localhost:7000/api';
+        const API_URL = window.location.origin + '/api';
         const token = localStorage.getItem('authToken');
         let allOrders = [];
         
         if (!token) {
             window.location.href = '/login.html';
         }
+        if (typeof requirePageFeature === 'function') requirePageFeature('orders');
 
         function showToast(message) {
             const toast = document.getElementById('toast');
@@ -362,5 +363,8 @@
         // Load orders on page load
         loadOrders();
     </script>
+    <script src="/js/feature-guard.js"></script>
+    <script src="/js/tenant-branding.js"></script>
+    <script src="/js/tenant-notifications.js"></script>
 </body>
 </html>

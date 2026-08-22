@@ -9,7 +9,7 @@
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 👤 Name: Shubham Kumar
-📧 Email: shubham@iconicsmart.com
+📧 Email: shubham@charlieai.com
 🔐 Password: shubham123
 📱 Phone: 9876543210
 👔 Role: Sales
@@ -43,7 +43,7 @@ Admin Dashboard → "👥 Manage Users" → Top of page
 4. ✅ Employee created instantly!
 
 Auto-generates:
-- Email: name@iconicsmart.com
+- Email: name@charlieai.com
 - Password: sales123 (default)
 - Role: Sales
 - Department: Sales
@@ -56,7 +56,7 @@ Auto-generates:
 ### **Test 1: Login as Shubham**
 ```
 1. Go to: http://localhost:7000/login.html
-2. Email: shubham@iconicsmart.com
+2. Email: shubham@charlieai.com
 3. Password: shubham123
 4. Click Login
 5. ✅ Opens dashboard as sales employee
@@ -162,7 +162,7 @@ Auto-generates:
 - ✅ Complete documentation
 
 **Login Credentials:**
-- Email: shubham@iconicsmart.com
+- Email: shubham@charlieai.com
 - Password: shubham123
 - Role: Sales
 
@@ -174,10 +174,10 @@ Auto-generates:
 **Quick Add:**
 - Click button → Enter name → Instant employee!
 - Default password: sales123
-- Auto-email: name@iconicsmart.com
+- Auto-email: name@charlieai.com
 
 ---
 
 **🎉 Setup complete! You can now test Beat Tracker with Shubham Kumar or add more employees with Quick Add!**
 
-**Test login:** http://localhost:7000/login.html (shubham@iconicsmart.com / shubham123)
+**Test login:** http://localhost:7000/login.html (shubham@charlieai.com / shubham123)

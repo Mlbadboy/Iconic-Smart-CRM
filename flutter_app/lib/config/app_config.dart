@@ -1,5 +1,5 @@
 class AppConfig {
-  static const String appName = 'Iconic Smart CRM';
+  static const String appName = "Charlie's CRM";
   static const String appVersion = '1.0.0';
   static const int buildNumber = 1;
 

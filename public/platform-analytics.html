@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Analytics & Command Center — Charlie's CRM</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <style>
+        :root {
+            --bg-page: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --border: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background: #1e293b;
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #818cf8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #334155;
+            color: #ffffff;
+            transition: all 0.2s ease;
+        }
+        .btn:hover { background: #475569; }
+        .btn-primary { background: var(--primary); border-color: var(--primary); }
+        .btn-primary:hover { background: var(--primary-hover); }
+
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .kpi-card {
+            background: #1e293b;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.25rem;
+        }
+
+        .kpi-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .kpi-val {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        th {
+            background: #0f172a;
+            padding: 0.8rem 1rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+        td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        /* Progress Bar */
+        .progress-bar-bg {
+            background: #334155;
+            border-radius: 999px;
+            height: 8px;
+            width: 100%;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .progress-bar-fill {
+            background: var(--primary);
+            height: 100%;
+            border-radius: 999px;
+        }
+
+        /* Badges */
+        .tier-badge {
+            display: inline-flex;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .tier-HIGH { background: #065f46; color: #6ee7b7; }
+        .tier-MEDIUM { background: #78350f; color: #fde68a; }
+        .tier-LOW { background: #334155; color: #94a3b8; }
+
+        /* Modal */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-backdrop.show { display: flex; }
+        .modal-content {
+            background: #1e293b;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 600px;
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <a href="/super-admin.html" class="logo">
+                ⚡ Charlie's CRM <span style="font-size: 0.85rem; background: #334155; color: #c7d2fe; padding: 2px 8px; border-radius: 4px; font-weight: normal;">SaaS Platform</span>
+            </a>
+            <span style="color: var(--border);">|</span>
+            <span style="color: var(--text-muted); font-size: 0.95rem;">Platform Analytics</span>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <a href="/super-admin.html" class="btn">
+                🏢 Company Console
+            </a>
+            <button class="btn btn-primary" onclick="loadAllPlatformAnalytics()">
+                🔄 Refresh Analytics
+            </button>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Top-Level Platform KPIs -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-title">Total Tenants</div>
+                <div class="kpi-val" id="kpiCompanies">0</div>
+                <div style="font-size: 0.8rem; color: var(--success); margin-top: 4px;" id="kpiActiveCompanies">0 Active</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">Total Users</div>
+                <div class="kpi-val" id="kpiUsers">0</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;" id="kpiActiveUsers">0 Active</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">Total Product Units</div>
+                <div class="kpi-val" id="kpiUnits">0</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Registered Units</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">Total Transactions</div>
+                <div class="kpi-val" id="kpiTransactions">0</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Orders & Stock Moves</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">API Requests</div>
+                <div class="kpi-val" id="kpiApiRequests">0</div>
+                <div style="font-size: 0.8rem; color: #818cf8; margin-top: 4px;" id="kpiSerialValidations">0 Unique Serials</div>
+            </div>
+        </div>
+
+        <!-- Section 1: Feature Utilization / Adoption -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 style="font-size: 1.2rem; margin: 0;">📊 Feature Utilization & Adoption</h2>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">Platform-wide module engagement</span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature / Module</th>
+                        <th>Total Actions</th>
+                        <th>Active Companies</th>
+                        <th>Active Users</th>
+                        <th style="width: 250px;">% of Platform Usage</th>
+                    </tr>
+                </thead>
+                <tbody id="featuresTableBody">
+                    <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Loading feature analytics...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 2: Company Comparison & Adoption Matrix -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 style="font-size: 1.2rem; margin: 0;">🏢 Company Comparison & CRM Adoption Matrix</h2>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">Cross-tenant utilization oversight</span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Plan</th>
+                        <th>Users</th>
+                        <th>Orders</th>
+                        <th>Units</th>
+                        <th>API Calls</th>
+                        <th>Serial Checks</th>
+                        <th>Adoption Score</th>
+                        <th style="text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="companiesTableBody">
+                    <tr><td colspan="9" style="text-align: center; color: var(--text-muted);">Loading comparison matrix...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 3: Platform Health & Diagnostics -->
+        <div class="card">
+            <h2 style="font-size: 1.2rem; margin: 0 0 1rem 0;">🩺 Platform Health & Diagnostics</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <div style="background: #0f172a; padding: 1rem; border-radius: 8px;">
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">SYSTEM STATUS</div>
+                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--success);" id="healthStatus">OPERATIONAL</div>
+                </div>
+                <div style="background: #0f172a; padding: 1rem; border-radius: 8px;">
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">DATABASE</div>
+                    <div style="font-size: 1.2rem; font-weight: 700; color: #818cf8;" id="healthDb">CONNECTED</div>
+                </div>
+                <div style="background: #0f172a; padding: 1rem; border-radius: 8px;">
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">MEMORY USAGE</div>
+                    <div style="font-size: 1.2rem; font-weight: 700;" id="healthMemory">0 MB</div>
+                </div>
+                <div style="background: #0f172a; padding: 1rem; border-radius: 8px;">
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">UPTIME</div>
+                    <div style="font-size: 1.2rem; font-weight: 700;" id="healthUptime">0s</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Company Summary Drilldown Modal -->
+    <div id="companyModal" class="modal-backdrop">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 id="modalCompanyName" style="margin: 0;">Tenant Analytics</h3>
+                <button class="btn" onclick="closeModal()">✕</button>
+            </div>
+            <div id="modalDetails" style="display: flex; flex-direction: column; gap: 1rem;">
+                Loading...
+            </div>
+            <div style="margin-top: 1.5rem; text-align: right;">
+                <button class="btn btn-primary" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/platform-analytics.js"></script>
+</body>
+</html>

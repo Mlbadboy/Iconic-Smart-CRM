@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service Centers - Iconic Smart CRM</title>
+    <title>Service Centers - Charlie's CRM</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -139,7 +139,7 @@
 <body>
     <header class="header">
         <div class="header-content">
-            <div class="logo">🚀 Iconic Smart CRM</div>
+            <div class="logo">🚀 Charlie's CRM</div>
             <div class="nav">
                 <a href="/services.html" class="btn btn-secondary">← Back to Services</a>
                 <button class="btn btn-primary" onclick="logout()">Logout</button>
@@ -208,10 +208,11 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:7000/api';
+        const API_URL = window.location.origin + '/api';
         let authToken = localStorage.getItem('authToken');
 
         if (!authToken) window.location.href = '/login.html';
+        if (typeof requirePageFeature === 'function') requirePageFeature('service');
 
         function toggleForm() {
             const form = document.getElementById('addForm');
@@ -317,5 +318,8 @@
 
         window.addEventListener('DOMContentLoaded', loadServiceCenters);
     </script>
+    <script src="/js/feature-guard.js"></script>
+    <script src="/js/tenant-branding.js"></script>
+    <script src="/js/tenant-notifications.js"></script>
 </body>
 </html>

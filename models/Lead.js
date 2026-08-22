@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const leadSchema = new mongoose.Schema({
+  companyId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Company',
+    index: true
+  },
   leadId: { type: String, default: function() { return 'LEAD-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9); } },
   name: { type: String, required: true },
   email: { type: String, required: true },

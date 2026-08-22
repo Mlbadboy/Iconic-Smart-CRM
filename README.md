@@ -125,10 +125,10 @@ After running `npm run seed`, use these accounts:
 
 | Role | Email | Password | Access |
 |------|-------|----------|--------|
-| **Admin** | admin@iconic-crm.com | admin123 | Full access |
-| **Manager** | manager@iconic-crm.com | manager123 | Team management |
-| **Sales** | sales@iconic-crm.com | sales123 | Sales features |
-| **Support** | support@iconic-crm.com | support123 | Support tickets |
+| **Admin** | admin@charlieai.com | admin123 | Full access |
+| **Manager** | manager@charlieai.com | manager123 | Team management |
+| **Sales** | sales@charlieai.com | sales123 | Sales features |
+| **Support** | support@charlieai.com | support123 | Support tickets |
 | **Customer** | customer@example.com | demo123 | Customer view |
 
 ---
@@ -221,7 +221,7 @@ PUT    /api/services/:id      # Update service
 # Login
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@iconic-crm.com","password":"admin123"}'
+  -d '{"email":"admin@charlieai.com","password":"admin123"}'
 
 # Get orders (with token)
 curl http://localhost:5000/api/orders \

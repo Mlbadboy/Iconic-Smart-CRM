@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenant Control Center — Charlie's CRM</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <style>
+        :root {
+            --bg-page: #0f172a;
+            --bg-card: #1e293b;
+            --border: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background: #1e293b;
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #818cf8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2);
+        }
+
+        .btn {
+            padding: 0.5rem 0.9rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #334155;
+            color: #ffffff;
+            transition: all 0.2s ease;
+        }
+        .btn:hover { background: #475569; }
+        .btn-primary { background: var(--primary); border-color: var(--primary); }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-danger { background: #991b1b; border-color: #991b1b; color: #fee2e2; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-success { background: #065f46; border-color: #065f46; color: #d1fae5; }
+        .btn-success:hover { background: #059669; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        th {
+            background: #0f172a;
+            padding: 0.8rem 1rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+        td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        /* Status & Badges */
+        .status-badge {
+            display: inline-flex;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .status-ACTIVE { background: #065f46; color: #6ee7b7; }
+        .status-SUSPENDED { background: #78350f; color: #fde68a; }
+        .status-DEACTIVATED { background: #450a0a; color: #fca5a5; }
+
+        /* Feature Pills Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+        .feature-checkbox-label {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.6rem 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-backdrop.show { display: flex; }
+        .modal-content {
+            background: #1e293b;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 650px;
+            padding: 2rem;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <a href="/super-admin.html" class="logo">
+                ⚡ Charlie's CRM <span style="font-size: 0.85rem; background: #334155; color: #c7d2fe; padding: 2px 8px; border-radius: 4px; font-weight: normal;">Tenant Control</span>
+            </a>
+            <span style="color: var(--border);">|</span>
+            <span style="color: var(--text-muted); font-size: 0.95rem;">Entitlements, Subscription & Suspension</span>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <a href="/super-admin.html" class="btn">🏢 Companies</a>
+            <a href="/platform-analytics.html" class="btn">📊 Analytics</a>
+            <a href="/super-admin-notifications.html" class="btn">📢 Notifications</a>
+            <button class="btn btn-primary" onclick="loadTenantControlList()">🔄 Refresh</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <div>
+                    <h1 style="font-size: 1.4rem; margin: 0 0 0.25rem 0;">Tenant Control Center</h1>
+                    <p style="color: var(--text-muted); margin: 0; font-size: 0.9rem;">Manage company-level feature entitlements, subscription plans, storage quotas, and access suspension.</p>
+                </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Status</th>
+                            <th>Plan</th>
+                            <th>Expiry</th>
+                            <th>Payment</th>
+                            <th>Storage</th>
+                            <th>Features Enabled</th>
+                            <th style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tenantControlTableBody">
+                        <tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Loading tenant controls...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- 1. Feature Entitlements Modal -->
+    <div id="featuresModal" class="modal-backdrop">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 id="featuresModalTitle" style="margin: 0;">Feature Entitlements</h3>
+                <button class="btn" onclick="closeModal('featuresModal')">✕</button>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">
+                Enable or disable specific CRM modules for this company. Disabled modules disappear from the frontend and are rejected by the backend API.
+            </p>
+
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                <button class="btn btn-sm" onclick="applyPlanDefaults('STARTER')">Apply Starter Plan Defaults</button>
+                <button class="btn btn-sm" onclick="applyPlanDefaults('PROFESSIONAL')">Apply Pro Defaults</button>
+                <button class="btn btn-sm" onclick="applyPlanDefaults('ENTERPRISE')">Enable All</button>
+            </div>
+
+            <form id="featuresForm" onsubmit="saveFeatures(event)">
+                <div class="features-grid" id="featuresGridContainer">
+                    <!-- Checkboxes injected by JS -->
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn" onclick="closeModal('featuresModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Feature Entitlements</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. Subscription & Storage Modal -->
+    <div id="subscriptionModal" class="modal-backdrop">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 id="subscriptionModalTitle" style="margin: 0;">Edit Subscription & Quotas</h3>
+                <button class="btn" onclick="closeModal('subscriptionModal')">✕</button>
+            </div>
+
+            <form id="subscriptionForm" onsubmit="saveSubscription(event)">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Subscription Plan</label>
+                        <select id="subPlan" style="width: 100%; padding: 0.6rem; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: #ffffff;">
+                            <option value="STARTER">STARTER</option>
+                            <option value="PROFESSIONAL">PROFESSIONAL</option>
+                            <option value="ENTERPRISE">ENTERPRISE</option>
+                            <option value="CUSTOM">CUSTOM</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Billing Cycle</label>
+                        <select id="subBillingCycle" style="width: 100%; padding: 0.6rem; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: #ffffff;">
+                            <option value="MONTHLY">MONTHLY</option>
+                            <option value="QUARTERLY">QUARTERLY</option>
+                            <option value="ANNUAL">ANNUAL</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Subscription Expiry</label>
+                        <input type="date" id="subExpiry" style="width: 100%; padding: 0.6rem; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: #ffffff;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Payment Status</label>
+                        <select id="subPaymentStatus" style="width: 100%; padding: 0.6rem; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: #ffffff;">
+                            <option value="PAID">PAID</option>
+                            <option value="DUE">DUE</option>
+                            <option value="OVERDUE">OVERDUE</option>
+                            <option value="GRACE_PERIOD">GRACE_PERIOD</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Storage Limit (GB)</label>
+                        <input type="number" id="subStorageGb" min="1" max="1000" style="width: 100%; padding: 0.6rem; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: #ffffff;">
+                    </div>
+                </div>
+
+                <div style="margin-top: 1rem;">
+                    <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="subAutoApplyFeatures">
+                        <span>Automatically apply plan's default feature entitlements</span>
+                    </label>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn" onclick="closeModal('subscriptionModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Subscription</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. Suspension Modal -->
+    <div id="suspendModal" class="modal-backdrop">
+        <div class="modal-content">
+            <h3 style="margin: 0 0 0.5rem 0; color: #fbbf24;">⏸️ Suspend Tenant Access</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">
+                Suspending this company will temporarily block regular CRM user access and display an inactive notice. <strong>No company data or serials will be deleted.</strong>
+            </p>
+            <form id="suspendForm" onsubmit="confirmSuspend(event)">
+                <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Suspension Reason</label>
+                <input type="text" id="suspendReasonInput" placeholder="e.g. Subscription payment overdue / Customer requested hold" required style="width: 100%; padding: 0.7rem; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: #ffffff; margin-bottom: 1.5rem;">
+
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button type="button" class="btn" onclick="closeModal('suspendModal')">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Confirm Suspension</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/tenant-control.js"></script>
+</body>
+</html>

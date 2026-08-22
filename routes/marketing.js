@@ -3,8 +3,10 @@ const MarketingAsset = require('../models/MarketingAsset');
 const { auth } = require('../middleware/auth');
 const { requirePermission } = require('../middleware/rbac');
 const { recordAuditEvent } = require('../services/auditService');
+const { requireFeature } = require('../middleware/featureGate');
 
 const router = express.Router();
+router.use(requireFeature('marketing'));
 
 router.post('/', auth, requirePermission('marketing.create'), async (req, res) => {
   try {

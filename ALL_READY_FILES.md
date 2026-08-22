@@ -332,7 +332,7 @@ import { isAdmin } from '../../lib/utils';
 6. Success! Status updated
 
 ### Scenario 3: Regular User (No Admin)
-1. Login as sales@iconic-crm.com
+1. Login as sales@charlieai.com
 2. Navigate to /orders
 3. View order details
 4. Admin Actions section NOT visible ✅

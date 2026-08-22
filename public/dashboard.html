@@ -3,20 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iconic Smart CRM - Easy Dashboard</title>
+    <title>Charlie's CRM - Company Command Center</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #667eea;
-            --primary-dark: #5568d3;
-            --success: #48bb78;
-            --warning: #f6ad55;
-            --danger: #fc8181;
-            --info: #4299e1;
-            --bg-light: #f7fafc;
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --primary-light: rgba(79, 70, 229, 0.1);
+            --accent: #06b6d4;
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.1);
+            --danger: #ef4444;
+            --danger-light: rgba(239, 68, 68, 0.1);
+            --info: #3b82f6;
+            --bg-light: #f8fafc;
             --bg-white: #ffffff;
-            --text-dark: #2d3748;
-            --text-light: #718096;
-            --border: #e2e8f0;
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --border: rgba(226, 232, 240, 0.8);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08);
+            --border-radius: 12px;
         }
 
         * {
@@ -26,13 +39,17 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: var(--bg-light);
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(at 0% 0%, rgba(243, 244, 246, 1) 0, transparent 50%),
+                        radial-gradient(at 50% 0%, rgba(239, 246, 255, 1) 0, transparent 50%),
+                        radial-gradient(at 100% 0%, rgba(245, 243, 255, 1) 0, transparent 50%),
+                        #f8fafc;
             color: var(--text-dark);
             line-height: 1.6;
+            min-height: 100vh;
         }
 
-        /* Skip to main content for accessibility */
+        /* Accessibility Link */
         .skip-link {
             position: absolute;
             top: -40px;
@@ -41,19 +58,24 @@
             color: white;
             padding: 8px;
             text-decoration: none;
-            z-index: 100;
+            z-index: 10000;
         }
 
         .skip-link:focus {
             top: 0;
         }
 
-        /* Header */
+        /* Header Glassmorphism */
         .header {
-            background: var(--bg-white);
-            border-bottom: 2px solid var(--border);
-            padding: 1rem 2rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.75);
+            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            padding: 0.75rem 2rem;
+            transition: all 0.3s;
         }
 
         .header-content {
@@ -62,56 +84,256 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
             gap: 1rem;
         }
 
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
         .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
+            font-size: 1.35rem;
+            font-weight: 800;
             color: var(--primary);
+            letter-spacing: -0.025em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        /* Navigation Links */
+        .navbar {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .user-info {
+        .nav-link {
+            padding: 0.5rem 1rem;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        /* Right Actions */
+        .header-actions {
             display: flex;
             align-items: center;
             gap: 1rem;
         }
 
-        .btn {
-            padding: 0.5rem 1rem;
+        .icon-btn {
+            background: none;
             border: none;
-            border-radius: 6px;
+            position: relative;
             cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            font-size: 1.25rem;
+        }
+
+        .icon-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            font-weight: 700;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+
+        /* Dropdowns */
+        .dropdown-wrapper {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            width: 320px;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.show {
+            display: flex;
+        }
+
+        .dropdown-header {
+            padding: 1rem;
+            font-weight: 700;
             font-size: 0.95rem;
-            font-weight: 500;
-            transition: all 0.2s;
+            border-bottom: 1px solid var(--border);
+            background: #fafafa;
+        }
+
+        .dropdown-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: var(--text-dark);
             text-decoration: none;
-            display: inline-block;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
         }
 
-        .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        .dropdown-item:last-child {
+            border-bottom: none;
         }
 
-        .btn:focus {
-            outline: 3px solid var(--primary);
-            outline-offset: 2px;
+        .dropdown-item:hover {
+            background: var(--bg-light);
         }
 
-        .btn-primary {
+        .dropdown-item .notif-time {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .dropdown-item.unread {
+            background: var(--primary-light);
+        }
+
+        .dropdown-footer {
+            padding: 0.75rem;
+            text-align: center;
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            background: #fafafa;
+        }
+
+        .dropdown-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Profile Trigger */
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            transition: background 0.2s;
+        }
+
+        .profile-trigger:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             background: var(--primary);
             color: white;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
         }
 
-        .btn-secondary {
-            background: var(--bg-light);
+        .profile-trigger span {
+            font-size: 0.9rem;
+            font-weight: 600;
             color: var(--text-dark);
-            border: 1px solid var(--border);
+        }
+
+        .profile-trigger .chevron {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        /* User Menu Details */
+        .user-menu-info {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .user-menu-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .user-menu-role {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            text-transform: capitalize;
+        }
+
+        .user-menu-actions {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-action-item {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .menu-action-item:hover {
+            background: var(--bg-light);
+        }
+
+        .menu-action-item.text-danger {
+            color: var(--danger);
+        }
+
+        .menu-action-item.text-danger:hover {
+            background: var(--danger-light);
         }
 
         /* Main Container */
@@ -119,157 +341,484 @@
             max-width: 1400px;
             margin: 2rem auto;
             padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
         }
 
-        /* Welcome Section */
-        .welcome {
-            background: linear-gradient(135deg, var(--primary) 0%, #764ba2 100%);
+        /* Welcome & Subscriptions section */
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary) 0%, #312e81 100%);
+            border-radius: var(--border-radius);
+            padding: 2.25rem 2.5rem;
             color: white;
-            padding: 3rem 2rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
         }
 
-        .welcome h1 {
-            font-size: 2.5rem;
+        .welcome-text h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
             margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
         }
 
-        .welcome p {
-            font-size: 1.2rem;
-            opacity: 0.95;
+        .welcome-text p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 400;
         }
 
-        /* Quick Actions */
-        .quick-actions {
-            margin-bottom: 2rem;
+        .subscription-badge {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
         }
 
+        .subscription-badge .plan-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .subscription-badge .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #10b981;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px #10b981;
+        }
+
+        .subscription-badge .renewal-date {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            font-weight: 500;
+        }
+
+        /* Section Titles */
         .section-title {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
             color: var(--text-dark);
+            margin-bottom: 1.25rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
+        /* Stats grids */
+        .dashboard-section {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            padding: 1.75rem;
+            box-shadow: var(--shadow);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .stat-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(79, 70, 229, 0.3);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.03em;
+        }
+
+        .stat-footer {
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .stat-trend-up {
+            color: var(--success);
+        }
+
+        .stat-trend-down {
+            color: var(--danger);
+        }
+
+        .stat-badge {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .stat-badge.warning {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        /* Action Required List */
+        .action-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .action-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            border-left: 4px solid;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .action-item.critical {
+            background: var(--danger-light);
+            border-left-color: var(--danger);
+            color: #991b1b;
+        }
+
+        .action-item.warning {
+            background: var(--warning-light);
+            border-left-color: var(--warning);
+            color: #92400e;
+        }
+
+        .action-item.info {
+            background: rgba(59, 130, 246, 0.08);
+            border-left-color: var(--info);
+            color: #1e40af;
+        }
+
+        .action-btn {
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            border: none;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .action-btn:hover {
+            background: var(--bg-light);
+            box-shadow: var(--shadow);
+        }
+
+        /* Quick Actions Grid */
         .actions-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 1.5rem;
         }
 
         .action-card {
-            background: var(--bg-white);
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            cursor: pointer;
-            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             text-decoration: none;
             color: inherit;
-            border: 2px solid transparent;
         }
 
         .action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            transform: translateY(-4px);
             border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
         }
 
-        .action-card:focus {
-            outline: 3px solid var(--primary);
-            outline-offset: 2px;
-        }
-
-        .action-icon {
-            font-size: 3rem;
+        .action-card .icon {
+            font-size: 2rem;
             margin-bottom: 1rem;
+            padding: 0.5rem;
+            background: var(--primary-light);
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
         }
 
-        .action-title {
-            font-size: 1.3rem;
-            font-weight: 600;
+        .action-card .title {
+            font-size: 1.15rem;
+            font-weight: 700;
             margin-bottom: 0.5rem;
+            color: var(--text-dark);
         }
 
-        .action-description {
+        .action-card .desc {
+            font-size: 0.88rem;
             color: var(--text-light);
-            font-size: 0.95rem;
+            margin-bottom: 1.25rem;
+            flex-grow: 1;
+            line-height: 1.4;
         }
 
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--bg-white);
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            border-left: 4px solid var(--primary);
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: bold;
+        .action-card .link-text {
+            font-size: 0.9rem;
+            font-weight: 700;
             color: var(--primary);
-            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
         }
 
-        .stat-label {
+        /* Administration Center Grid */
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .admin-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s;
+        }
+
+        .admin-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        .admin-card .icon {
+            font-size: 1.75rem;
+            background: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-card .details h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.2rem;
+        }
+
+        .admin-card .details p {
+            font-size: 0.8rem;
             color: var(--text-light);
+        }
+
+        /* Organization Health Section Grid */
+        .health-grid-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .health-card {
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .health-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
             font-size: 0.9rem;
         }
 
-        /* Help Section */
-        .help-section {
-            background: var(--bg-white);
-            padding: 2rem;
+        .health-table td {
+            padding: 0.9rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .health-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .health-table td:first-child {
+            font-weight: 700;
+            color: var(--text-light);
+            width: 30%;
+        }
+
+        .health-table td:second-child {
+            color: var(--text-dark);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin-top: 2rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
         }
 
-        .help-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1rem;
+        .status-badge.success {
+            background: var(--success-light);
+            color: var(--success);
         }
 
-        .help-item {
+        /* Recent Notifications Board */
+        .notif-board {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .notif-board-item {
             padding: 1rem;
+            background: var(--bg-light);
             border: 1px solid var(--border);
             border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
         }
 
-        .help-item h4 {
-            margin-bottom: 0.5rem;
-            color: var(--primary);
+        .notif-board-item .notif-title {
+            font-weight: 700;
+            font-size: 0.95rem;
         }
 
-        /* Loading State */
-        .loading {
-            text-align: center;
-            padding: 3rem;
+        .notif-board-item .notif-body {
+            font-size: 0.85rem;
             color: var(--text-light);
+        }
+
+        .notif-board-item .notif-meta {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* Footer Help Section */
+        .help-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .help-card {
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            background: var(--bg-light);
+            transition: all 0.2s;
+        }
+
+        .help-card:hover {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        .help-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .help-card p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .help-card a {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .help-card a:hover {
+            text-decoration: underline;
+        }
+
+        /* Loading Spinner Overlay */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            z-index: 10000;
+            transition: opacity 0.3s;
         }
 
         .spinner {
             border: 3px solid var(--border);
             border-top: 3px solid var(--primary);
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 48px;
+            height: 48px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
         }
 
         @keyframes spin {
@@ -277,67 +826,29 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .welcome h1 {
-                font-size: 1.8rem;
-            }
-
-            .welcome p {
-                font-size: 1rem;
-            }
-
-            .actions-grid,
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Accessibility */
-        :focus-visible {
-            outline: 3px solid var(--primary);
-            outline-offset: 2px;
-        }
-
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0,0,0,0);
-            white-space: nowrap;
-            border-width: 0;
-        }
-
-        /* Toast Notifications */
+        /* Toast notifications */
         .toast {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
-            background: var(--bg-white);
-            padding: 1rem 1.5rem;
+            background: white;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            display: none;
-            z-index: 1000;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+            box-shadow: var(--shadow-lg);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 99999;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
 
         .toast.show {
-            display: block;
+            transform: translateY(0);
+            opacity: 1;
         }
 
         .toast.success {
@@ -347,187 +858,7 @@
         .toast.error {
             border-left: 4px solid var(--danger);
         }
-    </style>
-</head>
-<body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <!-- Header -->
-    <header class="header" role="banner">
-        <div class="header-content">
-            <div class="logo" role="img" aria-label="Iconic Smart CRM">
-                🚀 Iconic Smart CRM
-            </div>
-            <div class="user-info">
-                <span id="userName" aria-live="polite">Welcome!</span>
-                <button class="btn btn-secondary" onclick="showHelp()" aria-label="Show help">
-                    ❓ Help
-                </button>
-                <button class="btn btn-primary" onclick="logout()" aria-label="Logout">
-                    🚪 Logout
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main id="main-content" class="container" role="main">
-        <!-- Loading State -->
-        <div id="loading" class="loading" aria-live="polite">
-            <div class="spinner" role="status" aria-label="Loading"></div>
-            <p>Loading your dashboard...</p>
-        </div>
-
-        <!-- Dashboard Content (Hidden initially) -->
-        <div id="dashboard" style="display: none;">
-            <!-- Welcome Section -->
-            <section class="welcome" aria-labelledby="welcome-title">
-                <h1 id="welcome-title">Welcome back, <span id="welcomeName"></span>! 👋</h1>
-                <p>Here's what's happening with your CRM today</p>
-            </section>
-
-            <!-- Stats -->
-            <section aria-labelledby="stats-title">
-                <h2 id="stats-title" class="section-title">📊 Quick Stats</h2>
-                <div class="stats-grid" role="list">
-                    <div class="stat-card" role="listitem">
-                        <div class="stat-value" id="ordersCount" aria-label="Total orders">0</div>
-                        <div class="stat-label">Total Orders</div>
-                    </div>
-                    <div class="stat-card" role="listitem">
-                        <div class="stat-value" id="servicesCount" aria-label="Service requests">0</div>
-                        <div class="stat-label">Service Requests</div>
-                    </div>
-                    <div class="stat-card" role="listitem">
-                        <div class="stat-value" id="leadsCount" aria-label="Active leads">0</div>
-                        <div class="stat-label">Active Leads</div>
-                    </div>
-                    <div class="stat-card" role="listitem">
-                        <div class="stat-value" id="deliveriesCount" aria-label="Pending deliveries">0</div>
-                        <div class="stat-label">Pending Deliveries</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Quick Actions -->
-            <section class="quick-actions" aria-labelledby="actions-title">
-                <h2 id="actions-title" class="section-title">⚡ Quick Actions</h2>
-                <div class="actions-grid" role="list">
-                    <a href="#" class="action-card" onclick="goToOrders(); return false;" role="listitem" tabindex="0">
-                        <div class="action-icon" aria-hidden="true">📦</div>
-                        <div class="action-title">View Orders</div>
-                        <div class="action-description">View and manage all customer orders</div>
-                    </a>
-
-                    <a href="#" class="action-card" onclick="createOrder(); return false;" role="listitem" tabindex="0">
-                        <div class="action-icon" aria-hidden="true">➕</div>
-                        <div class="action-title">Create Order</div>
-                        <div class="action-description">Create new order with invoice</div>
-                    </a>
-
-                    <a href="#" class="action-card" onclick="goToServices(); return false;" role="listitem" tabindex="0">
-                        <div class="action-icon" aria-hidden="true">🎫</div>
-                        <div class="action-title">Service Requests</div>
-                        <div class="action-description">Handle customer support tickets</div>
-                    </a>
-
-                    <a href="#" class="action-card" onclick="goToLeads(); return false;" role="listitem" tabindex="0">
-                        <div class="action-icon" aria-hidden="true">📋</div>
-                        <div class="action-title">Manage Leads</div>
-                        <div class="action-description">Track and convert sales leads</div>
-                    </a>
-
-                    <a href="#" class="action-card" id="usersCard" onclick="goToUsers(); return false;" role="listitem" tabindex="0" style="display: none;">
-                        <div class="action-icon" aria-hidden="true">👥</div>
-                        <div class="action-title">Manage Users</div>
-                        <div class="action-description">Add and remove CRM users (Admin Only)</div>
-                    </a>
-
-                    <a href="#" class="action-card" onclick="goToBeatTracker(); return false;" role="listitem" tabindex="0">
-                        <div class="action-icon" aria-hidden="true">📍</div>
-                        <div class="action-title">Beat Tracker</div>
-                        <div class="action-description">Track field employees, visits & attendance</div>
-                    </a>
-
-                    <a href="#" class="action-card" onclick="goToDeliveries(); return false;" role="listitem" tabindex="0">
-                        <div class="action-icon" aria-hidden="true">🚚</div>
-                        <div class="action-title">Deliveries</div>
-                        <div class="action-description">Track shipments and deliveries</div>
-                    </a>
-
-                    <a href="#" class="action-card" onclick="goToMarketing(); return false;" role="listitem" tabindex="0">
-                        <div class="action-icon" aria-hidden="true">📢</div>
-                        <div class="action-title">Marketing</div>
-                        <div class="action-description">Manage campaigns and promotions</div>
-                    </a>
-
-                    <a href="#" class="action-card" onclick="openReportsModal(); return false;" role="listitem" tabindex="0">
-                        <div class="action-icon" aria-hidden="true">📊</div>
-                        <div class="action-title">Reports</div>
-                        <div class="action-description">Download CRM reports in Excel/CSV format</div>
-                    </a>
-
-                    <a href="#" class="action-card" onclick="goToSerialValidation(); return false;" role="listitem" tabindex="0">
-                        <div class="action-icon" aria-hidden="true">🔌</div>
-                        <div class="action-title">Serial Validation</div>
-                        <div class="action-description">Verify product serial numbers and material codes</div>
-                    </a>
-                </div>
-            </section>
-
-            <!-- Help Section -->
-            <section class="help-section" aria-labelledby="help-title">
-                <h2 id="help-title" class="section-title">💡 Need Help?</h2>
-                <div class="help-grid">
-                    <div class="help-item">
-                        <h4>📚 Documentation</h4>
-                        <p>Read our comprehensive guides</p>
-                        <a href="#" onclick="viewDocs(); return false;">View Docs</a>
-                    </div>
-                    <div class="help-item">
-                        <h4>🎥 Video Tutorials</h4>
-                        <p>Watch step-by-step tutorials</p>
-                        <a href="#" onclick="viewVideos(); return false;">Watch Now</a>
-                    </div>
-                    <div class="help-item">
-                        <h4>💬 Live Support</h4>
-                        <p>Chat with our support team</p>
-                        <a href="#" onclick="contactSupport(); return false;">Get Help</a>
-                    </div>
-                    <div class="help-item">
-                        <h4>🔌 API Integration</h4>
-                        <p>Connect your apps and services</p>
-                        <a href="#" onclick="viewApiDocs(); return false;">API Docs</a>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </main>
-
-    <!-- Toast Notification -->
-    <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"></div>
-
-    <!-- Reports Modal -->
-    <div id="reportsModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>📊 Download Reports</h2>
-                <button class="modal-close" onclick="closeReportsModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p style="margin-bottom: 1.5rem; color: #718096;">Select the type of report you want to download. Reports are available in Excel (.xlsx) or CSV format.</p>
-                
-                <div class="reports-grid" id="reportsGrid">
-                    <div class="loading-spinner" id="reportsLoading">
-                        <div class="spinner"></div>
-                        <p>Loading available reports...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <style>
         /* Modal Styles */
         .modal {
             display: none;
@@ -536,7 +867,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
             z-index: 10000;
             align-items: center;
             justify-content: center;
@@ -553,12 +885,12 @@
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: var(--shadow-lg);
         }
         
         .modal-header {
             padding: 1.5rem 2rem;
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -566,28 +898,29 @@
         
         .modal-header h2 {
             margin: 0;
-            font-size: 1.5rem;
-            color: #2d3748;
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-dark);
         }
         
         .modal-close {
             background: none;
             border: none;
-            font-size: 2rem;
+            font-size: 1.5rem;
             cursor: pointer;
-            color: #718096;
-            padding: 0;
-            width: 40px;
-            height: 40px;
+            color: var(--text-light);
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
+            border-radius: 50%;
+            transition: background 0.2s;
         }
         
         .modal-close:hover {
-            background: #f7fafc;
-            color: #2d3748;
+            background: var(--bg-light);
+            color: var(--text-dark);
         }
         
         .modal-body {
@@ -596,34 +929,34 @@
         
         .reports-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.25rem;
         }
         
         .report-card {
-            border: 2px solid #e2e8f0;
+            border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 1.5rem;
+            padding: 1.25rem;
             cursor: pointer;
             transition: all 0.2s;
             background: white;
         }
         
         .report-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
             transform: translateY(-2px);
         }
         
         .report-icon {
-            font-size: 2.5rem;
+            font-size: 2rem;
             margin-bottom: 0.5rem;
         }
         
         .report-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2d3748;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
             margin-bottom: 0.5rem;
         }
         
@@ -631,70 +964,373 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.9rem;
-            color: #718096;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            font-weight: 500;
         }
         
         .report-format {
-            background: #edf2f7;
-            padding: 0.25rem 0.5rem;
+            padding: 0.15rem 0.5rem;
             border-radius: 4px;
-            font-weight: 500;
+            font-weight: 700;
             text-transform: uppercase;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
         }
         
         .report-format.excel {
-            background: #d1fae5;
-            color: #065f46;
+            background: var(--success-light);
+            color: var(--success);
         }
         
         .report-format.csv {
-            background: #dbeafe;
-            color: #1e40af;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
         }
-        
-        .loading-spinner {
-            text-align: center;
-            padding: 3rem;
+
+        /* Mobile Viewports */
+        @media (max-width: 1024px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+            .navbar {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                border-top: 1px solid var(--border);
+                padding-top: 0.5rem;
+                margin-top: 0.25rem;
+            }
         }
-        
-        .spinner {
-            border: 3px solid #e2e8f0;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .report-card.downloading {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-        
-        .report-card.downloading::after {
-            content: '⏳ Downloading...';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: 600;
-            color: #667eea;
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            .welcome-card {
+                padding: 1.5rem;
+                text-align: center;
+                justify-content: center;
+            }
+            .welcome-text h1 {
+                font-size: 1.75rem;
+            }
+            .subscription-badge {
+                width: 100%;
+                align-items: center;
+            }
         }
     </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
 
+    <!-- Loading overlay state -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p style="font-weight: 600; color: var(--text-light);">Configuring workspace...</p>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo" data-branding="logo" onclick="window.location.reload();">
+                    🚀 Charlie's CRM
+                </div>
+            </div>
+            
+            <!-- Navigation links dynamic reflow -->
+            <nav class="navbar" id="mainNav" role="navigation" aria-label="Main Navigation">
+                <!-- Dynamically populated links -->
+            </nav>
+
+            <div class="header-actions">
+                <!-- Notifications dropdown -->
+                <div class="dropdown-wrapper notif-dropdown">
+                    <button class="icon-btn" onclick="toggleNotifDropdown(event)" aria-label="Announcements" aria-haspopup="true">
+                        🔔 <span id="notifUnreadBadge" class="badge" style="display: none;">0</span>
+                    </button>
+                    <div id="notifDropdownMenu" class="dropdown-menu">
+                        <div class="dropdown-header">System Announcements</div>
+                        <div id="notifList" class="dropdown-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                        <div class="dropdown-footer">
+                            <a href="#" onclick="markAllNotificationsRead(); return false;">Mark all as read</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User profile details dropdown -->
+                <div class="dropdown-wrapper user-dropdown">
+                    <button class="profile-trigger" onclick="toggleUserDropdown(event)" aria-label="User profile options" aria-haspopup="true">
+                        <div class="avatar" id="avatarBadge">U</div>
+                        <span id="headerUserName">Admin User</span>
+                        <span class="chevron">▾</span>
+                    </button>
+                    <div id="userDropdownMenu" class="dropdown-menu">
+                        <div class="user-menu-info">
+                            <div class="user-menu-name" id="userMenuName">Admin User</div>
+                            <div class="user-menu-role" id="userMenuRole">Company Administrator</div>
+                        </div>
+                        <div class="user-menu-actions">
+                            <a href="#" onclick="showProfile(); return false;" class="menu-action-item">👤 View Profile</a>
+                            <a href="#" onclick="showActivity(); return false;" class="menu-action-item">📋 My Activity</a>
+                            <a href="/super-admin.html" id="superAdminConsoleLink" class="menu-action-item" style="display: none; background: var(--primary-light); color: var(--primary);">👑 Platform Console</a>
+                            <hr style="border: 0; border-top: 1px solid var(--border);">
+                            <a href="#" onclick="logout(); return false;" class="menu-action-item text-danger">🚪 Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main id="main-content" class="container">
+        <!-- Hero section & Plan Info -->
+        <section class="welcome-card" aria-labelledby="welcome-title">
+            <div class="welcome-text">
+                <h1 id="welcome-title">Welcome back, <span id="welcomeUserName">User</span>! 👋</h1>
+                <p>Here's what's happening with your organization today.</p>
+            </div>
+            <div class="subscription-badge" id="subscriptionBadge">
+                <div class="plan-status">
+                    <span class="status-dot"></span>
+                    <span id="billingPlanName">Professional Plan</span>
+                </div>
+                <div class="renewal-date" id="billingRenewalText">Renews: -- -- ----</div>
+            </div>
+        </section>
+
+        <!-- Action Required Notifications -->
+        <section class="dashboard-section" id="actionRequiredSection" style="display: none;" aria-labelledby="action-title">
+            <h2 class="section-title" id="action-title">⚠️ Action Required</h2>
+            <div class="action-list" id="actionRequiredList">
+                <!-- Populated dynamically -->
+            </div>
+        </section>
+
+        <!-- Organization Overview Stats -->
+        <section class="dashboard-section" aria-labelledby="org-overview-title">
+            <h2 class="section-title" id="org-overview-title">👥 Organization Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">Total Employees</div>
+                    <div class="stat-value" id="statTotalUsers">0</div>
+                    <div class="stat-footer"><span class="stat-badge" id="statUsersChange">+0 this month</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">Departments</div>
+                    <div class="stat-value" id="statTotalDepts">0</div>
+                    <div class="stat-footer"><span class="stat-badge">Structure hierarchy</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">Custom Roles</div>
+                    <div class="stat-value" id="statTotalRoles">0</div>
+                    <div class="stat-footer"><span class="stat-badge">Access privilege lists</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">Locked Accounts</div>
+                    <div class="stat-value" id="statLockedUsers">0</div>
+                    <div class="stat-footer" id="statLockedFooter"><span class="stat-badge">Healthy state</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Business Snapshot Stats -->
+        <section class="dashboard-section" aria-labelledby="business-snapshot-title">
+            <h2 class="section-title" id="business-snapshot-title">💼 Business Snapshot</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">Total Revenue</div>
+                    <div class="stat-value" id="statTotalRevenue">₹0.00</div>
+                    <div class="stat-footer" id="statRevenueTrend">
+                        <span class="stat-trend-up">▲ 0%</span> compared to last week
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">Total Orders</div>
+                    <div class="stat-value" id="statTotalOrders">0</div>
+                    <div class="stat-footer" id="statOrdersTrend">
+                        <span class="stat-trend-up">▲ 0%</span> compared to last week
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">Registered Units</div>
+                    <div class="stat-value" id="statTotalUnits">0</div>
+                    <div class="stat-footer"><span class="stat-badge" id="statUnitsActivePercent">100% active</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">Active Service Requests</div>
+                    <div class="stat-value" id="statActiveServices">0</div>
+                    <div class="stat-footer"><span class="stat-badge" id="statServicePendingText">0 open ticket</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Actions (Dynamic Grid Reflow) -->
+        <section class="dashboard-section" aria-labelledby="quick-actions-title">
+            <h2 class="section-title" id="quick-actions-title">⚡ Quick Actions</h2>
+            <div class="actions-grid" id="quickActionsGrid">
+                <!-- Populated dynamically based on feature entitlement -->
+            </div>
+        </section>
+
+        <!-- Administration controls center -->
+        <section class="dashboard-section" id="adminCenterSection" style="display: none;" aria-labelledby="admin-center-title">
+            <h2 class="section-title" id="admin-center-title">🛠️ Administration Control</h2>
+            <div class="admin-grid">
+                <a href="/manage-users.html" class="admin-card">
+                    <div class="icon">👥</div>
+                    <div class="details">
+                        <h3>Users</h3>
+                        <p>Manage employees and database access</p>
+                    </div>
+                </a>
+                <a href="/roles.html" class="admin-card">
+                    <div class="icon">🔑</div>
+                    <div class="details">
+                        <h3>Roles & Permissions</h3>
+                        <p>Define custom roles, scopes and gates</p>
+                    </div>
+                </a>
+                <a href="/organization.html" class="admin-card">
+                    <div class="icon">🏢</div>
+                    <div class="details">
+                        <h3>Organization</h3>
+                        <p>Manage departments and structures</p>
+                    </div>
+                </a>
+                <a href="/bulk-import.html" class="admin-card" data-feature="bulk_import">
+                    <div class="icon">📥</div>
+                    <div class="details">
+                        <h3>Bulk Import Center</h3>
+                        <p>Upload products and serials in bulk</p>
+                    </div>
+                </a>
+                <a href="/platform-analytics.html" class="admin-card" data-feature="analytics">
+                    <div class="icon">🔐</div>
+                    <div class="details">
+                        <h3>Security & Performance</h3>
+                        <p>Track response times & API audit logs</p>
+                    </div>
+                </a>
+                <a href="#" onclick="openReportsModal(); return false;" class="admin-card">
+                    <div class="icon">📋</div>
+                    <div class="details">
+                        <h3>Audit Logs & Reports</h3>
+                        <p>Operational logs and report downloads</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- System Announcements / Recent Notifications board -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+            <section class="dashboard-section" aria-labelledby="notif-board-title">
+                <h2 class="section-title" id="notif-board-title">🔔 Recent Platform Notifications</h2>
+                <div class="notif-board" id="notifBoard">
+                    <p style="color: var(--text-light); text-align: center; padding: 2rem 0;">No active notices.</p>
+                </div>
+            </section>
+
+            <!-- Detailed Organization Health table -->
+            <section class="dashboard-section" aria-labelledby="org-health-title">
+                <h2 class="section-title" id="org-health-title">📊 Organization Health Indicators</h2>
+                <div class="health-grid-layout">
+                    <div class="health-card">
+                        <table class="health-table">
+                            <tbody>
+                                <tr>
+                                    <td>Account Status</td>
+                                    <td><span class="status-badge success" id="healthSubStatus">ACTIVE</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Subscription Plan</td>
+                                    <td><span id="healthSubPlan" style="font-weight: 700;">PROFESSIONAL</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Renewal Date</td>
+                                    <td><span id="healthSubRenewal">-- -- ----</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Active Users</td>
+                                    <td><span id="healthActiveUsers">0</span> / <span id="healthTotalUsers">0</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Locked Users</td>
+                                    <td><span id="healthLockedUsers" style="font-weight: 700; color: var(--danger);">0</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Feature Utilization</td>
+                                    <td><span id="healthFeatureUtil">0%</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Platform API Calls</td>
+                                    <td><span id="healthApiUsage">0</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Serial Validations</td>
+                                    <td><span id="healthSerialValidations">0</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Help Support section -->
+        <section class="dashboard-section" aria-labelledby="help-title">
+            <h2 class="section-title" id="help-title">💡 Support & Documentation Help Center</h2>
+            <div class="help-grid">
+                <div class="help-card">
+                    <h3>📚 Documentation</h3>
+                    <p>Read comprehensive configuration and feature integration guides.</p>
+                    <a href="#" onclick="viewDocs(); return false;">Open Guides →</a>
+                </div>
+                <div class="help-card">
+                    <h3>🎥 Video Tutorials</h3>
+                    <p>Watch step-by-step videos demonstrating how to manage settings.</p>
+                    <a href="#" onclick="viewVideos(); return false;">Watch Tutorials →</a>
+                </div>
+                <div class="help-card">
+                    <h3>💬 Live Support Assistant</h3>
+                    <p>Interact with our intelligent chat bot for live technical assistance.</p>
+                    <a href="#" onclick="contactSupport(); return false;">Chat Now →</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notification widget -->
+    <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+    <!-- Reports Modal -->
+    <div id="reportsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📊 Operational Reports Directory</h2>
+                <button class="modal-close" onclick="closeReportsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 1.5rem; color: var(--text-light); font-size: 0.9rem;">
+                    Download CSV and Excel files reflecting real-time CRM database entries:
+                </p>
+                <div class="reports-grid" id="reportsGrid">
+                    <div class="loading-spinner" id="reportsLoading" style="text-align: center; padding: 2rem;">
+                        <div class="spinner" style="margin: 0 auto 1rem;"></div>
+                        <p style="color: var(--text-light); font-weight: 600;">Retrieving tables...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Engine -->
     <script>
-        const API_URL = 'http://localhost:7000/api';
+        const API_URL = window.location.origin + '/api';
         let authToken = localStorage.getItem('authToken');
 
         // Check authentication
@@ -702,9 +1338,22 @@
             window.location.href = '/login.html';
         }
 
+        // Single-flight session redirect guard
+        function handleSessionExpired() {
+            if (window.__CHARLIE_SESSION_REDIRECTING) return;
+            window.__CHARLIE_SESSION_REDIRECTING = true;
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            showToast('Session expired. Please log in again.', 'error');
+            setTimeout(() => {
+                window.location.href = '/login.html';
+            }, 800);
+        }
+
         // Show toast notification
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
+            if (!toast) return;
             toast.textContent = message;
             toast.className = `toast ${type} show`;
             setTimeout(() => {
@@ -712,8 +1361,14 @@
             }, 3000);
         }
 
-        // API Request
+        // API Request with automatic 401 handling
         async function apiRequest(endpoint, options = {}) {
+            authToken = localStorage.getItem('authToken');
+            if (!authToken) {
+                handleSessionExpired();
+                return null;
+            }
+
             try {
                 const response = await fetch(`${API_URL}${endpoint}`, {
                     ...options,
@@ -723,6 +1378,16 @@
                         ...options.headers
                     }
                 });
+
+                if (response.status === 401) {
+                    handleSessionExpired();
+                    return null;
+                }
+
+                if (response.status === 429) {
+                    console.warn(`Rate limit reached for ${endpoint}`);
+                    return null;
+                }
 
                 if (!response.ok) {
                     console.warn(`API ${endpoint} returned ${response.status}`);
@@ -736,97 +1401,377 @@
             }
         }
 
-        // Load Dashboard Data
-        async function loadDashboard() {
-            try {
-                // Verify token and get user info
-                const userData = await apiRequest('/auth/verify');
-                if (!userData || !userData.user) {
-                    console.error('Failed to verify user, redirecting to login');
-                    setTimeout(() => logout(), 1000);
-                    return;
-                }
+        // Dropdown Toggle Methods
+        function toggleNotifDropdown(event) {
+            event.stopPropagation();
+            const notifMenu = document.getElementById('notifDropdownMenu');
+            const userMenu = document.getElementById('userDropdownMenu');
+            userMenu.classList.remove('show');
+            notifMenu.classList.toggle('show');
+        }
 
-                document.getElementById('userName').textContent = userData.user.name;
-                document.getElementById('welcomeName').textContent = userData.user.name;
+        // Accessibility toggle dropdown Keyboard/Focus helpers
+        function toggleUserDropdown(event) {
+            event.stopPropagation();
+            const notifMenu = document.getElementById('notifDropdownMenu');
+            const userMenu = document.getElementById('userDropdownMenu');
+            notifMenu.classList.remove('show');
+            userMenu.classList.toggle('show');
+        }
 
-                // Show Users card only for admins
-                if (userData.user.role === 'admin') {
-                    document.getElementById('usersCard').style.display = 'flex';
-                }
+        // Close dropdowns on outside click
+        window.addEventListener('click', (e) => {
+            const notifMenu = document.getElementById('notifDropdownMenu');
+            const userMenu = document.getElementById('userDropdownMenu');
+            
+            if (notifMenu && !e.target.closest('.notif-dropdown')) {
+                notifMenu.classList.remove('show');
+            }
+            if (userMenu && !e.target.closest('.user-dropdown')) {
+                userMenu.classList.remove('show');
+            }
+        });
 
-                // Load stats with error handling for each
-                const loadStat = async (endpoint, elementId) => {
-                    try {
-                        const data = await apiRequest(endpoint);
-                        if (data && Array.isArray(data)) {
-                            document.getElementById(elementId).textContent = data.length;
-                        } else {
-                            document.getElementById(elementId).textContent = '0';
-                        }
-                    } catch (error) {
-                        console.warn(`Failed to load ${endpoint}:`, error);
-                        document.getElementById(elementId).textContent = '0';
+        // Quick Action Cards definition
+        const QUICK_ACTIONS_METADATA = [
+            { key: 'orders', title: 'Manage Orders', icon: '📦', url: '/view-orders.html', desc: 'View and manage all customer orders' },
+            { key: 'orders', title: 'Create Order', icon: '➕', url: '/orders.html', desc: 'Create new order with invoice' },
+            { key: 'service', title: 'Service Requests', icon: '🎫', url: '/services.html', desc: 'Handle customer support tickets' },
+            { key: 'sales', title: 'Manage Leads', icon: '📋', url: '/leads.html', desc: 'Track and convert sales leads' },
+            { key: 'field_force', title: 'Beat Tracker', icon: '📍', url: '/beat-tracker.html', desc: 'Track field employees, visits & attendance' },
+            { key: 'logistics', title: 'Deliveries', icon: '🚚', url: '/deliveries.html', desc: 'Track shipments and deliveries' },
+            { key: 'marketing', title: 'Marketing', icon: '📢', url: '/marketing.html', desc: 'Manage campaigns and promotions' },
+            { key: 'serial_validation', title: 'Serial Validation', icon: '🔎', url: '/serial-validation.html', desc: 'Verify product serial numbers and material codes' },
+            { key: 'bulk_import', title: 'Bulk Import', icon: '📥', url: '/bulk-import.html', desc: 'Securely upload CSV files to import products & serials' },
+            { key: 'api_access', title: 'API Access', icon: '🔌', url: '/api-access.html', desc: 'Generate partner API keys for Salesforce & ERPs' },
+            { key: 'reports', title: 'Reports', icon: '📊', url: '#', onclick: 'openReportsModal(); return false;', desc: 'View operational business intelligence & exports' }
+        ];
+
+        // Format dates
+        function formatDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        // Format Currency
+        function formatINR(val) {
+            const num = Number(val || 0);
+            if (num >= 100000) {
+                return `₹${(num / 100000).toFixed(2)} L`;
+            }
+            return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(num);
+        }
+
+        // Global Announcement List cache for mark-all-read
+        let rawAnnouncementIds = [];
+
+        // Dynamic Navigation Menu and Actions Gating
+        function configureNavigationAndActions(features) {
+            const nav = document.getElementById('mainNav');
+            if (!nav) return;
+
+            // Header navigation links mapping
+            const links = [
+                { key: 'dashboard', name: 'Dashboard', url: '/dashboard.html' },
+                { key: 'sales', name: 'Sales', url: '/leads.html' },
+                { key: 'customers', name: 'Customers', url: '/contacts.html' },
+                { key: 'orders', name: 'Orders', url: '/view-orders.html' },
+                { key: 'products', name: 'Inventory', url: '/manage-products.html' },
+                { key: 'service', name: 'Service', url: '/services.html' },
+                { key: 'reports', name: 'Reports', url: '#', onclick: 'openReportsModal(); return false;' }
+            ];
+
+            nav.innerHTML = links
+                .filter(link => features[link.key] !== false)
+                .map(link => {
+                    const active = window.location.pathname.includes(link.url) ? 'active' : '';
+                    if (link.onclick) {
+                        return `<a href="${link.url}" onclick="${link.onclick}" class="nav-link ${active}">${link.name}</a>`;
                     }
-                };
+                    return `<a href="${link.url}" class="nav-link ${active}">${link.name}</a>`;
+                })
+                .join('');
 
-                // Load each stat independently
-                await Promise.allSettled([
-                    loadStat('/orders', 'ordersCount'),
-                    loadStat('/services', 'servicesCount'),
-                    loadStat('/leads', 'leadsCount'),
-                    loadStat('/deliveries', 'deliveriesCount')
-                ]);
+            // Render Quick Actions Grid (Reflow)
+            const grid = document.getElementById('quickActionsGrid');
+            if (grid) {
+                const allowedActions = QUICK_ACTIONS_METADATA.filter(action => features[action.key] !== false);
+                grid.innerHTML = allowedActions.map(action => {
+                    const onclickAttr = action.onclick ? `onclick="${action.onclick}"` : '';
+                    return `
+                        <a href="${action.url}" ${onclickAttr} class="action-card">
+                            <div class="icon">${action.icon}</div>
+                            <div class="title">${action.title}</div>
+                            <div class="desc">${action.desc}</div>
+                            <div class="link-text">Open →</div>
+                        </a>
+                    `;
+                }).join('');
+            }
 
-                // Show dashboard
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
+            // Filter Admin Cards dynamically based on features
+            document.querySelectorAll('.admin-card').forEach(card => {
+                const feat = card.getAttribute('data-feature');
+                if (feat && features[feat] === false) {
+                    card.style.display = 'none';
+                } else {
+                    card.style.display = 'flex';
+                }
+            });
+        }
 
-                showToast('Dashboard loaded successfully!');
-            } catch (error) {
-                console.error('Load error:', error);
-                showToast('Failed to load dashboard', 'error');
+        // Retrieve and Render Tenant Notifications (Announcements)
+        async function fetchAnnouncements() {
+            const data = await apiRequest('/notifications/tenant');
+            if (!data) return;
+
+            const notifUnreadBadge = document.getElementById('notifUnreadBadge');
+            const notifList = document.getElementById('notifList');
+            const notifBoard = document.getElementById('notifBoard');
+
+            const notifications = data.notifications || [];
+            rawAnnouncementIds = notifications.map(n => n.id);
+
+            // Update badge
+            const unreadCount = data.unreadCount || 0;
+            if (unreadCount > 0) {
+                notifUnreadBadge.textContent = unreadCount;
+                notifUnreadBadge.style.display = 'flex';
+            } else {
+                notifUnreadBadge.style.display = 'none';
+            }
+
+            // Dropdown List Render
+            if (notifications.length === 0) {
+                notifList.innerHTML = '<div style="padding: 1.5rem; text-align: center; color: var(--text-light); font-size: 0.85rem;">No notifications.</div>';
+            } else {
+                notifList.innerHTML = notifications.map(n => `
+                    <div class="dropdown-item ${n.isRead ? '' : 'unread'}" onclick="handleAnnouncementClick('${n.id}')">
+                        <div style="font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>${n.type === 'SYSTEM_MAINTENANCE' || n.type === 'DOWNTIME' ? '⚠️' : '📢'}</span>
+                            <span>${escapeHtml(n.title)}</span>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-light); margin-top: 0.2rem;">${escapeHtml(n.message)}</div>
+                        <div class="notif-time">${formatDate(n.startTime || n.createdAt)}</div>
+                    </div>
+                `).join('');
+            }
+
+            // Board List Render (Middle section list)
+            if (notifications.length === 0) {
+                notifBoard.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 2rem 0;">No active notifications.</p>';
+            } else {
+                notifBoard.innerHTML = notifications.slice(0, 3).map(n => `
+                    <div class="notif-board-item">
+                        <div class="notif-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span>${n.type === 'SYSTEM_MAINTENANCE' || n.type === 'DOWNTIME' ? '🔴' : '🔵'}</span>
+                            <span>${escapeHtml(n.title)}</span>
+                        </div>
+                        <div class="notif-body">${escapeHtml(n.message)}</div>
+                        <div class="notif-meta">${formatDate(n.startTime || n.createdAt)}</div>
+                    </div>
+                `).join('');
             }
         }
 
-        // Navigation functions
-        function goToOrders() {
-            window.location.href = '/view-orders.html';
+        // Click Announcement handler (marks as read)
+        async function handleAnnouncementClick(id) {
+            await apiRequest(`/notifications/tenant/${id}/read`, { method: 'POST' });
+            fetchAnnouncements();
+            showToast('Announcement marked as read.');
         }
 
-        function createOrder() {
-            window.location.href = '/orders.html';
+        // Mark all announcements read
+        async function markAllNotificationsRead() {
+            if (rawAnnouncementIds.length === 0) return;
+            try {
+                showToast('Marking announcements read...');
+                await Promise.allSettled(
+                    rawAnnouncementIds.map(id => apiRequest(`/notifications/tenant/${id}/read`, { method: 'POST' }))
+                );
+                fetchAnnouncements();
+                showToast('All notifications marked as read.');
+            } catch (e) {
+                console.error(e);
+            }
         }
 
-        function goToServices() {
-            window.location.href = '/services.html';
+        // Load dashboard statistics and structural data
+        let dashboardInitialized = false;
+        async function loadDashboard() {
+            if (dashboardInitialized || window.__CHARLIE_DASHBOARD_INITIALIZING) return;
+            window.__CHARLIE_DASHBOARD_INITIALIZING = true;
+
+            try {
+                // Verify user session
+                let currentUser = null;
+                const verifyRes = await apiRequest('/auth/verify');
+                if (verifyRes && verifyRes.user) {
+                    currentUser = verifyRes.user;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                } else {
+                    const cached = localStorage.getItem('currentUser');
+                    if (cached) {
+                        try { currentUser = JSON.parse(cached); } catch (e) {}
+                    }
+                }
+
+                if (!currentUser) {
+                    console.error('No authenticated user session found');
+                    handleSessionExpired();
+                    return;
+                }
+
+                // Render User Menu details
+                document.getElementById('headerUserName').textContent = currentUser.name || 'User';
+                document.getElementById('welcomeUserName').textContent = currentUser.name || 'User';
+                document.getElementById('userMenuName').textContent = currentUser.name || 'User';
+                
+                const userRole = String(currentUser.role || '').toLowerCase();
+                document.getElementById('userMenuRole').textContent = userRole.replace('-', ' ');
+                
+                const initials = String(currentUser.name || 'U').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('avatarBadge').textContent = initials;
+
+                // Show administration centers for management roles
+                const isManagementRole = ['admin', 'company-admin', 'sub-admin', 'super-admin', 'superadmin'].includes(userRole);
+                if (isManagementRole) {
+                    document.getElementById('adminCenterSection').style.display = 'block';
+                }
+
+                // Show console shortcut for Platform Admins
+                if (userRole === 'super-admin' || userRole === 'superadmin') {
+                    const consoleLink = document.getElementById('superAdminConsoleLink');
+                    if (consoleLink) consoleLink.style.display = 'flex';
+                }
+
+                // Fetch dynamic feature entitlement grid details
+                let entitlements = window.CURRENT_TENANT_STATE;
+                if (typeof fetchTenantEntitlements === 'function') {
+                    entitlements = await fetchTenantEntitlements(false);
+                }
+
+                // Apply dynamic feature navigation rules
+                configureNavigationAndActions(entitlements.features || {});
+
+                // Fetch real-time company overview stats
+                const overview = await apiRequest('/dashboard/company-overview');
+                if (overview) {
+                    // Organization Overview
+                    document.getElementById('statTotalUsers').textContent = overview.orgOverview.users;
+                    document.getElementById('statUsersChange').textContent = `+${overview.orgOverview.usersChange} this month`;
+                    document.getElementById('statTotalDepts').textContent = overview.orgOverview.depts;
+                    document.getElementById('statTotalRoles').textContent = overview.orgOverview.roles;
+                    
+                    const lockedCount = overview.orgOverview.locked;
+                    document.getElementById('statLockedUsers').textContent = lockedCount;
+                    const lockedFooter = document.getElementById('statLockedFooter');
+                    if (lockedCount > 0) {
+                        lockedFooter.innerHTML = '<span class="stat-badge warning">Action required</span>';
+                    } else {
+                        lockedFooter.innerHTML = '<span class="stat-badge">Healthy state</span>';
+                    }
+
+                    // Business Snapshot
+                    document.getElementById('statTotalRevenue').textContent = formatINR(overview.businessSnapshot.sales);
+                    document.getElementById('statTotalOrders').textContent = overview.businessSnapshot.orders;
+                    document.getElementById('statTotalUnits').textContent = overview.businessSnapshot.units.toLocaleString();
+                    document.getElementById('statUnitsActivePercent').textContent = `${overview.businessSnapshot.unitsActivePercent}% active`;
+                    
+                    const pendingServices = overview.businessSnapshot.servicePending;
+                    document.getElementById('statActiveServices').textContent = overview.businessSnapshot.service;
+                    document.getElementById('statServicePendingText').textContent = `${pendingServices} pending review`;
+
+                    // Sales Trends
+                    const revTrendVal = overview.businessSnapshot.salesChange;
+                    const ordersTrendVal = overview.businessSnapshot.ordersChange;
+                    
+                    document.getElementById('statRevenueTrend').innerHTML = revTrendVal >= 0 
+                        ? `<span class="stat-trend-up">▲ ${revTrendVal}%</span> compared to last week` 
+                        : `<span class="stat-trend-down">▼ ${Math.abs(revTrendVal)}%</span> compared to last week`;
+                        
+                    document.getElementById('statOrdersTrend').innerHTML = ordersTrendVal >= 0 
+                        ? `<span class="stat-trend-up">▲ ${ordersTrendVal}%</span> compared to last week` 
+                        : `<span class="stat-trend-down">▼ ${Math.abs(ordersTrendVal)}%</span> compared to last week`;
+
+                    // Subscription Badge info
+                    const subPlanName = overview.orgHealth.subscriptionPlan;
+                    document.getElementById('billingPlanName').textContent = `${subPlanName.charAt(0) + subPlanName.slice(1).toLowerCase()} Plan`;
+                    
+                    const renewalVal = overview.orgHealth.renewalDate;
+                    document.getElementById('billingRenewalText').textContent = renewalVal 
+                        ? `Renews: ${formatDate(renewalVal)}` 
+                        : 'Subscription Active 🟢';
+
+                    // Health table updates
+                    document.getElementById('healthSubStatus').textContent = overview.orgHealth.subscriptionStatus;
+                    document.getElementById('healthSubPlan').textContent = overview.orgHealth.subscriptionPlan;
+                    document.getElementById('healthSubRenewal').textContent = renewalVal ? formatDate(renewalVal) : 'N/A';
+                    
+                    document.getElementById('healthActiveUsers').textContent = overview.orgHealth.active;
+                    document.getElementById('healthTotalUsers').textContent = overview.orgHealth.users;
+                    document.getElementById('healthLockedUsers').textContent = overview.orgHealth.locked;
+                    document.getElementById('healthFeatureUtil').textContent = `${overview.orgHealth.featureUtilization}%`;
+                    document.getElementById('healthApiUsage').textContent = overview.orgHealth.apiUsage.toLocaleString();
+                    document.getElementById('healthSerialValidations').textContent = overview.orgHealth.serialValidations.toLocaleString();
+
+                    // Action Required list updates
+                    const actions = overview.actionRequired || [];
+                    const actionSection = document.getElementById('actionRequiredSection');
+                    const actionList = document.getElementById('actionRequiredList');
+                    
+                    if (actions.length > 0) {
+                        actionSection.style.display = 'block';
+                        actionList.innerHTML = actions.map(act => {
+                            const severityClass = act.severity.toLowerCase(); // critical, warning, info
+                            return `
+                                <div class="action-item ${severityClass}">
+                                    <span>${escapeHtml(act.message)}</span>
+                                    <a href="${act.actionUrl}" class="action-btn">Resolve Alert</a>
+                                </div>
+                            `;
+                        }).join('');
+                    } else {
+                        actionSection.style.display = 'none';
+                    }
+                }
+
+                // Fetch platform notifications (announcements)
+                await fetchAnnouncements();
+
+                // Hide loading screen
+                document.getElementById('loadingOverlay').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                }, 300);
+
+                dashboardInitialized = true;
+            } catch (err) {
+                console.error(err);
+                showToast('Failed to populate Command Center.', 'error');
+            } finally {
+                window.__CHARLIE_DASHBOARD_INITIALIZING = false;
+            }
         }
 
-        function goToLeads() {
-            window.location.href = '/leads.html';
+        // Helper escape HTML
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
-        function goToUsers() {
-            window.location.href = '/manage-users.html';
+        // Action trigger views placeholders
+        function showProfile() {
+            alert('👤 Profile view configuration coming soon!');
         }
 
-        function goToBeatTracker() {
-            window.location.href = '/beat-tracker.html';
+        // View Activity logs placeholder
+        function showActivity() {
+            alert('📋 Activity log configuration coming soon!');
         }
 
-        function goToDeliveries() {
-            window.location.href = '/deliveries.html';
-        }
-
-        function goToMarketing() {
-            window.location.href = '/marketing.html';
-        }
-
-        function goToSerialValidation() {
-            window.location.href = '/serial-validation.html';
-        }
-
-        // Reports Functions
+        // Reports modal functions
         async function openReportsModal() {
             const modal = document.getElementById('reportsModal');
             modal.classList.add('show');
@@ -843,20 +1788,17 @@
             const grid = document.getElementById('reportsGrid');
             
             loading.style.display = 'block';
+            grid.innerHTML = '';
             
             try {
-                const response = await fetch(`${API_URL}/reports/summary`, {
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
-                });
-                
-                if (!response.ok) throw new Error('Failed to load reports');
-                
-                const data = await response.json();
-                
+                const data = await apiRequest('/reports/summary');
                 loading.style.display = 'none';
                 
+                if (!data || !data.availableReports) {
+                    grid.innerHTML = '<p style="text-align: center; color: var(--danger);">Failed to locate operational charts.</p>';
+                    return;
+                }
+
                 const reportIcons = {
                     'Orders Report': '📦',
                     'Deliveries Report': '🚚',
@@ -884,8 +1826,8 @@
                 
             } catch (error) {
                 loading.style.display = 'none';
-                grid.innerHTML = '<p style="text-align: center; color: #fc8181;">Failed to load reports. Please try again.</p>';
-                console.error('Error loading reports:', error);
+                grid.innerHTML = '<p style="text-align: center; color: var(--danger);">Failed to list operational logs.</p>';
+                console.error(error);
             }
         }
 
@@ -893,40 +1835,31 @@
             try {
                 showToast(`⏳ Generating ${name}...`);
                 
-                const response = await fetch(`http://localhost:7000${endpoint}`, {
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
+                const response = await fetch(`${window.location.origin}${endpoint}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
                 });
                 
                 if (!response.ok) throw new Error('Failed to download report');
                 
-                // Get the blob
                 const blob = await response.blob();
-                
-                // Create download link
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
                 
-                // Set filename based on type
                 const extension = type === 'excel' ? 'xlsx' : 'csv';
                 const filename = `${name.toLowerCase().replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.${extension}`;
                 a.download = filename;
                 
-                // Trigger download
                 document.body.appendChild(a);
                 a.click();
                 
-                // Cleanup
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
                 
                 showToast(`✅ ${name} downloaded successfully!`);
-                
             } catch (error) {
                 showToast(`❌ Failed to download ${name}`);
-                console.error('Error downloading report:', error);
+                console.error(error);
             }
         }
 
@@ -938,233 +1871,29 @@
             }
         });
 
-        function showHelp() {
-            showToast('Opening Help Center...');
-            window.open('/help.html', '_blank');
-        }
+        // Help Actions
+        function viewDocs() { window.open('/help.html', '_blank'); }
+        function viewVideos() { alert('📹 Video tutorials are coming soon! Admin can upload media under settings.'); }
+        function contactSupport() { window.open('/help.html#support', '_blank'); }
 
-        function viewDocs() {
-            window.open('/help.html', '_blank');
-        }
-
-        function viewVideos() {
-            // Open video tutorials page
-            const modal = confirm('📹 Video Tutorials\n\nWould you like to:\n\n1. View existing tutorials\n2. Upload new tutorial (Admin only)\n\nClick OK to view tutorials, Cancel to upload.');
-            
-            if (modal) {
-                showToast('Opening video tutorials...');
-                // TODO: Create videos.html page
-                alert('📹 Video Tutorials Coming Soon!\n\nFeatures:\n• Getting Started videos\n• Feature walkthroughs\n• Admin tutorials\n• Integration guides\n\nAdmin can upload videos via Settings → Media Library');
-            } else {
-                showToast('Video upload feature coming soon!');
-                alert('📤 Upload Video Tutorial\n\nAdmin Feature:\n1. Go to Settings → Media\n2. Click "Upload Video"\n3. Select video file\n4. Add title & description\n5. Set category\n6. Publish\n\nSupported formats: MP4, WebM\nMax size: 500MB');
-            }
-        }
-
-        function contactSupport() {
-            // Open AI chat assistant
-            const chatWindow = window.open('', 'CRM Assistant', 'width=400,height=600,resizable=yes,scrollbars=yes');
-            
-            chatWindow.document.write(`
-<!DOCTYPE html>
-<html>
-<head>
-    <title>CRM Assistant</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f7fafc;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .header {
-            background: #667eea;
-            color: white;
-            padding: 1rem;
-            text-align: center;
-        }
-        .chat-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        .message {
-            padding: 0.75rem 1rem;
-            border-radius: 12px;
-            max-width: 80%;
-            animation: slideIn 0.3s;
-        }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .bot-message {
-            background: white;
-            align-self: flex-start;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .user-message {
-            background: #667eea;
-            color: white;
-            align-self: flex-end;
-        }
-        .input-area {
-            padding: 1rem;
-            background: white;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            gap: 0.5rem;
-        }
-        input {
-            flex: 1;
-            padding: 0.75rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 0.95rem;
-        }
-        button {
-            padding: 0.75rem 1.5rem;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        button:hover { background: #5568d3; }
-        .quick-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-        .quick-btn {
-            padding: 0.5rem 0.75rem;
-            background: #f7fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-        .quick-btn:hover { background: #edf2f7; }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h2>🤖 CRM Assistant</h2>
-        <p style="font-size: 0.9rem; opacity: 0.9;">Ask me anything about the CRM</p>
-    </div>
-    <div class="chat-container" id="chatContainer">
-        <div class="message bot-message">
-            <strong>👋 Hello! I'm your CRM Assistant</strong><br><br>
-            I can help you with:<br>
-            • Creating orders<br>
-            • Managing leads<br>
-            • Service requests<br>
-            • Deliveries tracking<br>
-            • API integration<br>
-            • Navigation & features<br><br>
-            What would you like to know?
-            <div class="quick-actions">
-                <button class="quick-btn" onclick="askQuestion('How do I create an order?')">Create Order</button>
-                <button class="quick-btn" onclick="askQuestion('How do I add a lead?')">Add Lead</button>
-                <button class="quick-btn" onclick="askQuestion('How do I track deliveries?')">Track Delivery</button>
-                <button class="quick-btn" onclick="askQuestion('Show me keyboard shortcuts')">Shortcuts</button>
-            </div>
-        </div>
-    </div>
-    <div class="input-area">
-        <input type="text" id="userInput" placeholder="Ask a question..." onkeypress="if(event.key==='Enter') sendMessage()">
-        <button onclick="sendMessage()">Send</button>
-    </div>
-    <script>
-        const responses = {
-            'order': 'To create an order:\\n1. Go to Dashboard\\n2. Click "View Orders"\\n3. Click "New Order" button\\n4. Fill in customer details\\n5. Add items\\n6. Submit\\n\\nOr click the "➕ New Order" card on the dashboard!',
-            'lead': 'To add a lead:\\n1. Go to Dashboard\\n2. Click "Manage Leads"\\n3. Click "Add Lead" button\\n4. Enter lead information\\n5. Select source and status\\n6. Save\\n\\nYou can also import leads from CSV!',
-            'delivery': 'To track deliveries:\\n1. Go to Dashboard\\n2. Click "Deliveries"\\n3. View all shipments\\n4. Filter by status\\n5. See tracking numbers and ETA\\n\\nYou can also search by order ID!',
-            'service': 'To create a service request:\\n1. Go to Dashboard\\n2. Click "Service Requests"\\n3. Click "New Request"\\n4. Select issue type\\n5. Add description\\n6. Set priority\\n7. Submit',
-            'shortcut': 'Keyboard Shortcuts:\\n• Tab - Navigate forward\\n• Shift+Tab - Navigate back\\n• Enter - Activate\\n• Escape - Close\\n• Alt+A - Auto-fill login\\n• Ctrl+K - Quick search',
-            'api': 'API Integration:\\n1. Generate API key in Settings\\n2. Use base URL: http://localhost:7000/api\\n3. Add Authorization header\\n4. Make requests\\n\\nSee API_INTEGRATION_GUIDE.md for examples!',
-            'help': 'I can help with:\\n• Orders & Deliveries\\n• Leads & Opportunities\\n• Service Requests\\n• Marketing Campaigns\\n• API Integration\\n• Keyboard Navigation\\n• Accessibility Features\\n\\nJust ask me anything!',
-            'default': 'I understand you\\'re asking about: "{query}"\\n\\nHere are some helpful resources:\\n• Help Center: /help.html\\n• Documentation: WORKFLOW_GUIDE.md\\n• API Docs: API_INTEGRATION_GUIDE.md\\n\\nOr try asking:\\n• "How do I create an order?"\\n• "Show me keyboard shortcuts"\\n• "How do I add a lead?"'
-        };
-        
-        function addMessage(text, isUser = false) {
-            const container = document.getElementById('chatContainer');
-            const message = document.createElement('div');
-            message.className = 'message ' + (isUser ? 'user-message' : 'bot-message');
-            message.innerHTML = text.replace(/\\n/g, '<br>');
-            container.appendChild(message);
-            container.scrollTop = container.scrollHeight;
-        }
-        
-        function getResponse(query) {
-            query = query.toLowerCase();
-            for (let key in responses) {
-                if (query.includes(key)) {
-                    return responses[key].replace('{query}', query);
-                }
-            }
-            return responses.default.replace('{query}', query);
-        }
-        
-        function sendMessage() {
-            const input = document.getElementById('userInput');
-            const message = input.value.trim();
-            if (!message) return;
-            
-            addMessage(message, true);
-            input.value = '';
-            
-            setTimeout(() => {
-                const response = getResponse(message);
-                addMessage(response);
-            }, 500);
-        }
-        
-        function askQuestion(question) {
-            document.getElementById('userInput').value = question;
-            sendMessage();
-        }
-    <\/script>
-</body>
-</html>
-            `);
-        }
-
-        function viewApiDocs() {
-            window.open('/help.html', '_blank');
-        }
-
+        // Logout
         function logout() {
+            if (window.__CHARLIE_SESSION_REDIRECTING) return;
+            window.__CHARLIE_SESSION_REDIRECTING = true;
             localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
             showToast('Logged out successfully');
             setTimeout(() => {
                 window.location.href = '/login.html';
-            }, 1000);
+            }, 600);
         }
 
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            // Ctrl/Cmd + K for search
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                showToast('Search feature coming soon!');
-            }
-            
-            // Escape to close modals
-            if (e.key === 'Escape') {
-                // Close any open modals
-            }
-        });
-
-        // Load dashboard on page load
+        // Load dashboard on DOM ready
         window.addEventListener('DOMContentLoaded', loadDashboard);
     </script>
+    <!-- Integration Engines -->
+    <script src="/js/feature-guard.js"></script>
+    <script src="/js/tenant-branding.js"></script>
+    <script src="/js/tenant-notifications.js"></script>
 </body>
 </html>

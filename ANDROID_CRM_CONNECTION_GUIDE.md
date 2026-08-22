@@ -107,7 +107,7 @@ Android App ↔ WebSocket Connection ↔ CRM Server
 // Android App
 POST https://api.iconicsmart.co.in/api/auth/login
 Body: {
-    "email": "employee@iconicsmart.com",
+    "email": "employee@charlieai.com",
     "password": "password123"
 }
 
@@ -116,7 +116,7 @@ Response: {
     "user": {
         "id": "6904fcf0a254947361617bb8",
         "name": "Shubham Kumar",
-        "email": "employee@iconicsmart.com",
+        "email": "employee@charlieai.com",
         "role": "sales"
     }
 }
@@ -470,7 +470,7 @@ curl http://10.0.2.2:7000/api/health
 // Android App Test
 POST http://10.0.2.2:7000/api/auth/login
 Body: {
-    "email": "sales@iconic-crm.com",
+    "email": "sales@charlieai.com",
     "password": "sales123"
 }
 

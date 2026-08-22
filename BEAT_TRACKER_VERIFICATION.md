@@ -14,7 +14,7 @@
 ✅ Found 1 field employee(s):
 
 1. Shubham Kumar
-   📧 Email: shubham@iconicsmart.com
+   📧 Email: shubham@charlieai.com
    📱 Phone: 9876543210
    👔 Role: sales
    🏢 Department: Sales

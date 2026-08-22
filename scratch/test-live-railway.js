@@ -2,7 +2,7 @@ async function testLiveRailway() {
   const loginRes = await fetch('https://iconicsmartcrm.up.railway.app/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: 'admin@iconic-crm.com', password: 'admin123' })
+    body: JSON.stringify({ email: 'admin@charlieai.com', password: 'admin123' })
   }).then(r => r.json());
 
   console.log('✅ Live Admin Login Success:', loginRes.user?.name || loginRes);

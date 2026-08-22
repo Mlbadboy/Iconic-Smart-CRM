@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Iconic Smart CRM</title>
+    <title>Login - Charlie's CRM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,8 +15,8 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #6366f1 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -23,35 +26,55 @@
 
         .login-container {
             background: white;
-            padding: 3rem 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 450px;
+            padding: 3.25rem 2.75rem;
+            border-radius: 24px;
+            box-shadow: 0 25px 60px -10px rgba(15, 23, 42, 0.35);
+            max-width: 460px;
             width: 100%;
         }
 
         .logo {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 2.25rem;
         }
 
-        .logo-icon {
-            font-size: 4rem;
-            margin-bottom: 0.5rem;
+        .logo-badge {
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 1.1rem;
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+            border: 2px solid #c7d2fe;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.75rem;
+            box-shadow: 0 12px 25px -5px rgba(79, 70, 229, 0.25);
+            transition: transform 0.25s ease;
         }
 
-        h1 {
-            color: #2d3748;
+        .logo-badge:hover {
+            transform: scale(1.05) rotate(3deg);
+        }
+
+        .brand-title {
+            color: #0f172a;
             text-align: center;
-            margin-bottom: 0.5rem;
-            font-size: 2rem;
+            margin-bottom: 0.35rem;
+            font-size: 2.25rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+            display: block;
         }
 
         .subtitle {
             text-align: center;
-            color: #718096;
+            color: #64748b;
             margin-bottom: 2rem;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            letter-spacing: -0.01em;
         }
 
         .form-group {
@@ -60,49 +83,54 @@
 
         label {
             display: block;
-            margin-bottom: 0.5rem;
-            color: #2d3748;
-            font-weight: 500;
-            font-size: 0.95rem;
+            margin-bottom: 0.45rem;
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
 
         input {
             width: 100%;
-            padding: 0.875rem 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            padding: 0.9rem 1.15rem;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 12px;
             font-size: 1rem;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
             font-family: inherit;
+            background: #f8fafc;
         }
 
         input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: #ffffff;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
         }
 
         input:invalid:not(:placeholder-shown) {
-            border-color: #fc8181;
+            border-color: #f87171;
         }
 
         .btn {
             width: 100%;
-            padding: 1rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0.95rem;
+            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 1rem;
+            transition: all 0.2s ease;
+            margin-top: 1.25rem;
+            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
+            font-family: inherit;
         }
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 15px 25px -5px rgba(79, 70, 229, 0.5);
+            background: linear-gradient(135deg, #4338ca 0%, #3730a3 100%);
         }
 
         .btn:active {
@@ -243,10 +271,10 @@
 </head>
 <body>
     <div class="login-container">
-        <div class="logo">
-            <div class="logo-icon" role="img" aria-label="Rocket icon">🚀</div>
-            <h1>Iconic Smart CRM</h1>
-            <p class="subtitle">Simple, Powerful, Accessible</p>
+        <div class="logo" data-branding="logo-container">
+            <div class="logo-badge" data-branding="logo" role="img" aria-label="Rocket icon">🚀</div>
+            <h1 class="brand-title" data-branding="heading">Charlie's CRM</h1>
+            <p class="subtitle" data-branding="subtitle">Simple, Powerful, Accessible</p>
         </div>
 
         <div id="errorMessage" class="error-message" role="alert" aria-live="assertive"></div>
@@ -349,17 +377,23 @@
                 const data = await response.json();
 
                 if (response.ok && data.token) {
-                    // Store token
+                    // Clear any stale cached feature state
+                    localStorage.removeItem('cachedEntitlements');
+                    sessionStorage.removeItem('cachedEntitlements');
+                    sessionStorage.removeItem('suspensionReason');
+
+                    // Store token & fresh user info
                     localStorage.setItem('authToken', data.token);
                     localStorage.setItem('userName', data.user.name);
                     localStorage.setItem('userRole', data.user.role);
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
 
                     showSuccess('✅ Login successful! Redirecting...');
 
                     // Redirect to dashboard
                     setTimeout(() => {
                         window.location.href = '/dashboard.html';
-                    }, 1000);
+                    }, 500);
                 } else {
                     throw new Error(data.message || 'Login failed');
                 }
@@ -375,7 +409,7 @@
         }
 
         function showHelp() {
-            alert('📞 Contact Support:\n\nEmail: support@iconic-crm.com\nPhone: +1-555-0100\n\nOr visit our Help Center at /help.html');
+            alert('📞 Contact Support:\n\nEmail: support@charlieai.com\nPhone: +1-555-0100\n\nOr visit our Help Center at /help.html');
         }
 
         function viewDocs() {
@@ -384,16 +418,34 @@
 
 
 
-        // Check if already logged in
-        window.addEventListener('DOMContentLoaded', () => {
+        // Check if already logged in with verified token
+        window.addEventListener('DOMContentLoaded', async () => {
             const token = localStorage.getItem('authToken');
-            if (token) {
-                showSuccess('You are already logged in. Redirecting...');
-                setTimeout(() => {
-                    window.location.href = '/dashboard.html';
-                }, 1000);
+            if (!token) return;
+
+            try {
+                const res = await fetch(`${API_URL}/auth/verify`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.valid && data.user) {
+                        showSuccess('You are already logged in. Redirecting to workspace...');
+                        setTimeout(() => {
+                            window.location.href = '/dashboard.html';
+                        }, 600);
+                        return;
+                    }
+                }
+                // Token invalid or expired: clear without looping
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('currentUser');
+            } catch (err) {
+                // If offline or network error, do not loop
+                console.warn('Silent auth check notice:', err.message);
             }
         });
     </script>
+    <script src="/js/tenant-branding.js"></script>
 </body>
 </html>

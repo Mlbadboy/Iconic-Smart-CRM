@@ -203,7 +203,7 @@ async function main() {
     assert.strictEqual(escalation.escalatedTo, 'service-manager');
 
     // Resolve Escalation
-    await escalationService.resolveEscalation(escalation._id, 'admin@iconic-crm.com', 'Resolved breach');
+    await escalationService.resolveEscalation(escalation._id, 'admin@charlieai.com', 'Resolved breach');
     const resolvedEsc = await mongoose.model('Escalation').findById(escalation._id);
     assert.strictEqual(resolvedEsc.status, 'resolved');
 

@@ -1,6 +1,22 @@
 const mongoose = require('mongoose');
 
 const retailerSchema = new mongoose.Schema({
+    companyId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Company',
+        index: true
+    },
+    partnerType: {
+        type: String,
+        enum: ['DISTRIBUTOR', 'DEALER', 'RETAILER'],
+        default: 'RETAILER',
+        index: true
+    },
+    partnerCode: {
+        type: String,
+        trim: true,
+        index: true
+    },
     retailerName: {
         type: String,
         required: true,
@@ -70,5 +86,9 @@ const retailerSchema = new mongoose.Schema({
 retailerSchema.index({ email: 1 }, { unique: true });
 retailerSchema.index({ phone: 1 });
 retailerSchema.index({ retailerName: 1 });
+
+retailerSchema.index({ companyId: 1, email: 1 });
+retailerSchema.index({ companyId: 1, partnerType: 1 });
+retailerSchema.index({ companyId: 1, partnerCode: 1 });
 
 module.exports = mongoose.model('Retailer', retailerSchema);

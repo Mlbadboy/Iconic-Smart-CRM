@@ -11,7 +11,7 @@
 ## 📧 Quick Email Setup
 
 ### Step 1: Open Configuration Page
-1. Login as admin: `admin@iconic-crm.com` / `admin123`
+1. Login as admin: `admin@charlieai.com` / `admin123`
 2. Navigate to: `http://localhost:7000/config.html`
 
 ### Step 2: Configure Email (Gmail Example)

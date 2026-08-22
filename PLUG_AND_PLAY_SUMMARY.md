@@ -44,10 +44,10 @@ Your CRM is now a **production-ready, plug-and-play system** that can be deploye
 
 **Pre-configured Login Credentials**:
 ```
-Admin:    admin@iconic-crm.com     / admin123
-Manager:  manager@iconic-crm.com   / manager123
-Sales:    sales@iconic-crm.com     / sales123
-Support:  support@iconic-crm.com   / support123
+Admin:    admin@charlieai.com     / admin123
+Manager:  manager@charlieai.com   / manager123
+Sales:    sales@charlieai.com     / sales123
+Support:  support@charlieai.com   / support123
 Customer: customer@example.com     / demo123
 ```
 

@@ -6,7 +6,7 @@ async function quickLogin() {
   
   try {
     const res = await axios.post('http://localhost:7000/api/auth/login', {
-      email: 'admin@iconic-crm.com',
+      email: 'admin@charlieai.com',
       password: 'admin123'
     });
     
@@ -16,7 +16,7 @@ async function quickLogin() {
     console.log('🔑 Token:', res.data.token.substring(0, 20) + '...');
     console.log('\n📊 Your CRM is working perfectly!');
     console.log('\n🌐 Open browser: http://localhost:7000/login.html');
-    console.log('   Email: admin@iconic-crm.com');
+    console.log('   Email: admin@charlieai.com');
     console.log('   Password: admin123');
     console.log('\n💡 TIP: Use Private/Incognito window if CSP errors persist\n');
     

@@ -44,7 +44,7 @@ FRONTEND_URL=http://localhost:3000
   console.log('\nNext steps:');
   console.log('1. npm run seed    # Populate demo data');
   console.log('2. npm start       # Start the server');
-  console.log('3. Login with: admin@iconic-crm.com / admin123\n');
+  console.log('3. Login with: admin@charlieai.com / admin123\n');
   
   rl.close();
 });

@@ -31,7 +31,7 @@ Server should be running at **http://localhost:7000**
 # 1. Login to get JWT token
 curl -X POST http://localhost:7000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d "{\"email\":\"admin@iconic-crm.com\",\"password\":\"admin123\"}"
+  -d "{\"email\":\"admin@charlieai.com\",\"password\":\"admin123\"}"
 
 # Save the token from response
 # TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ..."
@@ -46,7 +46,7 @@ curl -X POST http://localhost:7000/api/api-keys \
 ### **Option B: Using the Web Interface**
 
 1. Go to http://localhost:7000
-2. Login with `admin@iconic-crm.com` / `admin123`
+2. Login with `admin@charlieai.com` / `admin123`
 3. Navigate to Settings → API Keys
 4. Click "Create New API Key"
 5. Copy and save the key securely

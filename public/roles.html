@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roles & Permissions Builder — Charlie's CRM</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" data-branding="favicon">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --purple: #8b5cf6;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+            background: #eef2ff;
+        }
+
+        .container {
+            max-width: 1350px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .main-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .role-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .role-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px -3px rgba(0,0,0,0.08);
+        }
+
+        .role-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .role-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .dept-tag {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            background: #f1f5f9;
+            color: #475569;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .scope-tag {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            background: #e0e7ff;
+            color: #3730a3;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .perm-count-badge {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .assigned-badge {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-top: 0.25rem;
+        }
+
+        .role-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 0.75rem;
+        }
+
+        /* Modal Styles */
+        .modal-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-backdrop.show { display: flex; }
+
+        .modal-box {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.75rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .modal-body {
+            padding: 1.5rem 1.75rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.35rem;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+        }
+
+        /* Permissions Matrix */
+        .perm-section {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .perm-section.disabled-feature {
+            background: #fdf2f2;
+            border-color: #fecaca;
+            opacity: 0.75;
+        }
+
+        .perm-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .perm-section-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .lock-badge {
+            background: #fee2e2;
+            color: #b91c1c;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            border: 1px solid #f87171;
+        }
+
+        .available-badge {
+            background: #dcfce7;
+            color: #15803d;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+        }
+
+        .perm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.65rem;
+        }
+
+        .perm-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .perm-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 0.85rem 1.5rem;
+            background: #1e293b;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 2000;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 2rem;">
+            <a href="/dashboard.html" class="logo" data-branding="logo">
+                🚀 Charlie's CRM
+            </a>
+            <nav class="nav-links">
+                <a href="/dashboard.html" class="nav-link">Dashboard</a>
+                <a href="/manage-users.html" class="nav-link">Users</a>
+                <a href="/roles.html" class="nav-link active">Roles & Permissions</a>
+                <a href="/organization.html" class="nav-link">Organization</a>
+                <a href="/reports.html" class="nav-link">Reports</a>
+            </nav>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <span id="userNameDisplay" style="font-size: 0.9rem; font-weight: 600; color: var(--text-muted);">Admin</span>
+            <button class="btn btn-secondary btn-sm" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="main-card">
+            <div class="toolbar">
+                <div>
+                    <h2 style="font-size: 1.35rem; font-weight: 700; margin: 0 0 0.25rem 0;">Company Roles & Permissions</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">
+                        Configure custom roles and assign fine-grained permissions for your team members.
+                    </p>
+                </div>
+                <div>
+                    <button class="btn btn-primary" onclick="openRoleModal()">+ Create New Role</button>
+                </div>
+            </div>
+
+            <div class="roles-grid" id="rolesGrid">
+                <div style="text-align: center; padding: 2rem; color: var(--text-muted); grid-column: span 3;">
+                    Loading roles & permissions...
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Create / Edit Role Modal -->
+    <div class="modal-backdrop" id="roleModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title" id="roleModalTitle">Create Custom Role</h3>
+                <button style="background:none; border:none; font-size:1.5rem; cursor:pointer;" onclick="closeModal('roleModal')">&times;</button>
+            </div>
+            <form id="roleForm" onsubmit="handleRoleSubmit(event)" style="display:flex; flex-direction:column; height:100%; overflow:hidden;">
+                <div class="modal-body">
+                    <input type="hidden" id="roleIdInput">
+                    
+                    <div style="background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between;">
+                        <span style="font-size: 0.9rem; font-weight: 600; color: #3730a3;">🚀 Start from Template:</span>
+                        <select id="roleTemplateSelect" onchange="applyRoleTemplate()" style="padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid #c7d2fe; font-size: 0.85rem;">
+                            <option value="">Custom Role (Blank)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Role Name *</label>
+                            <input type="text" id="roleNameInput" required placeholder="e.g. Sales Manager">
+                        </div>
+                        <div class="form-group">
+                            <label>Department</label>
+                            <select id="roleDepartmentSelect">
+                                <option value="">Select Department</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Default Data Scope</label>
+                            <select id="roleScopeSelect">
+                                <option value="ALL">ALL (Company Wide)</option>
+                                <option value="REGION">REGION (Regional Boundary)</option>
+                                <option value="TERRITORY">TERRITORY (City / Area)</option>
+                                <option value="DISTRIBUTOR">DISTRIBUTOR Network</option>
+                                <option value="DEALER">DEALER Network</option>
+                                <option value="SELF">SELF (Only Own Records)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input type="text" id="roleDescInput" placeholder="Briefly describe what responsibilities this role holds...">
+                    </div>
+
+                    <div style="margin-top: 1.5rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                            <h4 style="margin:0; font-size:1.05rem; font-weight:700;">Feature Permissions</h4>
+                            <div style="display:flex; gap:0.5rem;">
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllEnabledPermissions(true)">Select All Enabled</button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllEnabledPermissions(false)">Clear All</button>
+                            </div>
+                        </div>
+
+                        <div id="permissionSectionsContainer">
+                            <!-- Populated dynamically with 18 feature sections and lock badges -->
+                        </div>
+                    </div>
+                </div>
+
+                <div style="padding: 1.25rem 1.75rem; background: #f8fafc; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('roleModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveRoleBtn">Save Role</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="/js/feature-guard.js"></script>
+    <script src="/js/tenant-branding.js"></script>
+    <script src="/js/tenant-notifications.js"></script>
+    <script>
+        const API_URL = window.location.origin + '/api';
+        const token = localStorage.getItem('authToken');
+        let availablePermissionGroups = [];
+        let roleTemplates = {};
+        let allRoles = [];
+        let allDepartments = [];
+
+        if (!token) window.location.href = '/login.html';
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 3500);
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        async function initPage() {
+            try {
+                const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                if (user.name) document.getElementById('userNameDisplay').textContent = user.name;
+
+                await Promise.all([
+                    loadAvailablePermissions(),
+                    loadRoleTemplates(),
+                    loadDepartments(),
+                    loadRoles()
+                ]);
+            } catch (err) {
+                console.error('Init error:', err);
+            }
+        }
+
+        async function loadAvailablePermissions() {
+            try {
+                const res = await fetch(`${API_URL}/roles/available-permissions`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    availablePermissionGroups = data.permissionGroups || [];
+                }
+            } catch (e) {
+                console.error('Permissions load error:', e);
+            }
+        }
+
+        async function loadRoleTemplates() {
+            try {
+                const res = await fetch(`${API_URL}/roles/templates`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    roleTemplates = await res.json();
+                    const sel = document.getElementById('roleTemplateSelect');
+                    let opts = '<option value="">Custom Role (Blank)</option>';
+                    for (const [k, t] of Object.entries(roleTemplates)) {
+                        opts += `<option value="${k}">${t.name} (${t.department})</option>`;
+                    }
+                    sel.innerHTML = opts;
+                }
+            } catch (e) {
+                console.error('Templates load error:', e);
+            }
+        }
+
+        async function loadDepartments() {
+            try {
+                const res = await fetch(`${API_URL}/departments`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    allDepartments = await res.json();
+                    const sel = document.getElementById('roleDepartmentSelect');
+                    sel.innerHTML = '<option value="">Select Department</option>' + 
+                        allDepartments.map(d => `<option value="${d.name}">${d.name}</option>`).join('');
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function loadRoles() {
+            try {
+                const res = await fetch(`${API_URL}/roles`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Failed to load roles');
+                allRoles = await res.json();
+                renderRolesGrid(allRoles);
+            } catch (err) {
+                document.getElementById('rolesGrid').innerHTML = `
+                    <div style="text-align:center; color:var(--danger); padding:2rem; grid-column:span 3;">
+                        ${err.message}
+                    </div>
+                `;
+            }
+        }
+
+        function renderRolesGrid(roles) {
+            const grid = document.getElementById('rolesGrid');
+            if (!roles || roles.length === 0) {
+                grid.innerHTML = `
+                    <div style="text-align:center; padding:3rem; color:var(--text-muted); grid-column:span 3;">
+                        No custom roles configured yet. Click <strong>+ Create New Role</strong> to get started!
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = roles.map(r => {
+                const assigned = r.assignedUsersCount || 0;
+                const permsCount = r.permissions?.length || 0;
+                return `
+                    <div class="role-card">
+                        <div>
+                            <div class="role-header">
+                                <div class="role-name">${r.name}</div>
+                                <span class="dept-tag">${r.department || 'General'}</span>
+                            </div>
+                            <p style="font-size:0.85rem; color:var(--text-muted); margin:0 0 0.5rem 0;">
+                                ${r.description || 'Custom organizational role.'}
+                            </p>
+                            <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+                                <span class="scope-tag">${r.scopeType || 'ALL'}</span>
+                                <span class="perm-count-badge">🔑 ${permsCount} permissions</span>
+                            </div>
+                            <div class="assigned-badge">
+                                👥 ${assigned} user${assigned === 1 ? '' : 's'} assigned
+                            </div>
+                        </div>
+                        <div class="role-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="editRole('${r._id}')">Edit</button>
+                            <button class="btn btn-secondary btn-sm" onclick="duplicateRole('${r._id}')">Duplicate</button>
+                            <button class="btn btn-secondary btn-sm" style="color:var(--danger);" onclick="deleteRole('${r._id}', '${r.name}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderPermissionSections(selectedPermissions = []) {
+            const container = document.getElementById('permissionSectionsContainer');
+            
+            container.innerHTML = availablePermissionGroups.map(group => {
+                const isEnabled = group.isEnabled;
+
+                return `
+                    <div class="perm-section ${isEnabled ? '' : 'disabled-feature'}" style="margin-bottom: 1.25rem; border-radius: 12px; border: 1px solid ${isEnabled ? 'var(--border)' : '#fca5a5'}; background: ${isEnabled ? '#ffffff' : '#fff5f5'};">
+                        <div class="perm-section-header" style="border-bottom: 1px solid ${isEnabled ? '#f1f5f9' : '#fed7d7'}; padding-bottom: 0.75rem; margin-bottom: 0.85rem;">
+                            <div>
+                                <span class="perm-section-title" style="font-size: 1.05rem;">${group.featureName}</span>
+                                <span style="font-size:0.75rem; color:var(--text-muted); margin-left:0.5rem;">(${group.category})</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:0.5rem;">
+                                <span style="font-size:0.8rem; font-weight:600; color:var(--text-muted);">Company Feature:</span>
+                                ${isEnabled 
+                                    ? `<span class="available-badge">✅ Enabled</span>`
+                                    : `<span class="lock-badge">🔒 Disabled in Plan</span>`
+                                }
+                            </div>
+                        </div>
+
+                        ${!isEnabled ? `
+                            <div style="background: #fef2f2; border: 1px dashed #f87171; border-radius: 8px; padding: 0.85rem 1rem; color: #991b1b; font-size: 0.85rem;">
+                                <strong>🔒 Not included in company plan</strong><br>
+                                This feature is currently not active for your company. To grant permissions for <em>${group.featureName}</em>, your platform administrator must enable it in Tenant Control.
+                            </div>
+                        ` : `
+                            <div style="margin-bottom: 0.5rem; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">
+                                Role Permissions:
+                            </div>
+                            <div class="perm-grid">
+                                ${group.permissions.map(p => {
+                                    const isChecked = selectedPermissions.includes(p.key);
+                                    return `
+                                        <label class="perm-item" style="padding: 0.4rem 0.6rem; border-radius: 6px; border: 1px solid #f1f5f9; background: #f8fafc;">
+                                            <input type="checkbox" name="permissions" value="${p.key}" 
+                                                ${isChecked ? 'checked' : ''}>
+                                            <span style="font-weight: 500;">${p.label}</span>
+                                        </label>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openRoleModal() {
+            document.getElementById('roleModalTitle').textContent = 'Create Custom Role';
+            document.getElementById('roleIdInput').value = '';
+            document.getElementById('roleNameInput').value = '';
+            document.getElementById('roleDescInput').value = '';
+            document.getElementById('roleDepartmentSelect').value = '';
+            document.getElementById('roleScopeSelect').value = 'ALL';
+            document.getElementById('roleTemplateSelect').value = '';
+            renderPermissionSections([]);
+            document.getElementById('roleModal').classList.add('show');
+        }
+
+        function applyRoleTemplate() {
+            const templateKey = document.getElementById('roleTemplateSelect').value;
+            if (!templateKey || !roleTemplates[templateKey]) return;
+
+            const t = roleTemplates[templateKey];
+            document.getElementById('roleNameInput').value = t.name;
+            document.getElementById('roleDescInput').value = t.description || '';
+            document.getElementById('roleDepartmentSelect').value = t.department || '';
+            document.getElementById('roleScopeSelect').value = t.scopeType || 'ALL';
+            renderPermissionSections(t.permissions || []);
+        }
+
+        function selectAllEnabledPermissions(select) {
+            const checkboxes = document.querySelectorAll('#permissionSectionsContainer input[type="checkbox"]:not(:disabled)');
+            checkboxes.forEach(cb => { cb.checked = select; });
+        }
+
+        async function handleRoleSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('roleIdInput').value;
+            const name = document.getElementById('roleNameInput').value.trim();
+            const description = document.getElementById('roleDescInput').value.trim();
+            const department = document.getElementById('roleDepartmentSelect').value;
+            const scopeType = document.getElementById('roleScopeSelect').value;
+
+            const checkedPerms = Array.from(document.querySelectorAll('#permissionSectionsContainer input[type="checkbox"]:checked'))
+                .map(cb => cb.value);
+
+            const payload = {
+                name,
+                description,
+                department,
+                scopeType,
+                permissions: checkedPerms
+            };
+
+            try {
+                const method = id ? 'PUT' : 'POST';
+                const url = id ? `${API_URL}/roles/${id}` : `${API_URL}/roles`;
+
+                const res = await fetch(url, {
+                    method,
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || data.message || 'Failed to save role');
+
+                showToast(id ? '✅ Role updated successfully' : '✅ Custom role created successfully');
+                closeModal('roleModal');
+                await loadRoles();
+            } catch (err) {
+                alert('❌ ' + err.message);
+            }
+        }
+
+        async function editRole(id) {
+            try {
+                const res = await fetch(`${API_URL}/roles/${id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Failed to load role details');
+                const r = await res.json();
+
+                document.getElementById('roleModalTitle').textContent = `Edit Role — ${r.name}`;
+                document.getElementById('roleIdInput').value = r._id;
+                document.getElementById('roleNameInput').value = r.name;
+                document.getElementById('roleDescInput').value = r.description || '';
+                document.getElementById('roleDepartmentSelect').value = r.department || '';
+                document.getElementById('roleScopeSelect').value = r.scopeType || 'ALL';
+                document.getElementById('roleTemplateSelect').value = '';
+
+                renderPermissionSections(r.permissions || []);
+                document.getElementById('roleModal').classList.add('show');
+            } catch (e) {
+                alert('Error editing role: ' + e.message);
+            }
+        }
+
+        async function duplicateRole(id) {
+            try {
+                const res = await fetch(`${API_URL}/roles/${id}/duplicate`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Failed to duplicate role');
+                showToast(`✅ Role duplicated as '${data.role.name}'`);
+                await loadRoles();
+            } catch (e) {
+                alert('❌ ' + e.message);
+            }
+        }
+
+        async function deleteRole(id, name) {
+            if (!confirm(`Are you sure you want to delete the role '${name}'?`)) return;
+
+            try {
+                const res = await fetch(`${API_URL}/roles/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || data.message || 'Failed to delete role');
+                }
+                showToast(`✅ Role '${name}' deleted`);
+                await loadRoles();
+            } catch (e) {
+                alert('❌ ' + e.message);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = '/login.html';
+        }
+
+        window.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>

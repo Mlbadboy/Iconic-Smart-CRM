@@ -1,14 +1,14 @@
-# Railway Deployment Guide for iconicsmart.co.in
+# Railway Deployment Guide for charlieai.in
 
 ## Quick Start
 
-This guide will help you deploy Iconic Smart CRM to Railway with your custom domain.
+This guide will help you deploy Charlie's CRM to Railway with your custom domain `https://www.charlieai.in/`.
 
 ## Prerequisites
 
 - Railway account (sign up at [railway.app](https://railway.app))
 - GitHub repository access
-- Domain `iconicsmart.co.in` with DNS access
+- Domain `charlieai.in` with DNS access (GoDaddy, Cloudflare, Namecheap, etc.)
 - MongoDB Atlas account (recommended) or Railway MongoDB service
 
 ## Step-by-Step Deployment
@@ -16,9 +16,9 @@ This guide will help you deploy Iconic Smart CRM to Railway with your custom dom
 ### 1. Railway Account Setup
 
 1. Go to [railway.app](https://railway.app) and sign up (GitHub login recommended)
-2. Create a new project: "Iconic Smart CRM"
+2. Create a new project: "Charlie's CRM"
 3. Click "New" → "GitHub Repo"
-4. Select your `Iconic-Smart-CRM` repository
+4. Select your `Iconic-Smart-CRM` (or `charlies-crm`) repository
 5. Railway will automatically detect Node.js and start building
 
 ### 2. MongoDB Setup
@@ -32,7 +32,7 @@ This guide will help you deploy Iconic Smart CRM to Railway with your custom dom
 5. Network Access: Add IP `0.0.0.0/0` (allow all IPs for Railway)
 6. Get connection string:
    ```
-   mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/iconic-crm?retryWrites=true&w=majority
+   mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/charlies-crm?retryWrites=true&w=majority
    ```
 
 **Option B: Railway MongoDB Service**
@@ -47,12 +47,14 @@ In Railway dashboard → Your Service → Variables tab, add:
 
 **Required Variables:**
 ```
-MONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/iconic-crm?retryWrites=true&w=majority
+MONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/charlies-crm?retryWrites=true&w=majority
 NODE_ENV=production
 PORT=7000
 JWT_SECRET=<generate-strong-random-64-char-string>
 JWT_EXPIRE=7d
-FRONTEND_URL=https://www.iconicsmart.co.in
+FRONTEND_URL=https://www.charlieai.in
+DOMAIN=www.charlieai.in
+ALLOWED_ORIGINS=https://www.charlieai.in,https://charlieai.in,https://app.charlieai.in
 ```
 
 **Email Service (Optional but Recommended):**
@@ -61,7 +63,7 @@ EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
 EMAIL_USER=your-email@gmail.com
 EMAIL_PASSWORD=your-app-password
-EMAIL_FROM=Iconic Smart CRM <noreply@iconicsmart.co.in>
+EMAIL_FROM=Charlie's CRM <noreply@charlieai.in>
 EMAIL_SECURE=false
 ```
 
@@ -75,27 +77,34 @@ MAX_FILE_SIZE=5242880
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ```
 
-### 4. Custom Domain Configuration
+### 4. Custom Domain Configuration (charlieai.in)
 
-1. In Railway service → Settings → Domains
-2. Click "Add Custom Domain"
-3. Enter: `iconicsmart.co.in`
+1. In Railway service → **Settings** → **Domains**
+2. Click **"Custom Domain"**
+3. Enter: `www.charlieai.in` and `charlieai.in`
 4. Railway will provide DNS records (CNAME or A record)
-5. Add DNS records in your domain registrar:
+5. Add DNS records in your domain registrar (e.g. Cloudflare / GoDaddy):
 
-   **For CNAME:**
-   - Type: CNAME
-   - Name: @ (or iconicsmart.co.in)
-   - Value: Railway-provided CNAME (e.g., `your-app.up.railway.app`)
-   - TTL: 3600
+   **For CNAME (www subdomain):**
+   - Type: `CNAME`
+   - Name: `www`
+   - Value: Railway-provided CNAME (e.g., `charlies-crm-production.up.railway.app`)
+   - TTL: `3600` (or Auto)
 
-   **For www subdomain:**
-   - Type: CNAME
-   - Name: www
+   **For Root domain (`charlieai.in`):**
+   - Type: `CNAME` or `ALIAS` / `ANAME` (or `A` record with Railway IP if provided)
+   - Name: `@`
+   - Value: Railway-provided domain target
+   - TTL: `3600`
+
+   **For Multi-Tenant Subdomains (`*.charlieai.in`):**
+   - Type: `CNAME`
+   - Name: `*`
    - Value: Same Railway CNAME
+   - TTL: `3600`
 
 6. Wait 5-15 minutes for DNS propagation
-7. Railway automatically provisions SSL certificate (Let's Encrypt)
+7. Railway automatically provisions SSL certificate (Let's Encrypt TLS) and routes all traffic seamlessly to `https://www.charlieai.in/`.
 
 ### 5. File Storage Configuration
 
@@ -154,7 +163,7 @@ Update `middleware/upload.js` to use cloud storage SDK.
 | `EMAIL_PORT` | No | SMTP port | `587` |
 | `EMAIL_USER` | No | SMTP username | `your-email@gmail.com` |
 | `EMAIL_PASSWORD` | No | SMTP password | `app-password` |
-| `EMAIL_FROM` | No | From address | `Iconic Smart CRM <noreply@iconicsmart.co.in>` |
+| `EMAIL_FROM` | No | From address | `Iconic Smart CRM <noreply@charlieai.com>` |
 | `MAX_FILE_SIZE` | No | Max upload size (bytes) | `5242880` |
 
 ## Troubleshooting

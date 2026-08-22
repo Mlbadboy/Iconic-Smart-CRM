@@ -1,15 +1,34 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
+    companyId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Company',
+        index: true
+    },
     productId: {
         type: String,
-        unique: true,
         required: true
     },
     sku: {
         type: String,
-        unique: true,
-        required: true
+        required: true,
+        trim: true,
+        index: true
+    },
+    materialCode: {
+        type: String,
+        trim: true,
+        index: true
+    },
+    productCode: {
+        type: String,
+        trim: true,
+        index: true
+    },
+    model: {
+        type: String,
+        trim: true
     },
     name: {
         type: String,
@@ -56,8 +75,8 @@ const productSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Generate product ID before saving
-productSchema.pre('save', async function(next) {
+// Generate product ID before validation
+productSchema.pre('validate', async function(next) {
     if (!this.productId) {
         // Use a more robust ID generation to avoid conflicts
         const timestamp = Date.now();
@@ -66,5 +85,8 @@ productSchema.pre('save', async function(next) {
     }
     next();
 });
+
+productSchema.index({ companyId: 1, sku: 1 });
+productSchema.index({ companyId: 1, active: 1 });
 
 module.exports = mongoose.model('Product', productSchema);

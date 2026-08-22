@@ -6,8 +6,10 @@ const { validateSerialNumber, maskSerial } = require('../services/serialValidati
 const SerialValidationHistory = require('../models/SerialValidationHistory');
 const SerialRegistry = require('../models/SerialRegistry');
 const { success, error } = require('../utils/apiResponse');
+const { requireFeature } = require('../middleware/featureGate');
 
 const router = express.Router();
+router.use(requireFeature('serial_validation'));
 
 // Validate a serial number
 router.post('/validate', auth, requirePermission('serial_validation.validate'), getRateLimiter, async (req, res) => {
@@ -46,16 +48,13 @@ router.get('/history', auth, requirePermission('serial_validation.history'), asy
     const history = await SerialValidationHistory.find()
       .populate('validatedBy', 'name email role')
       .sort({ createdAt: -1 })
-      .limit(100);
-
-    // Mask serial numbers before returning them to the UI
+      .limit(50);
     const maskedHistory = history.map(item => {
       const obj = item.toObject();
       obj.serialNumber = maskSerial(obj.serialNumber);
       return obj;
     });
-
-    return success(res, maskedHistory);
+    return success(res, { history: maskedHistory });
   } catch (err) {
     return error(res, { status: 500, message: err.message });
   }

@@ -80,15 +80,108 @@ router.post('/register', async (req, res) => {
 // Login
 router.post('/login', async (req, res) => {
   try {
+    const { resolveTenantFromHost } = require('../services/tenantResolver');
+    const hostInfo = await resolveTenantFromHost(req);
+
+    // If accessing on a tenant subdomain, check tenant lifecycle
+    if (hostInfo.company) {
+      if (hostInfo.company.status === 'SUSPENDED') {
+        return res.status(403).json({ 
+          message: 'Tenant subscription is suspended. Please contact your company administrator or platform support.',
+          code: 'TENANT_SUSPENDED'
+        });
+      }
+      if (hostInfo.company.status === 'DEACTIVATED' || !hostInfo.company.isActive) {
+        return res.status(403).json({ 
+          message: 'This tenant workspace is inactive.',
+          code: 'TENANT_INACTIVE'
+        });
+      }
+    }
+
     const email = normalizeEmail(req.body.email);
     const { password } = req.body;
     if (!email || !password) return res.status(400).json({ message: 'Email and password are required' });
 
     const user = await User.findOne({ email });
-    if (!user || !user.isActive || !(await bcrypt.compare(password, user.password))) {
+    if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
+
+    // Check account lockout status
+    if (user.isLocked || user.status === 'LOCKED') {
+      return res.status(423).json({
+        message: 'Your account has been temporarily locked due to too many failed login attempts. Please contact your company administrator to unlock your account.',
+        code: 'ACCOUNT_LOCKED',
+        lockReason: user.lockReason || 'Too many failed login attempts',
+        failedLoginAttempts: user.failedLoginAttempts || 5
+      });
+    }
+
+    // Check soft-deactivation / active state
+    if (user.status === 'DISABLED' || !user.isActive) {
+      return res.status(403).json({
+        message: 'This user account has been deactivated. Please contact your company administrator.',
+        code: 'USER_DISABLED'
+      });
+    }
+
+    // Validate password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      const attempts = (user.failedLoginAttempts || 0) + 1;
+      user.failedLoginAttempts = attempts;
+
+      if (attempts >= 5) {
+        user.isLocked = true;
+        user.status = 'LOCKED';
+        user.lockReason = 'Too many failed login attempts';
+        await user.save();
+
+        await recordAuditEvent(req, {
+          actorId: user._id,
+          actorRole: user.role,
+          action: 'user.locked',
+          entity: 'User',
+          entityId: user._id,
+          details: { reason: '5 failed login attempts', failedAttempts: attempts }
+        });
+
+        return res.status(423).json({
+          message: 'Your account has been temporarily locked due to too many failed login attempts. Please contact your company administrator to unlock your account.',
+          code: 'ACCOUNT_LOCKED',
+          lockReason: user.lockReason,
+          failedLoginAttempts: attempts
+        });
+      }
+
+      await user.save();
+      return res.status(401).json({ 
+        message: 'Invalid credentials',
+        remainingAttempts: Math.max(0, 5 - attempts)
+      });
+    }
+
+    // Password is valid - reset lockout counters
+    user.failedLoginAttempts = 0;
+    user.isLocked = false;
+    user.lockReason = null;
+    user.lockUntil = null;
+
+    const isSuperAdmin = ['super-admin', 'superadmin'].includes(String(user.role).toLowerCase());
+
+    // If logging into a specific tenant workspace, enforce that the user belongs to this tenant!
+    if (hostInfo.company && !isSuperAdmin) {
+      if (String(user.companyId) !== String(hostInfo.company._id)) {
+        return res.status(401).json({ 
+          message: 'Invalid credentials for this tenant workspace',
+          code: 'TENANT_MISMATCH'
+        });
+      }
+    }
+
     user.lastLogin = new Date();
+    user.lastActivity = new Date();
     await user.save();
     await recordAuditEvent(req, {
       actorId: user._id,
@@ -98,8 +191,51 @@ router.post('/login', async (req, res) => {
       entityId: user._id,
       newValue: { lastLogin: user.lastLogin }
     });
-    const token = jwt.sign({ id: user._id, role: user.role }, getJwtSecret(), { expiresIn: process.env.JWT_EXPIRES_IN || '8h' });
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+    const tokenPayload = {
+      id: user._id,
+      role: user.role,
+      companyId: user.companyId || null,
+      customRoleId: user.customRoleId || null,
+      scopeType: user.scopeType || 'ALL',
+      scopeValues: user.scopeValues || []
+    };
+    const token = jwt.sign(tokenPayload, getJwtSecret(), { expiresIn: process.env.JWT_EXPIRES_IN || '8h' });
+    
+    let companyDetails = null;
+    if (user.companyId) {
+      const Company = require('../models/Company');
+      const comp = await Company.findById(user.companyId).select('name displayName code subdomain logo branding settings status features billing').lean();
+      if (comp) {
+        companyDetails = { 
+          id: comp._id, 
+          name: comp.name, 
+          displayName: comp.displayName || comp.name,
+          code: comp.code, 
+          subdomain: comp.subdomain || null,
+          logo: comp.branding?.logo || comp.logo, 
+          branding: comp.branding,
+          settings: comp.settings,
+          status: comp.status,
+          plan: comp.billing?.plan || 'STARTER',
+          features: comp.features || {}
+        };
+      }
+    }
+
+    res.json({ 
+      token, 
+      user: { 
+        id: user._id, 
+        name: user.name, 
+        email: user.email, 
+        role: user.role,
+        companyId: user.companyId || null,
+        company: companyDetails,
+        customRoleId: user.customRoleId || null,
+        scopeType: user.scopeType || 'ALL',
+        scopeValues: user.scopeValues || []
+      } 
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -108,7 +244,7 @@ router.post('/login', async (req, res) => {
 // Get profile
 router.get('/profile', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findById(req.user.id).select('-password').populate('companyId', 'name code logo settings').populate('customRoleId');
     if (!user) return res.status(404).json({ message: 'User not found' });
     res.json(user);
   } catch (err) {
@@ -119,9 +255,22 @@ router.get('/profile', auth, async (req, res) => {
 // Verify token
 router.get('/verify', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findById(req.user.id).select('-password').populate('companyId', 'name code logo settings').populate('customRoleId');
     if (!user || !user.isActive) return res.status(401).json({ valid: false, message: 'Invalid token' });
-    res.json({ valid: true, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+    res.json({ 
+      valid: true, 
+      user: { 
+        id: user._id, 
+        name: user.name, 
+        email: user.email, 
+        role: user.role,
+        companyId: user.companyId?._id || user.companyId || null,
+        company: user.companyId ? { id: user.companyId._id, name: user.companyId.name, code: user.companyId.code } : null,
+        customRoleId: user.customRoleId,
+        scopeType: user.scopeType,
+        scopeValues: user.scopeValues
+      } 
+    });
   } catch (err) {
     res.status(401).json({ valid: false, message: 'Invalid token' });
   }
@@ -130,9 +279,21 @@ router.get('/verify', auth, async (req, res) => {
 // Get current user (alias for verify)
 router.get('/me', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findById(req.user.id).select('-password').populate('companyId', 'name code logo settings').populate('customRoleId');
     if (!user || !user.isActive) return res.status(401).json({ message: 'Invalid token' });
-    res.json({ id: user._id, name: user.name, email: user.email, role: user.role, phone: user.phone, department: user.department });
+    res.json({ 
+      id: user._id, 
+      name: user.name, 
+      email: user.email, 
+      role: user.role, 
+      phone: user.phone, 
+      department: user.department,
+      companyId: user.companyId?._id || user.companyId || null,
+      company: user.companyId ? { id: user.companyId._id, name: user.companyId.name, code: user.companyId.code } : null,
+      customRoleId: user.customRoleId,
+      scopeType: user.scopeType,
+      scopeValues: user.scopeValues
+    });
   } catch (err) {
     res.status(401).json({ message: 'Invalid token' });
   }

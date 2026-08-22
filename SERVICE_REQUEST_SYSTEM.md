@@ -332,7 +332,7 @@ SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your-email@gmail.com
 SMTP_PASS=your-app-password
-SMTP_FROM=crm@iconic.com
+SMTP_FROM=crm@charlieai.com
 ```
 
 ---

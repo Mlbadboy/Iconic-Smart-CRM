@@ -3,25 +3,47 @@ const ApiKey = require('../models/ApiKey');
 // API Key Authentication Middleware
 const apiKeyAuth = async (req, res, next) => {
   try {
-    // Check for API key in header (strictly X-API-Key header; query parameter is disabled for security)
-    const apiKey = req.header('X-API-Key');
+    // Check for API key in header or request body (case-insensitive key search)
+    let apiKey = req.header('X-API-Key');
+    
+    if (!apiKey && req.body && typeof req.body === 'object') {
+      for (const k of Object.keys(req.body)) {
+        if (k.toLowerCase() === 'accesskey') {
+          apiKey = req.body[k];
+          break;
+        }
+      }
+    }
     
     if (!apiKey) {
       return res.status(401).json({ 
-        message: 'API Key required. Include X-API-Key header.' 
+        valid: false,
+        code: 'API_KEY_REQUIRED',
+        status: 'UNAUTHORIZED',
+        message: 'API Key required. Include X-API-Key header or accessKey in body.' 
       });
     }
 
     // Find and validate API key
-    const keyDoc = await ApiKey.findOne({ key: apiKey, active: true }).populate('userId');
+    const keyDoc = await ApiKey.findOne({ key: apiKey, active: true, status: 'ACTIVE' }).populate('userId');
     
     if (!keyDoc) {
-      return res.status(401).json({ message: 'Invalid or inactive API key' });
+      return res.status(401).json({ 
+        valid: false,
+        code: 'API_KEY_INVALID_OR_REVOKED',
+        status: 'UNAUTHORIZED',
+        message: 'Invalid or inactive API key' 
+      });
     }
 
     // Check expiration
     if (keyDoc.expiresAt && new Date() > keyDoc.expiresAt) {
-      return res.status(401).json({ message: 'API key has expired' });
+      return res.status(401).json({ 
+        valid: false,
+        code: 'API_KEY_EXPIRED',
+        status: 'UNAUTHORIZED',
+        message: 'API key has expired' 
+      });
     }
 
     // Check rate limits (basic implementation)
@@ -34,18 +56,21 @@ const apiKeyAuth = async (req, res, next) => {
       $set: { 'usage.lastUsed': now }
     });
 
-    // Attach user info and permissions to request
+    // Attach tenant, user info and permissions to request
+    req.companyId = keyDoc.companyId;
     req.user = {
-      id: keyDoc.userId._id.toString(),
-      email: keyDoc.userId.email,
-      name: keyDoc.userId.name,
-      role: keyDoc.userId.role,
+      id: keyDoc.userId?._id?.toString() || keyDoc.userId?.toString(),
+      email: keyDoc.userId?.email,
+      name: keyDoc.userId?.name,
+      role: keyDoc.userId?.role || 'api-client',
+      companyId: keyDoc.companyId,
       apiKeyPermissions: keyDoc.permissions
     };
 
     req.apiKey = {
       id: keyDoc._id,
       name: keyDoc.name,
+      companyId: keyDoc.companyId,
       permissions: keyDoc.permissions,
       dealerScope: keyDoc.dealerScope || []
     };

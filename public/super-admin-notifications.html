@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Notifications — Charlie's CRM</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <style>
+        :root {
+            --bg-page: #0f172a;
+            --bg-card: #1e293b;
+            --border: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background: #1e293b;
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #818cf8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2);
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #334155;
+            color: #ffffff;
+            transition: all 0.2s ease;
+        }
+        .btn:hover { background: #475569; }
+        .btn-primary { background: var(--primary); border-color: var(--primary); }
+        .btn-primary:hover { background: var(--primary-hover); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        th {
+            background: #0f172a;
+            padding: 0.8rem 1rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+        td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-backdrop.show { display: flex; }
+        .modal-content {
+            background: #1e293b;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 600px;
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <a href="/super-admin.html" class="logo">
+                ⚡ Charlie's CRM <span style="font-size: 0.85rem; background: #334155; color: #c7d2fe; padding: 2px 8px; border-radius: 4px; font-weight: normal;">Notifications</span>
+            </a>
+            <span style="color: var(--border);">|</span>
+            <span style="color: var(--text-muted); font-size: 0.95rem;">Announcements & Maintenance</span>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <a href="/super-admin.html" class="btn">🏢 Companies</a>
+            <a href="/tenant-control.html" class="btn">⚙️ Tenant Control</a>
+            <a href="/platform-analytics.html" class="btn">📊 Analytics</a>
+            <button class="btn btn-primary" onclick="openCreateModal()">+ New Announcement</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div>
+                    <h1 style="font-size: 1.4rem; margin: 0 0 0.25rem 0;">Published Platform Announcements</h1>
+                    <p style="color: var(--text-muted); margin: 0; font-size: 0.9rem;">Broadcast scheduled maintenance banners, renewal reminders, and system announcements to tenant workspaces.</p>
+                </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title & Message</th>
+                            <th>Type</th>
+                            <th>Priority</th>
+                            <th>Audience</th>
+                            <th>Active Window</th>
+                            <th>Status</th>
+                            <th style="text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="notificationsTableBody">
+                        <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Loading announcements...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Create Notification Modal -->
+    <div id="createModal" class="modal-backdrop">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h3 style="margin: 0;">Create Platform Announcement</h3>
+                <button class="btn" onclick="closeModal()">✕</button>
+            </div>
+
+            <form id="notifForm" onsubmit="createNotification(event)">
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Title</label>
+                    <input type="text" id="notifTitle" required placeholder="e.g. Scheduled CRM Maintenance" style="width: 100%; padding: 0.6rem; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: #ffffff;">
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Message</label>
+                    <textarea id="notifMessage" required rows="3" placeholder="e.g. We will be performing database upgrades tonight from 11:00 PM to 12:00 AM IST." style="width: 100%; padding: 0.6rem; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: #ffffff;"></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Type</label>
+                        <select id="notifType" style="width: 100%; padding: 0.6rem; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: #ffffff;">
+                            <option value="SYSTEM_MAINTENANCE">SYSTEM_MAINTENANCE</option>
+                            <option value="DOWNTIME">DOWNTIME</option>
+                            <option value="RENEWAL">RENEWAL</option>
+                            <option value="PAYMENT_DUE">PAYMENT_DUE</option>
+                            <option value="SECURITY">SECURITY</option>
+                            <option value="NEW_FEATURE">NEW_FEATURE</option>
+                            <option value="GENERAL">GENERAL</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Priority</label>
+                        <select id="notifPriority" style="width: 100%; padding: 0.6rem; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: #ffffff;">
+                            <option value="MEDIUM">MEDIUM</option>
+                            <option value="HIGH">HIGH</option>
+                            <option value="CRITICAL">CRITICAL</option>
+                            <option value="LOW">LOW</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Audience</label>
+                        <select id="notifAudience" style="width: 100%; padding: 0.6rem; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: #ffffff;">
+                            <option value="ALL_COMPANIES">ALL_COMPANIES (Broadcast)</option>
+                            <option value="SELECTED_PLAN">By Plan</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Start Time (Optional)</label>
+                        <input type="datetime-local" id="notifStartTime" style="width: 100%; padding: 0.6rem; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: #ffffff;">
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Publish Announcement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/super-admin-notifications.js"></script>
+</body>
+</html>

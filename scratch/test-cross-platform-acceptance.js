@@ -54,7 +54,7 @@ async function runCrossPlatformAcceptanceSuite() {
   // Authenticate first
   console.log('🔑 Authenticating as Admin for cross-platform API calls...');
   const loginRes = await httpRequest(`http://localhost:${PORT}/api/auth/login`, 'POST', {}, {
-    email: 'admin@iconic-crm.com',
+    email: 'admin@charlieai.com',
     password: 'admin123'
   });
 

@@ -27,10 +27,10 @@ The database auto-seeds default accounts upon initial deployment. You can log in
 
 | Role | Email | Password | Primary Permissions & Responsibilities |
 | :--- | :--- | :--- | :--- |
-| **Admin** | `admin@iconic-crm.com` | `admin123` | Full system access, API Key management, user roles, system config |
-| **Manager** | `manager@iconic-crm.com` | `manager123` | Approvals management, SLA performance analytics, team oversight |
-| **Sales** | `sales@iconic-crm.com` | `sales123` | Leads management, Opportunities pipeline, Order placement |
-| **Support** | `support@iconic-crm.com` | `support123` | Service ticket resolution, Serial validation verification |
+| **Admin** | `admin@charlieai.com` | `admin123` | Full system access, API Key management, user roles, system config |
+| **Manager** | `manager@charlieai.com` | `manager123` | Approvals management, SLA performance analytics, team oversight |
+| **Sales** | `sales@charlieai.com` | `sales123` | Leads management, Opportunities pipeline, Order placement |
+| **Support** | `support@charlieai.com` | `support123` | Service ticket resolution, Serial validation verification |
 | **Customer** | `customer@example.com` | `demo123` | Own order tracking, service ticket submission, profile management |
 
 ---
@@ -129,7 +129,7 @@ X-API-Key: crm_live_9a87f6e5d4c3b2a1...
 ## 🔄 5. End-to-End User Workflows
 
 ### 🛠️ Workflow A: Admin Bulk Data Import & API Key Provisioning
-1. **Login**: Admin logs in at `/login.html` with `admin@iconic-crm.com`.
+1. **Login**: Admin logs in at `/login.html` with `admin@charlieai.com`.
 2. **Import Serial Master Data**:
    - Navigates to `/serial-validation`.
    - Uploads or pastes CSV data formatted as:

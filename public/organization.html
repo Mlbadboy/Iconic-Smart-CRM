@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organization & Departments — Charlie's CRM</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" data-branding="favicon">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --purple: #8b5cf6;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+            background: #eef2ff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .main-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .depts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .dept-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .dept-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px -3px rgba(0,0,0,0.08);
+        }
+
+        .dept-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .dept-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: #eef2ff;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .dept-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .metrics-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .metric-box {
+            flex: 1;
+            background: #f8fafc;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-val {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .metric-lbl {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Modal Styles */
+        .modal-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-backdrop.show { display: flex; }
+
+        .modal-box {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.35rem;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 0.85rem 1.5rem;
+            background: #1e293b;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 2000;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 2rem;">
+            <a href="/dashboard.html" class="logo" data-branding="logo">
+                🚀 Charlie's CRM
+            </a>
+            <nav class="nav-links">
+                <a href="/dashboard.html" class="nav-link">Dashboard</a>
+                <a href="/manage-users.html" class="nav-link">Users</a>
+                <a href="/roles.html" class="nav-link">Roles & Permissions</a>
+                <a href="/organization.html" class="nav-link active">Organization</a>
+                <a href="/reports.html" class="nav-link">Reports</a>
+            </nav>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <span id="userNameDisplay" style="font-size: 0.9rem; font-weight: 600; color: var(--text-muted);">Admin</span>
+            <button class="btn btn-secondary btn-sm" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="main-card">
+            <div class="toolbar">
+                <div>
+                    <h2 style="font-size: 1.35rem; font-weight: 700; margin: 0 0 0.25rem 0;">Company Organization & Departments</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">
+                        Structure your business into departments (Sales, Service, Logistics, Inventory, Finance, Marketing, Operations).
+                    </p>
+                </div>
+                <div>
+                    <button class="btn btn-primary" onclick="openDeptModal()">+ Add Department</button>
+                </div>
+            </div>
+
+            <div class="depts-grid" id="deptsGrid">
+                <div style="text-align:center; padding:2rem; color:var(--text-muted); grid-column:span 3;">
+                    Loading departments...
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add / Edit Department Modal -->
+    <div class="modal-backdrop" id="deptModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title" id="deptModalTitle">Add Department</h3>
+                <button style="background:none; border:none; font-size:1.5rem; cursor:pointer;" onclick="closeModal('deptModal')">&times;</button>
+            </div>
+            <form id="deptForm" onsubmit="handleDeptSubmit(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="deptIdInput">
+                    <div class="form-group">
+                        <label>Department Name *</label>
+                        <input type="text" id="deptNameInput" required placeholder="e.g. Sales Team">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="deptDescInput" rows="2" placeholder="Briefly describe department focus..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Head of Department</label>
+                        <select id="deptHeadSelect">
+                            <option value="">None (Unassigned)</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="padding: 1.25rem 1.5rem; background: #f8fafc; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.75rem; border-radius: 0 0 16px 16px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('deptModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Department</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="/js/feature-guard.js"></script>
+    <script src="/js/tenant-branding.js"></script>
+    <script src="/js/tenant-notifications.js"></script>
+    <script>
+        const API_URL = window.location.origin + '/api';
+        const token = localStorage.getItem('authToken');
+        let allDepartments = [];
+        let allUsers = [];
+
+        if (!token) window.location.href = '/login.html';
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 3500);
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        async function initPage() {
+            try {
+                const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                if (user.name) document.getElementById('userNameDisplay').textContent = user.name;
+
+                await Promise.all([
+                    loadUsers(),
+                    loadDepartments()
+                ]);
+            } catch (err) {
+                console.error('Init error:', err);
+            }
+        }
+
+        async function loadUsers() {
+            try {
+                const res = await fetch(`${API_URL}/users`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    allUsers = await res.json();
+                    const headSelect = document.getElementById('deptHeadSelect');
+                    headSelect.innerHTML = '<option value="">None (Unassigned)</option>' + 
+                        allUsers.map(u => `<option value="${u._id}">${u.name} (${u.role})</option>`).join('');
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function loadDepartments() {
+            try {
+                const res = await fetch(`${API_URL}/departments`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Failed to load departments');
+                allDepartments = await res.json();
+                renderDepartmentsGrid(allDepartments);
+            } catch (err) {
+                document.getElementById('deptsGrid').innerHTML = `
+                    <div style="text-align:center; color:var(--danger); padding:2rem; grid-column:span 3;">
+                        ${err.message}
+                    </div>
+                `;
+            }
+        }
+
+        function getDeptIcon(name = '') {
+            const lower = name.toLowerCase();
+            if (lower.includes('sales')) return '💼';
+            if (lower.includes('service') || lower.includes('support')) return '🛠️';
+            if (lower.includes('logistics') || lower.includes('delivery')) return '🚚';
+            if (lower.includes('inventory') || lower.includes('warehouse')) return '📦';
+            if (lower.includes('finance') || lower.includes('account')) return '💰';
+            if (lower.includes('marketing')) return '📢';
+            if (lower.includes('operation')) return '⚙️';
+            return '🏢';
+        }
+
+        function renderDepartmentsGrid(depts) {
+            const grid = document.getElementById('deptsGrid');
+            if (!depts || depts.length === 0) {
+                grid.innerHTML = `
+                    <div style="text-align:center; padding:3rem; color:var(--text-muted); grid-column:span 3;">
+                        No departments found. Click <strong>+ Add Department</strong> to create your organization hierarchy.
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = depts.map(d => {
+                const headName = d.headOfDepartment?.name || 'Unassigned';
+                const members = d.memberCount || 0;
+                const roles = d.rolesCount || 0;
+                const icon = getDeptIcon(d.name);
+
+                return `
+                    <div class="dept-card">
+                        <div>
+                            <div class="dept-header">
+                                <div class="dept-icon">${icon}</div>
+                                <div>
+                                    <div class="dept-name">${d.name}</div>
+                                    <div style="font-size:0.8rem; color:var(--text-muted);">Head: ${headName}</div>
+                                </div>
+                            </div>
+                            <p style="font-size:0.85rem; color:var(--text-muted); margin:0;">
+                                ${d.description || 'Standard business department.'}
+                            </p>
+                        </div>
+                        <div>
+                            <div class="metrics-row">
+                                <div class="metric-box">
+                                    <div class="metric-val">${members}</div>
+                                    <div class="metric-lbl">Members</div>
+                                </div>
+                                <div class="metric-box">
+                                    <div class="metric-val">${roles}</div>
+                                    <div class="metric-lbl">Roles</div>
+                                </div>
+                            </div>
+                            <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:0.75rem;">
+                                <button class="btn btn-secondary btn-sm" onclick="editDept('${d._id}')">Edit</button>
+                                <button class="btn btn-secondary btn-sm" style="color:var(--danger);" onclick="deleteDept('${d._id}', '${d.name}')">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openDeptModal() {
+            document.getElementById('deptModalTitle').textContent = 'Add Department';
+            document.getElementById('deptIdInput').value = '';
+            document.getElementById('deptNameInput').value = '';
+            document.getElementById('deptDescInput').value = '';
+            document.getElementById('deptHeadSelect').value = '';
+            document.getElementById('deptModal').classList.add('show');
+        }
+
+        async function handleDeptSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('deptIdInput').value;
+            const name = document.getElementById('deptNameInput').value.trim();
+            const description = document.getElementById('deptDescInput').value.trim();
+            const headOfDepartment = document.getElementById('deptHeadSelect').value || null;
+
+            const payload = { name, description, headOfDepartment };
+
+            try {
+                const method = id ? 'PUT' : 'POST';
+                const url = id ? `${API_URL}/departments/${id}` : `${API_URL}/departments`;
+
+                const res = await fetch(url, {
+                    method,
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || data.message || 'Failed to save department');
+
+                showToast(id ? '✅ Department updated' : '✅ Department added successfully');
+                closeModal('deptModal');
+                await loadDepartments();
+            } catch (err) {
+                alert('❌ ' + err.message);
+            }
+        }
+
+        async function editDept(id) {
+            const d = allDepartments.find(dept => dept._id === id);
+            if (!d) return;
+
+            document.getElementById('deptModalTitle').textContent = `Edit Department — ${d.name}`;
+            document.getElementById('deptIdInput').value = d._id;
+            document.getElementById('deptNameInput').value = d.name;
+            document.getElementById('deptDescInput').value = d.description || '';
+            document.getElementById('deptHeadSelect').value = d.headOfDepartment?._id || d.headOfDepartment || '';
+            document.getElementById('deptModal').classList.add('show');
+        }
+
+        async function deleteDept(id, name) {
+            if (!confirm(`Are you sure you want to delete the department '${name}'?`)) return;
+
+            try {
+                const res = await fetch(`${API_URL}/departments/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || data.message || 'Failed to delete department');
+
+                showToast(`✅ Department '${name}' deleted`);
+                await loadDepartments();
+            } catch (e) {
+                alert('❌ ' + e.message);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = '/login.html';
+        }
+
+        window.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>

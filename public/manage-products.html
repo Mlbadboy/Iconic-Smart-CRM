@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Products - Iconic Smart CRM</title>
+    <title>Manage Products - Charlie's CRM</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -133,7 +133,10 @@
 
         <!-- Add Single Product -->
         <div class="card">
-            <h2>➕ Add New Product</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 style="margin-bottom: 0;">➕ Add New Product</h2>
+                <a href="/bulk-import.html?type=products" class="btn btn-secondary">⬆ Import CSV</a>
+            </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                 <div class="form-group">
                     <label>Product Name *</label>
@@ -241,12 +244,13 @@ LG 6.5 kg Fully Automatic Washing Machine, T65SJSF1Z, 16990, LG, Washing Machine
     <div id="toast" class="toast"></div>
 
     <script>
-        const API_URL = 'http://localhost:7000/api';
+        const API_URL = window.location.origin + '/api';
         const token = localStorage.getItem('authToken');
         
         if (!token) {
             window.location.href = '/login.html';
         }
+        if (typeof requirePageFeature === 'function') requirePageFeature('products');
 
         function showToast(message) {
             const toast = document.getElementById('toast');
@@ -656,5 +660,8 @@ Bajaj 36L Air Cooler,Platini PX36 TORQUE,5990,Bajaj,Air Cooler`;
         // Load products on page load
         loadProducts();
     </script>
+    <script src="/js/feature-guard.js"></script>
+    <script src="/js/tenant-branding.js"></script>
+    <script src="/js/tenant-notifications.js"></script>
 </body>
 </html>

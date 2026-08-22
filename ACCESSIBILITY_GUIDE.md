@@ -362,7 +362,7 @@ The Web Content Accessibility Guidelines (WCAG) defines requirements to improve 
 
 ### **Feedback**
 We welcome feedback on the accessibility of Iconic Smart CRM:
-- **Email**: accessibility@iconic-crm.com
+- **Email**: accessibility@charlieai.com
 - **Phone**: +1-555-0100
 - **Support Portal**: /help
 
@@ -436,4 +436,4 @@ Iconic Smart CRM is designed to be:
 
 **Last Updated**: October 20, 2025  
 **Version**: 2.0 - Accessibility Release  
-**Contact**: accessibility@iconic-crm.com
+**Contact**: accessibility@charlieai.com

@@ -31,9 +31,9 @@ mongoose.connect(MONGO_URI, {
   
   // Demo users
   const demoUsers = [
-    { name: 'Admin User', email: 'admin@iconic-crm.com', password: 'admin123', role: 'admin' },
-    { name: 'Manager User', email: 'manager@iconic-crm.com', password: 'manager123', role: 'manager' },
-    { name: 'Sales User', email: 'sales@iconic-crm.com', password: 'sales123', role: 'sales' }
+    { name: 'Admin User', email: 'admin@charlieai.com', password: 'admin123', role: 'admin' },
+    { name: 'Manager User', email: 'manager@charlieai.com', password: 'manager123', role: 'manager' },
+    { name: 'Sales User', email: 'sales@charlieai.com', password: 'sales123', role: 'sales' }
   ];
   
   for (const userData of demoUsers) {
@@ -66,7 +66,7 @@ mongoose.connect(MONGO_URI, {
   
   console.log('\n✅ Database seeding complete!');
   console.log('\n🎉 You can now login with:');
-  console.log('   Email: admin@iconic-crm.com');
+  console.log('   Email: admin@charlieai.com');
   console.log('   Password: admin123\n');
   
   process.exit(0);

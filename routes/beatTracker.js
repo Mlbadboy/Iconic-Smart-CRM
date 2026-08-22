@@ -5,10 +5,12 @@ const User = require('../models/User');
 const Attendance = require('../models/Attendance');
 const StoreVisit = require('../models/StoreVisit');
 const EmployeeTarget = require('../models/EmployeeTarget');
-const Order = require('../models/Order');
 const { notifications } = require('../services/notificationService');
 const { uploadSingle, getFileUrl } = require('../middleware/upload');
+const { requireFeature } = require('../middleware/featureGate');
 const logger = require('../services/logger');
+
+router.use(requireFeature('field_force'));
 
 // Get all field employees
 router.get('/employees', auth, async (req, res) => {

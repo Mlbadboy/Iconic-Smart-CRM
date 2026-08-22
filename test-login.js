@@ -5,7 +5,7 @@ async function testLogin() {
     console.log('🔍 Testing login endpoint...\n');
     
     const response = await axios.post('http://localhost:7000/api/auth/login', {
-      email: 'admin@iconic-crm.com',
+      email: 'admin@charlieai.com',
       password: 'admin123'
     });
     

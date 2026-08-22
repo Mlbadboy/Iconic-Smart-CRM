@@ -33,7 +33,7 @@ This page has:
 - Works around CSP issues
 
 **Pre-filled credentials**:
-- Email: `admin@iconic-crm.com`
+- Email: `admin@charlieai.com`
 - Password: `admin123`
 
 Just click "Login" and it should work!
@@ -88,7 +88,7 @@ Try in:
 | Backend API | ✅ Working |
 | MongoDB | ✅ Connected |
 | Login endpoint | ✅ Returns token |
-| User exists | ✅ admin@iconic-crm.com |
+| User exists | ✅ admin@charlieai.com |
 | CLI login | ✅ Success |
 | Rate limiting | ✅ Active |
 
@@ -164,7 +164,7 @@ http://localhost:7000/dashboard.html
 ```
 
 It might auto-redirect to login. Use:
-- Email: `admin@iconic-crm.com`
+- Email: `admin@charlieai.com`
 - Password: `admin123`
 
 ---

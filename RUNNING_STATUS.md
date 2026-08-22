@@ -40,10 +40,10 @@
 
 | Role | Email | Password | Access Level |
 |------|-------|----------|--------------|
-| **Admin** | admin@iconic-crm.com | admin123 | Full Access |
-| **Manager** | manager@iconic-crm.com | manager123 | Team Management |
-| **Sales** | sales@iconic-crm.com | sales123 | Sales Features |
-| **Support** | support@iconic-crm.com | support123 | Support Tickets |
+| **Admin** | admin@charlieai.com | admin123 | Full Access |
+| **Manager** | manager@charlieai.com | manager123 | Team Management |
+| **Sales** | sales@charlieai.com | sales123 | Sales Features |
+| **Support** | support@charlieai.com | support123 | Support Tickets |
 | **Customer** | customer@example.com | demo123 | Customer View |
 
 ---
@@ -64,7 +64,7 @@ curl http://localhost:7000/api/health
 # Login (get token)
 curl -X POST http://localhost:7000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@iconic-crm.com","password":"admin123"}'
+  -d '{"email":"admin@charlieai.com","password":"admin123"}'
 
 # Automated test script
 node test-all-endpoints.js

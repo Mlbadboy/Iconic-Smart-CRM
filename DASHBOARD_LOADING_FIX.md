@@ -87,7 +87,7 @@ localStorage.clear();
 ### **Step 2: Login Fresh**
 ```
 1. Go to: http://localhost:7000
-2. Email: admin@iconic-crm.com
+2. Email: admin@charlieai.com
 3. Password: admin123
 4. Click Login
 ```

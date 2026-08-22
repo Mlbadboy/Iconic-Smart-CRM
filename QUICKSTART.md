@@ -77,10 +77,10 @@ After seeding the database, use these accounts:
 
 | Role | Email | Password | Access Level |
 |------|-------|----------|--------------|
-| **Admin** | admin@iconic-crm.com | admin123 | Full system access |
-| **Manager** | manager@iconic-crm.com | manager123 | Team management |
-| **Sales** | sales@iconic-crm.com | sales123 | Sales features |
-| **Support** | support@iconic-crm.com | support123 | Support tickets |
+| **Admin** | admin@charlieai.com | admin123 | Full system access |
+| **Manager** | manager@charlieai.com | manager123 | Team management |
+| **Sales** | sales@charlieai.com | sales123 | Sales features |
+| **Support** | support@charlieai.com | support123 | Support tickets |
 | **Customer** | customer@example.com | demo123 | Customer view |
 
 ---
@@ -128,7 +128,7 @@ curl http://localhost:5000/api/health
 # Login
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@iconic-crm.com","password":"admin123"}'
+  -d '{"email":"admin@charlieai.com","password":"admin123"}'
 
 # Get orders (with JWT token)
 curl http://localhost:5000/api/orders \
@@ -286,7 +286,7 @@ Error: Invalid token
 
 - **Documentation**: [README.md](./README.md)
 - **Issues**: [GitHub Issues](https://github.com/mayurprabhune13-jpg/Iconic-Smart-CRM/issues)
-- **Email**: support@iconic-crm.com
+- **Email**: support@charlieai.com
 
 ---
 

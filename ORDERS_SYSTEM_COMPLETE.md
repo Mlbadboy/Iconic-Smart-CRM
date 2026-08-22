@@ -170,7 +170,7 @@ curl -X POST http://localhost:7000/api/retailers \
 ┌─────────────────────────────────────────────┐
 │ ICONIC SMART               TAX INVOICE      │
 │ www.iconicsmart.in         Invoice #: INV001│
-│ info@iconicsmart.in        Order #: ORD001  │
+│ info@charlieai.com        Order #: ORD001  │
 │ +91-XXXXXXXXXX             Date: 31/10/2025 │
 ├─────────────────────────────────────────────┤
 │                                             │

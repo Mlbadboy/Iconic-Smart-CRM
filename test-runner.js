@@ -59,6 +59,54 @@ async function main() {
     console.log('🧪 Running comprehensive feature tests...');
     await runCommand('node', ['test-all-features.js'], process.env);
 
+    // 6. Run Multi-Tenant E2E Tests
+    console.log('🧪 Running multi-tenant & multi-company E2E tests...');
+    await runCommand('node', ['scratch/test-multitenant-e2e.js'], process.env);
+
+    // 7. Run SaaS Subdomain & White-Label E2E Tests
+    console.log('🧪 Running SaaS subdomain & white-label E2E tests...');
+    await runCommand('node', ['scratch/test-saas-multitenant-e2e.js'], process.env);
+
+    // 8. Run Simplified API Access & One-Click Handoff Tests
+    console.log('🧪 Running simplified API access tests...');
+    await runCommand('node', ['scratch/test-simple-api-access.js'], process.env);
+
+    // 9. Run External Partner (Salesforce / Postman) Simulation Tests
+    console.log('🧪 Running external partner workflow simulation tests...');
+    await runCommand('node', ['scratch/test-external-partner-workflow.js'], process.env);
+
+    // 10. Run API Usage & Serial Validation Analytics Tests
+    console.log('🧪 Running API usage & serial validation analytics tests...');
+    await runCommand('node', ['scratch/test-api-analytics.js'], process.env);
+
+    // 11. Run Two-Level Reporting & Platform Analytics Tests
+    console.log('🧪 Running two-level reporting & platform analytics tests...');
+    await runCommand('node', ['scratch/test-two-level-reporting.js'], process.env);
+
+    // 12. Run Tenant Control, Feature Entitlements & Notifications Tests
+    console.log('🧪 Running tenant control & feature entitlements tests...');
+    await runCommand('node', ['scratch/test-tenant-control-entitlements.js'], process.env);
+
+    // 13. Run 18-Feature Deep Entitlement & Coverage Tests
+    console.log('🧪 Running 18-feature deep entitlement & coverage tests...');
+    await runCommand('node', ['scratch/test-feature-coverage.js'], process.env);
+
+    // 14. Run Company Admin RBAC, Organization & Lockout Tests
+    console.log('🧪 Running Company Admin RBAC, Organization & Lockout tests...');
+    await runCommand('node', ['scratch/test-company-admin-rbac.js'], process.env);
+
+    // 15. Run Real Browser & Acceptance Lifecycle Sequence Tests
+    console.log('🧪 Running real browser & acceptance lifecycle sequence tests...');
+    await runCommand('node', ['scratch/test-browser-acceptance-sequence.js'], process.env);
+
+    // 16. Run Authentication Request Loop & Rate Limiting Stability Tests
+    console.log('🧪 Running authentication request loop & rate limiting stability tests...');
+    await runCommand('node', ['scratch/test-auth-request-loop.js'], process.env);
+
+    // 17. Run Tenant-Scoped Bulk CSV Import Center Tests
+    console.log('🧪 Running tenant-scoped Bulk CSV Import Center tests...');
+    await runCommand('node', ['scratch/test-bulk-import.js'], process.env);
+
     console.log('🎉 All test suites passed successfully!');
     
     // Clean up

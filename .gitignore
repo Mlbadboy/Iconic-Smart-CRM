@@ -9,3 +9,13 @@ jsconfig.json
 .env
 .env.*
 !.env.example
+
+# logs
+logs/*.log
+*.log
+
+# temporary uploads and staging
+uploads/temp/
+uploads/bulk-imports/
+uploads/bulk_import/
+scratch/tmp_user_csvs/

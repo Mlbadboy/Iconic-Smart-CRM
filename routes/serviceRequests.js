@@ -3,9 +3,12 @@ const router = express.Router();
 const ServiceRequest = require('../models/ServiceRequest');
 const { auth } = require('../middleware/auth');
 const { hasPermission, requirePermission } = require('../middleware/rbac');
+const { requireFeature } = require('../middleware/featureGate');
 const { recordAuditEvent } = require('../services/auditService');
 const { sendEmail, emailTemplates } = require('../services/emailService');
 const logger = require('../services/logger');
+
+router.use(requireFeature('service'));
 
 const allowedStatusTransitions = {
     open: ['in-progress', 'closed'],

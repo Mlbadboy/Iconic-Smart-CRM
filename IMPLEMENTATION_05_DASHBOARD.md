@@ -137,7 +137,7 @@ copy react-ready-files\pages-Dashboard-Full.jsx client\src\pages\Dashboard.jsx
 ## 🧪 TESTING
 
 ### Test as Admin:
-1. Login: admin@iconic-crm.com / admin123
+1. Login: admin@charlieai.com / admin123
 2. Should see:
    - All orders count
    - Total revenue
@@ -146,7 +146,7 @@ copy react-ready-files\pages-Dashboard-Full.jsx client\src\pages\Dashboard.jsx
    - "Manage Users" quick action
 
 ### Test as User:
-1. Login: sales@iconic-crm.com / sales123
+1. Login: sales@charlieai.com / sales123
 2. Should see:
    - Personal orders only
    - Personal statistics

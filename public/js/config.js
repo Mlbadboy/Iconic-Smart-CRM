@@ -28,14 +28,14 @@ const CONFIG = {
     // Domain info
     domain: {
         development: 'localhost:7000',
-        production: 'www.iconicsmart.co.in'
+        production: 'www.charlieai.in'
     },
     
     // App info
     app: {
-        name: 'Iconic Smart CRM',
+        name: "Charlie's CRM",
         version: '1.0.0',
-        company: 'Iconic Smart'
+        company: "Charlie's CRM"
     }
 };
 

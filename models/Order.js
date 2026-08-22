@@ -2,9 +2,13 @@ const mongoose = require('mongoose');
 const { nextSequence } = require('../services/sequenceService');
 
 const orderSchema = new mongoose.Schema({
+  companyId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Company', 
+    index: true 
+  },
   orderNumber: { 
-    type: String, 
-    unique: true 
+    type: String 
   },
   orderId: { type: String, default: function() { return 'ORD-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9); } },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -71,5 +75,9 @@ orderSchema.index({ userId: 1 });
 orderSchema.index({ retailerId: 1 });
 orderSchema.index({ status: 1 });
 orderSchema.index({ createdAt: -1 });
+
+orderSchema.index({ companyId: 1, orderNumber: 1 });
+orderSchema.index({ companyId: 1, createdAt: -1 });
+orderSchema.index({ companyId: 1, retailerId: 1 });
 
 module.exports = mongoose.model('Order', orderSchema);

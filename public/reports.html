@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operational Reports — Charlie's CRM</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" data-branding="favicon">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .btn {
+            padding: 0.55rem 1.1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #ffffff;
+            color: var(--text-main);
+            transition: all 0.15s ease;
+        }
+        .btn:hover { background: #f1f5f9; }
+        .btn-primary { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+        .btn-primary:hover { background: var(--primary-hover); }
+
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .kpi-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+        }
+
+        .kpi-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .kpi-val {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* Export Bar */
+        .export-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .export-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <a href="/dashboard.html" class="logo" data-branding="logo">
+                🚀 Charlie's CRM
+            </a>
+            <span style="color: var(--border);">|</span>
+            <span style="color: var(--text-muted); font-size: 0.95rem;">Company Operational Reports</span>
+        </div>
+        <div>
+            <a href="/dashboard.html" class="btn">
+                ← Back to Dashboard
+            </a>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Page Title -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <div>
+                <h1 style="margin: 0 0 0.25rem 0; font-size: 1.6rem;">Operational Business Intelligence</h1>
+                <p style="margin: 0; color: var(--text-muted);">Real-time performance analytics across your company workspace.</p>
+            </div>
+            <button class="btn btn-primary" onclick="loadOperationalReport()">
+                🔄 Refresh Report
+            </button>
+        </div>
+
+        <!-- 1. Sales & Revenue -->
+        <div class="card">
+            <h2 style="font-size: 1.15rem; margin: 0;">💰 Sales & Revenue</h2>
+            <div class="kpi-grid">
+                <div class="kpi-box">
+                    <div class="kpi-label">Total Leads</div>
+                    <div class="kpi-val" id="salesLeads">0</div>
+                    <div style="font-size: 0.8rem; color: var(--success); margin-top: 2px;" id="salesConverted">0 Converted</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">Total Orders</div>
+                    <div class="kpi-val" id="salesOrders">0</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">Total Revenue</div>
+                    <div class="kpi-val" id="salesRevenue" style="color: var(--success);">₹0</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">Average Order Value</div>
+                    <div class="kpi-val" id="salesAov">₹0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Product & Inventory Stock -->
+        <div class="card">
+            <h2 style="font-size: 1.15rem; margin: 0;">📦 Inventory & Unit Lifecycle</h2>
+            <div class="kpi-grid">
+                <div class="kpi-box">
+                    <div class="kpi-label">Total Registered Units</div>
+                    <div class="kpi-val" id="invTotal">0</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">Available in Stock</div>
+                    <div class="kpi-val" id="invAvailable" style="color: var(--primary);">0</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">In-Transit</div>
+                    <div class="kpi-val" id="invInTransit" style="color: var(--warning);">0</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">With Distributors</div>
+                    <div class="kpi-val" id="invDistributor">0</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">With Dealers</div>
+                    <div class="kpi-val" id="invDealer">0</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">Sold & Validated</div>
+                    <div class="kpi-val" id="invSold" style="color: var(--success);">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Distribution & Stock Transfers -->
+        <div class="card">
+            <h2 style="font-size: 1.15rem; margin: 0;">🚚 Distribution & Stock Transfers</h2>
+            <div class="kpi-grid">
+                <div class="kpi-box">
+                    <div class="kpi-label">Total Stock Transfers</div>
+                    <div class="kpi-val" id="distTransfers">0</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">Pending Transfers</div>
+                    <div class="kpi-val" id="distPending" style="color: var(--warning);">0</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">Completed Transfers</div>
+                    <div class="kpi-val" id="distCompleted" style="color: var(--success);">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Serial Validation & API -->
+        <div class="card">
+            <h2 style="font-size: 1.15rem; margin: 0;">🔌 Serial Validation & External API</h2>
+            <div class="kpi-grid">
+                <div class="kpi-box">
+                    <div class="kpi-label">API Requests</div>
+                    <div class="kpi-val" id="apiRequests">0</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">Unique Serials Validated</div>
+                    <div class="kpi-val" id="apiUniqueSerials" style="color: var(--primary);">0</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">Valid Verifications</div>
+                    <div class="kpi-val" id="apiValid" style="color: var(--success);">0</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">Dealer Mismatches</div>
+                    <div class="kpi-val" id="apiMismatch" style="color: var(--danger);">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Service & SLAs -->
+        <div class="card">
+            <h2 style="font-size: 1.15rem; margin: 0;">🛠️ Service & SLA Performance</h2>
+            <div class="kpi-grid">
+                <div class="kpi-box">
+                    <div class="kpi-label">Open Cases</div>
+                    <div class="kpi-val" id="svcOpen">0</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">Resolved Cases</div>
+                    <div class="kpi-val" id="svcResolved" style="color: var(--success);">0</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">SLA Breaches</div>
+                    <div class="kpi-val" id="svcBreaches" style="color: var(--danger);">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Raw Data Exports -->
+        <div class="card">
+            <h2 style="font-size: 1.15rem; margin: 0 0 0.5rem 0;">📥 Export Operational Datasets</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0 0 1rem 0;">Download verified Excel and CSV sheets for offline analysis.</p>
+            <div class="export-grid">
+                <div class="export-card">
+                    <div><strong>Orders Report</strong><br><small style="color: var(--text-muted);">Excel spreadsheet</small></div>
+                    <a href="/api/reports/orders" class="btn btn-sm">Download</a>
+                </div>
+                <div class="export-card">
+                    <div><strong>Deliveries Report</strong><br><small style="color: var(--text-muted);">Excel spreadsheet</small></div>
+                    <a href="/api/reports/deliveries" class="btn btn-sm">Download</a>
+                </div>
+                <div class="export-card">
+                    <div><strong>Service Requests</strong><br><small style="color: var(--text-muted);">Excel spreadsheet</small></div>
+                    <a href="/api/reports/services" class="btn btn-sm">Download</a>
+                </div>
+                <div class="export-card">
+                    <div><strong>Complete CRM Summary</strong><br><small style="color: var(--text-muted);">CSV spreadsheet</small></div>
+                    <a href="/api/reports/complete-crm" class="btn btn-sm">Download</a>
+                </div>
+            </div>
+        </div>
+    <script src="/js/feature-guard.js"></script>
+    <script src="/js/tenant-branding.js"></script>
+    <script src="/js/tenant-notifications.js"></script>
+    <script src="/js/reports.js"></script>
+    <script>
+        if (typeof requirePageFeature === 'function') requirePageFeature('reports');
+    </script>
+</body>
+</html>

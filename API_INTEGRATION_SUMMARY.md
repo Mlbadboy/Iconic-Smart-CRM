@@ -130,7 +130,7 @@ GET    /api/webhooks/:id/stats # View statistics
 # 1. Login
 curl -X POST http://localhost:7000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@iconic-crm.com","password":"admin123"}'
+  -d '{"email":"admin@charlieai.com","password":"admin123"}'
 
 # 2. Create API Key
 curl -X POST http://localhost:7000/api/api-keys \

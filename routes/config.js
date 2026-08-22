@@ -222,15 +222,15 @@ router.post('/test-email', async (req, res) => {
     // Try to send a test email
     const testResult = await sendEmail({
       to: EMAIL_USER,
-      subject: 'Test Email - Iconic Smart CRM',
+      subject: "Test Email - Charlie's CRM",
       html: `
         <h2>✅ Email Configuration Test</h2>
-        <p>This is a test email from Iconic Smart CRM.</p>
+        <p>This is a test email from Charlie's CRM.</p>
         <p>If you received this email, your email configuration is working correctly!</p>
         <hr>
         <p style="color: #666; font-size: 12px;">Sent at: ${new Date().toLocaleString()}</p>
       `,
-      text: 'This is a test email from Iconic Smart CRM. If you received this, your email configuration is working correctly!'
+      text: "This is a test email from Charlie's CRM. If you received this, your email configuration is working correctly!"
     });
 
     if (testResult.sent) {

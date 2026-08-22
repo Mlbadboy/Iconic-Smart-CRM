@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const serialValidationHistorySchema = new mongoose.Schema({
+  companyId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Company',
+    index: true
+  },
   materialCode: {
     type: String,
     required: true,
@@ -31,14 +36,40 @@ const serialValidationHistorySchema = new mongoose.Schema({
       'ALREADY_VALIDATED',
       'INVALID_MATERIAL_CODE',
       'DEALER_MISMATCH',
-      'UNKNOWN_RESPONSE',
-      'SERVICE_UNAVAILABLE'
+      'UNAUTHORIZED',
+      'RATE_LIMITED',
+      'SERVICE_ERROR',
+      'SERVICE_UNAVAILABLE',
+      'UNKNOWN',
+      'UNKNOWN_RESPONSE'
     ]
+  },
+  clientName: {
+    type: String,
+    trim: true
+  },
+  feature: {
+    type: String,
+    default: 'Serial Number Validation'
+  },
+  maskedSerial: {
+    type: String,
+    trim: true
+  },
+  serialHash: {
+    type: String,
+    trim: true
   },
   validatedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false
+  },
+  apiKeyId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ApiKey',
+    required: false,
+    index: true
   },
   validatedAt: {
     type: Date,
@@ -52,6 +83,9 @@ const serialValidationHistorySchema = new mongoose.Schema({
 
 // Indexes for performance and lookup
 serialValidationHistorySchema.index({ serialNumber: 1 });
+serialValidationHistorySchema.index({ companyId: 1, apiKeyId: 1, createdAt: -1 });
+serialValidationHistorySchema.index({ companyId: 1, validationResult: 1 });
+serialValidationHistorySchema.index({ companyId: 1, serialNumber: 1 });
 serialValidationHistorySchema.index({ validatedBy: 1 });
 serialValidationHistorySchema.index({ createdAt: -1 });
 

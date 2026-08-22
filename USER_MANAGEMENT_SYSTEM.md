@@ -71,7 +71,7 @@ A complete user management system that allows **administrators only** to add and
 ### **Example:**
 ```
 Full Name: John Doe
-Email: john@iconicsmart.com
+Email: john@charlieai.com
 Phone: 9876543210
 Role: User
 Password: ******
@@ -176,7 +176,7 @@ Admin Actions:
 1. Dashboard → Manage Users
 2. Fill form:
    Name: Rahul Sharma
-   Email: rahul@iconicsmart.com
+   Email: rahul@charlieai.com
    Role: Sales
    Department: Sales
 3. Click "Add User"

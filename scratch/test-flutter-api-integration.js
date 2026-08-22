@@ -65,7 +65,7 @@ async function runFlutterApiIntegrationTestSuite() {
 
     // 2. Authentication Login (Sanitized / Real Auth)
     let resAuth = await makeHttpRequest(PORT, 'POST', '/api/auth/login', {}, {
-      email: 'admin@iconic-crm.com',
+      email: 'admin@charlieai.com',
       password: 'admin123'
     });
     // Validates auth structure (returns token or sanitized rejection)

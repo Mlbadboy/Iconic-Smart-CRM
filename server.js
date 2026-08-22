@@ -8,7 +8,8 @@ const { Server } = require('socket.io');
 const { authLimiter, getRateLimiter } = require('./middleware/rateLimiter');
 const logger = require('./services/logger');
 
-dotenv.config();
+// Do not overwrite explicitly provided runtime environment variables (e.g. In-memory Mongo in tests)
+dotenv.config({ override: false });
 
 const app = express();
 app.set('trust proxy', 1);
@@ -18,8 +19,10 @@ const server = http.createServer(app);
 // Socket.IO CORS - support multiple origins
 const socketIOOrigins = [
   process.env.FRONTEND_URL,
-  'https://www.iconicsmart.co.in',
-  'https://iconicsmart.co.in',
+  'https://www.charlieai.in',
+  'https://charlieai.in',
+  'https://www.charlieai.com',
+  'https://charlieai.com',
   'http://localhost:5173',
   'http://localhost:7000',
   'http://localhost:3000'
@@ -32,15 +35,23 @@ const io = new Server(server, {
       if (!origin) return callback(null, true);
       
       if (socketIOOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        logger.warn('⚠️ Socket.IO CORS blocked origin:', origin);
-        // In production, block unauthorized origins
-        if (process.env.NODE_ENV === 'production') {
-          callback(new Error('Not allowed by Socket.IO CORS'));
-        } else {
-          callback(null, true); // Allow in development
+        return callback(null, true);
+      }
+
+      try {
+        const url = new URL(origin);
+        const host = url.hostname.toLowerCase();
+        if (host.endsWith('.charlieai.in') || host.endsWith('.charlieai.com') || host.endsWith('.localhost') || host === 'localhost' || host === '127.0.0.1') {
+          return callback(null, true);
         }
+      } catch (e) {}
+
+      logger.warn('⚠️ Socket.IO CORS blocked origin:', origin);
+      // In production, block unauthorized origins
+      if (process.env.NODE_ENV === 'production') {
+        callback(new Error('Not allowed by Socket.IO CORS'));
+      } else {
+        callback(null, true); // Allow in development
       }
     },
     methods: ["GET", "POST"],
@@ -67,32 +78,44 @@ io.on('connection', (socket) => {
   });
 });
 
-// CORS Configuration for production domain
+// CORS Configuration for platform and tenant subdomains
 const allowedOrigins = [
   'http://localhost:7000',
   'http://localhost:3000',
   'http://localhost:5173',
-  'https://www.iconicsmart.co.in',
-  'https://iconicsmart.co.in',
-  'http://www.iconicsmart.co.in',
-  'http://iconicsmart.co.in'
+  'https://www.charlieai.in',
+  'https://charlieai.in',
+  'https://app.charlieai.in',
+  'http://charlieai.in',
+  'http://www.charlieai.in',
+  'https://www.charlieai.com',
+  'https://charlieai.com',
+  'https://app.charlieai.com'
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, Postman, etc.)
+    // Allow requests with no origin (mobile apps, Postman, server-to-server)
     if (!origin) return callback(null, true);
     
     if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      logger.warn('⚠️ CORS blocked origin:', origin);
-      // In production, block unauthorized origins for security
-      if (process.env.NODE_ENV === 'production') {
-        callback(new Error('Not allowed by CORS'));
-      } else {
-        callback(null, true); // Allow in development for testing
+      return callback(null, true);
+    }
+
+    // Support *.charlieai.in, *.charlieai.com or *.localhost tenant subdomains
+    try {
+      const url = new URL(origin);
+      const host = url.hostname.toLowerCase();
+      if (host.endsWith('.charlieai.in') || host.endsWith('.charlieai.com') || host.endsWith('.charliescrm.com') || host.endsWith('.localhost') || host === 'localhost' || host === '127.0.0.1') {
+        return callback(null, true);
       }
+    } catch (e) {}
+
+    logger.warn('⚠️ CORS blocked origin:', origin);
+    if (process.env.NODE_ENV === 'production') {
+      callback(new Error('Not allowed by CORS'));
+    } else {
+      callback(null, true); // Allow in development
     }
   },
   credentials: true
@@ -141,29 +164,62 @@ if (fs.existsSync(path.join(__dirname, 'client', 'dist'))) {
 // Serve uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// MongoDB connection with better error handling
-const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://admin:admin123@localhost:27017/iconic-crm?authSource=admin';
+// MongoDB connection with resilient local in-memory fallback
+async function initializeDatabase() {
+  const configuredUri = process.env.MONGO_URI || process.env.MONGODB_URI;
+  if (configuredUri && !configuredUri.includes('localhost:27017') && !configuredUri.includes('127.0.0.1:27017')) {
+    try {
+      logger.info('🔌 Attempting configured MongoDB connection...');
+      await mongoose.connect(configuredUri, { serverSelectionTimeoutMS: 3000 });
+      logger.info('✅ MongoDB connected successfully!');
+      return true;
+    } catch (err) {
+      logger.warn('⚠️ Configured MongoDB connection failed:', err.message);
+    }
+  }
 
-logger.info('🔌 Attempting MongoDB connection...');
-logger.info(`URI resolved to: ${MONGO_URI.replace(/:[^:@]+@/, ':****@')}`);
+  // Attempt local MongoDB daemon
+  try {
+    const localUri = configuredUri || 'mongodb://127.0.0.1:27017/charlies-crm';
+    await mongoose.connect(localUri, { serverSelectionTimeoutMS: 1000 });
+    logger.info('✅ Connected to local MongoDB daemon!');
+    return true;
+  } catch (err) {
+    logger.info('ℹ️ Local MongoDB daemon not found, launching in-memory database...');
+  }
 
-mongoose.connect(MONGO_URI, {
-  serverSelectionTimeoutMS: 5000,
-  socketTimeoutMS: 45000,
-})
-.then(async () => {
-  logger.info('✅ MongoDB connected successfully!');
+  // Fallback to MongoMemoryServer
+  try {
+    const { MongoMemoryServer } = require('mongodb-memory-server');
+    const mongod = await MongoMemoryServer.create();
+    global.__mongoMemoryServer__ = mongod;
+    const memUri = mongod.getUri();
+    await mongoose.connect(memUri);
+    logger.info('✅ In-Memory MongoDB initialized and connected successfully!');
+    return true;
+  } catch (err) {
+    logger.error('❌ Failed to initialize database:', err.message);
+    return false;
+  }
+}
+
+initializeDatabase().then(async (connected) => {
+  if (!connected) return;
   logger.info('📊 Database:', mongoose.connection.name);
   try {
     const { autoSeedIfEmpty } = require('./seed');
     await autoSeedIfEmpty();
   } catch (err) {
-    logger.warn('Auto-seed check failed:', err.message);
+    logger.warn('Auto-seed check notice:', err.message);
   }
-})
-.catch(err => {
-  logger.error('❌ MongoDB connection error:', err.message);
-  logger.error('💡 Make sure MongoDB is running: docker-compose up -d mongodb');
+  try {
+    const { migrateToMultiTenant } = require('./scripts/migrate-to-multitenant');
+    await migrateToMultiTenant();
+  } catch (err) {
+    logger.warn('Multi-tenant migration notice:', err.message);
+  }
+}).catch(err => {
+  logger.error('Database initialization error:', err.message);
 });
 
 // Root route - redirect to login (BEFORE API routes)
@@ -173,9 +229,17 @@ app.get('/', (req, res) => {
 });
 
 // API Routes
+app.use('/api/tenant', require('./routes/tenant'));
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/companies', require('./routes/companies'));
+app.use('/api/roles', require('./routes/roles'));
+app.use('/api/departments', require('./routes/departments'));
+app.use('/api/stock-transfers', require('./routes/stockTransfers'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/tenant-control', require('./routes/tenantControl'));
+app.use('/api/notifications', require('./routes/platformNotifications'));
+app.use('/api/platform/analytics', require('./routes/platformAnalytics'));
 app.use('/api/beat-tracker', require('./routes/beatTracker'));
 app.use('/api/api-keys', require('./routes/apiKeys'));
 app.use('/api/webhooks', require('./routes/webhooks'));
@@ -205,6 +269,8 @@ app.use('/api/tasks', require('./routes/tasks'));
 app.use('/api/serial-validation', require('./routes/serialValidation'));
 app.use('/api/v1/serial-validation', require('./routes/externalSerialValidation'));
 app.use('/api/v1/serial-registry', require('./routes/serialRegistry'));
+app.use('/qerp/validatesno.asp', (req, res, next) => { req.url = '/validate'; require('./routes/externalSerialValidation')(req, res, next); });
+app.use('/api/bulk-import', require('./middleware/featureGate').requireFeature('bulk_import'), require('./routes/bulkImport'));
 
 // Health check endpoint for Railway
 app.get('/api/health', (req, res) => {

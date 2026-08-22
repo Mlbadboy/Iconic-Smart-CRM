@@ -101,9 +101,9 @@ Once MongoDB is running:
    ```
 
 3. **Access demo accounts**:
-   - Admin: admin@iconic-crm.com / admin123
-   - Manager: manager@iconic-crm.com / manager123
-   - Sales: sales@iconic-crm.com / sales123
+   - Admin: admin@charlieai.com / admin123
+   - Manager: manager@charlieai.com / manager123
+   - Sales: sales@charlieai.com / sales123
 
 4. **Explore API**:
    - http://localhost:5000/api/health

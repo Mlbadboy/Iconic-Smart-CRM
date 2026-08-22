@@ -66,7 +66,7 @@ const tests = [
   // 2. Login Test
   test('Login Authentication', async () => {
     const response = await axios.post(`${API_URL}/auth/login`, {
-      email: 'admin@iconic-crm.com',
+      email: 'admin@charlieai.com',
       password: 'admin123'
     });
     

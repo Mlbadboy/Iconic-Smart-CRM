@@ -62,7 +62,7 @@ npm start
 ### Issue: "Login failed"
 **Solution:** 
 1. Check if database is seeded: `npm run seed`
-2. Verify credentials: admin@iconic-crm.com / admin123
+2. Verify credentials: admin@charlieai.com / admin123
 3. Check server logs for errors
 
 ### Issue: "Email service not configured"
@@ -84,7 +84,7 @@ EMAIL_PASSWORD=your-app-password
 
 ### 1. Login Test
 - [ ] Open http://localhost:7000/login.html
-- [ ] Login with admin@iconic-crm.com / admin123
+- [ ] Login with admin@charlieai.com / admin123
 - [ ] Should redirect to dashboard
 
 ### 2. API Test

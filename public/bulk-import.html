@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Import Center - Charlie's CRM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #0f172a;
+            --bg-surface: #1e293b;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.15);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-blur: blur(12px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            line-height: 1.5;
+            background-image: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.03) 0%, transparent 40%);
+        }
+
+        /* Top Navigation Header */
+        header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-main);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link {
+            padding: 0.5rem 0.875rem;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dropdown-wrapper {
+            position: relative;
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 0.35rem 0.75rem;
+            border-radius: 99px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-main);
+        }
+
+        .profile-trigger:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 120%;
+            right: 0;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+            width: 240px;
+            display: none;
+            z-index: 1100;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .user-menu-info {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .user-menu-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .user-menu-role {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: capitalize;
+        }
+
+        .user-menu-actions a {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .user-menu-actions a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--primary);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            border: 1px solid transparent;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border-color: var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Container Layout */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .page-title-section {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-desc {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card panels */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .card-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .card-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Drag & Drop Upload Zone */
+        .upload-zone {
+            border: 2px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.01);
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.03);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .radio-option input {
+            accent-color: var(--primary);
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Progress States */
+        .progress-container {
+            margin: 1.5rem 0;
+            display: none;
+        }
+
+        .progress-bar-bg {
+            background: rgba(255, 255, 255, 0.05);
+            height: 10px;
+            border-radius: 99px;
+            overflow: hidden;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar-fill {
+            background: var(--primary);
+            height: 100%;
+            width: 0%;
+            border-radius: 99px;
+            transition: width 0.2s ease;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* Result Overview Badge Cards */
+        .result-deck {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .result-badge {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .result-badge-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .result-badge.valid { border-color: rgba(16, 185, 129, 0.3); color: var(--success); }
+        .result-badge.warning { border-color: rgba(245, 158, 11, 0.3); color: var(--warning); }
+        .result-badge.error { border-color: rgba(239, 68, 68, 0.3); color: var(--danger); }
+
+        /* Error CSV preview box */
+        .error-log-box {
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .error-log-title {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--danger);
+            margin-bottom: 0.5rem;
+        }
+
+        .error-log-item {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #fca5a5;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid rgba(239, 68, 68, 0.08);
+        }
+
+        /* History Table Panel */
+        .history-section {
+            margin-top: 3rem;
+        }
+
+        .history-table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.02);
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 99px;
+            text-transform: uppercase;
+        }
+
+        .status-uploaded { background: rgba(99, 102, 241, 0.1); color: var(--primary); }
+        .status-validating { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .status-validated { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .status-importing { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+        .status-completed { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .status-completed_with_errors { background: rgba(239, 68, 68, 0.1); color: var(--warning); }
+        .status-failed { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--primary);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="/dashboard.html" class="logo-group" data-branding="logo">
+                    🚀 <span data-branding="name">Charlie's CRM</span>
+                </a>
+            </div>
+            
+            <nav class="navbar" id="mainNav">
+                <a href="/dashboard.html" class="nav-link">Dashboard</a>
+                <a href="/leads.html" class="nav-link">Sales</a>
+                <a href="/contacts.html" class="nav-link">Customers</a>
+                <a href="/view-orders.html" class="nav-link">Orders</a>
+                <a href="/manage-products.html" class="nav-link">Inventory</a>
+                <a href="/services.html" class="nav-link">Service</a>
+                <a href="/bulk-import.html" class="nav-link active">Bulk Import</a>
+            </nav>
+
+            <div class="header-actions">
+                <div class="dropdown-wrapper user-dropdown">
+                    <button class="profile-trigger" onclick="toggleUserDropdown(event)">
+                        <div class="avatar" id="avatarBadge">U</div>
+                        <span id="headerUserName">Admin User</span>
+                        <span>▾</span>
+                    </button>
+                    <div id="userDropdownMenu" class="dropdown-menu">
+                        <div class="user-menu-info">
+                            <div class="user-menu-name" id="userMenuName">Admin User</div>
+                            <div class="user-menu-role" id="userMenuRole">Company Administrator</div>
+                        </div>
+                        <div class="user-menu-actions">
+                            <a href="/dashboard.html">📊 Dashboard</a>
+                            <a href="/manage-users.html">👥 Team Management</a>
+                            <a href="/organization.html">🏢 Organization</a>
+                            <a href="#" onclick="logout(); return false;" style="color: var(--danger);">🚪 Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Page Title -->
+        <div class="page-title-section">
+            <h1 class="page-title">📥 Bulk Import Center</h1>
+            <p class="page-desc">Import products or serial numbers securely into your tenant catalog registry.</p>
+        </div>
+
+        <!-- Alert Notification Panel -->
+        <div id="quotaAlert" class="card" style="display:none; border-color:var(--danger); background:rgba(239,68,68,0.05); margin-bottom:2rem;">
+            <p id="quotaAlertText" style="color:#fca5a5; font-weight:600;"></p>
+        </div>
+
+        <div class="main-grid">
+            <!-- Left Panel: Job Configuration & Upload -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">1. Upload CRM File</h2>
+                    <p class="card-subtitle">Choose data category and drag your CSV file here.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">IMPORT TYPE</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="importType" value="products" checked onchange="toggleTemplateLink()">
+                            Products / Catalog
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="importType" value="serials" onchange="toggleTemplateLink()">
+                            Serial Numbers
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Drag & Drop area -->
+                <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📁</div>
+                    <p style="font-weight:600; margin-bottom:0.25rem;">Drag your CSV template here</p>
+                    <p style="color:var(--text-muted); font-size:0.8rem;">or click to browse from files</p>
+                    <input type="file" id="fileInput" accept=".csv" style="display:none;" onchange="handleFileSelected(event)">
+                </div>
+
+                <div id="selectedFileInfo" style="display:none; margin-bottom:1.5rem;">
+                    <p style="font-size:0.875rem; color:var(--text-muted);">
+                        Selected: <strong id="selectedFileName" style="color:var(--text-main);">None</strong> (<span id="selectedFileSize">0 KB</span>)
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">IMPORT MODE</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="importMode" value="CREATE_ONLY" checked>
+                            Create new records only
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="importMode" value="CREATE_UPDATE">
+                            Create + Update existing
+                        </label>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; gap:1rem;">
+                    <a id="downloadTemplateBtn" href="#" onclick="downloadTemplate(event); return false;" class="btn btn-secondary" style="flex:1;">
+                        📥 Download Template
+                    </a>
+                    <button id="uploadBtn" class="btn btn-primary" style="flex:1;" onclick="startUpload()">
+                        Upload & Validate
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Panel: Processing, Report & Actions -->
+            <div class="card" id="processingCard">
+                <div class="card-header">
+                    <h2 class="card-title">2. Processing & Results</h2>
+                    <p class="card-subtitle">Review verification report and execute import.</p>
+                </div>
+
+                <div id="processingEmptyState" style="text-align:center; padding:4rem 2rem; color:var(--text-muted);">
+                    <p style="font-size:3rem; margin-bottom:1rem;">📊</p>
+                    <p>No active upload session. Upload a CSV file to inspect validation results.</p>
+                </div>
+
+                <!-- Progress container -->
+                <div class="progress-container" id="jobProgressContainer">
+                    <p style="font-weight:600; margin-bottom:0.5rem;" id="progressStatusText">Validating rows...</p>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="jobProgressBar"></div>
+                    </div>
+                    <div class="progress-info">
+                        <span id="progressPercent">0%</span>
+                        <span id="progressCount">0 / 0 rows</span>
+                    </div>
+                </div>
+
+                <!-- Validation Result Overview -->
+                <div class="result-deck" id="validationResultDeck">
+                    <div class="result-badge valid">
+                        <div class="result-badge-value" id="countValid">0</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">VALID</div>
+                    </div>
+                    <div class="result-badge warning">
+                        <div class="result-badge-value" id="countWarnings">0</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">WARNINGS</div>
+                    </div>
+                    <div class="result-badge error">
+                        <div class="result-badge-value" id="countErrors">0</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">ERRORS</div>
+                    </div>
+                </div>
+
+                <!-- Error Preview log -->
+                <div class="error-log-box" id="errorLogBox">
+                    <div class="error-log-title">⚠ Failed Validation Row Log</div>
+                    <div id="errorLogContainer">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+
+                <!-- Actions section -->
+                <div id="executionActions" style="display:none; margin-top:1.5rem; flex-direction:column; gap:1rem;">
+                    <div id="commitActionNotice" style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.25); border-radius:8px; padding:0.75rem 1rem; font-size:0.85rem; color:#a7f3d0;">
+                        💡 <strong>Next Step:</strong> Click <strong>"Import Valid Records"</strong> below to save these items into your database.
+                    </div>
+                    <div style="display:flex; gap:1rem;">
+                        <button id="downloadErrorsBtn" class="btn btn-secondary" style="flex:1; border-color:rgba(239,68,68,0.3); color:#fca5a5;" onclick="downloadErrors()">
+                            ✕ Download Error CSV
+                        </button>
+                        <button id="commitBtn" class="btn btn-success" style="flex:1; font-weight:700; box-shadow: 0 0 15px rgba(16,185,129,0.3);" onclick="commitImport()">
+                            ✓ Import Valid Records to Database
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Success Summary Card -->
+                <div id="successSummary" style="display:none; text-align:center; padding:2rem 1rem; border:1px solid rgba(16,185,129,0.2); background:rgba(16,185,129,0.02); border-radius:12px;">
+                    <p style="font-size:2.5rem; color:var(--success); margin-bottom:0.5rem;">✓</p>
+                    <h3 style="font-weight:700; margin-bottom:0.5rem;">Import Task Complete!</h3>
+                    <p style="color:var(--text-muted); font-size:0.9rem;" id="successSummaryText"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Section -->
+        <div class="history-section">
+            <h2 class="page-title" style="font-size:1.5rem; margin-bottom:1rem;">📋 Import Execution History</h2>
+            <div class="history-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>File Name</th>
+                            <th>Import Type</th>
+                            <th>Date & Time</th>
+                            <th>Total Rows</th>
+                            <th>Imported</th>
+                            <th>Rejected</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <tr>
+                            <td colspan="8" style="text-align:center; color:var(--text-muted); padding:2rem;">Loading history logs...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">Job completed successfully</div>
+
+    <script src="/js/tenant-branding.js"></script>
+    <script src="/js/feature-guard.js"></script>
+    <script src="/js/bulk-import.js"></script>
+</body>
+</html>

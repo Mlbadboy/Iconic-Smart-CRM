@@ -538,4 +538,4 @@ Your Iconic Smart CRM is now:
 
 **Last Updated**: October 20, 2025  
 **Version**: 2.0 - Accessibility & Usability Release  
-**Contact**: accessibility@iconic-crm.com
+**Contact**: accessibility@charlieai.com

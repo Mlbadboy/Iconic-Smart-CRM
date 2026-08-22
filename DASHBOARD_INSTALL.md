@@ -124,7 +124,7 @@ Visit: http://localhost:3000
 
 1. **Login**:
    ```
-   Email: admin@iconic-crm.com
+   Email: admin@charlieai.com
    Password: admin123
    ```
 
@@ -146,7 +146,7 @@ Visit: http://localhost:3000
 
 1. **Login**:
    ```
-   Email: sales@iconic-crm.com
+   Email: sales@charlieai.com
    Password: sales123
    ```
 

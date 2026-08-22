@@ -19,7 +19,7 @@ Go to: **http://localhost:7000**
 
 ### **Step 3: Login**
 Use demo credentials (already shown on screen):
-- **Email**: `admin@iconic-crm.com`
+- **Email**: `admin@charlieai.com`
 - **Password**: `admin123`
 
 **Pro Tip**: Press `Alt+A` to auto-fill! ⚡
@@ -92,9 +92,9 @@ Use demo credentials (already shown on screen):
 
 | Role | Email | Password | Access Level |
 |------|-------|----------|--------------|
-| **Admin** | admin@iconic-crm.com | admin123 | Everything |
-| **Manager** | manager@iconic-crm.com | manager123 | Most features |
-| **Sales** | sales@iconic-crm.com | sales123 | Sales features |
+| **Admin** | admin@charlieai.com | admin123 | Everything |
+| **Manager** | manager@charlieai.com | manager123 | Most features |
+| **Sales** | sales@charlieai.com | sales123 | Sales features |
 
 ---
 
@@ -163,7 +163,7 @@ Use demo credentials (already shown on screen):
 ### **How to Login**
 ```
 1. Go to http://localhost:7000
-2. Email: admin@iconic-crm.com
+2. Email: admin@charlieai.com
 3. Password: admin123
 4. Click Login (or press Enter)
 ```
@@ -294,7 +294,7 @@ Use demo credentials (already shown on screen):
 - **INTEGRATION_QUICK_START.md** - Quick setup
 
 ### **Contact Support**
-- **Email**: support@iconic-crm.com
+- **Email**: support@charlieai.com
 - **Phone**: +1-555-0100
 - **Hours**: Monday - Friday, 9 AM - 5 PM EST
 

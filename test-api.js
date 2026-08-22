@@ -42,7 +42,7 @@ async function runTests() {
 
     // Test 2: Login with admin
     const loginData = JSON.stringify({
-      email: 'admin@iconic-crm.com',
+      email: 'admin@charlieai.com',
       password: 'admin123'
     });
 

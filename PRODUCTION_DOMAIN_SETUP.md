@@ -38,7 +38,7 @@ CORS configuration for:
 
 ### **Step 2: Upload Code**
 ```bash
-scp -r Iconic-Smart-CRM user@www.iconicsmart.co.in:/var/www/
+scp -r Iconic-Smart-CRM user@charlieai.com:/var/www/
 ```
 
 ### **Step 3: Install & Configure**

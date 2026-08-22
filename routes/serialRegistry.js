@@ -5,8 +5,10 @@ const { requirePermission } = require('../middleware/rbac');
 const SerialRegistry = require('../models/SerialRegistry');
 const ImportSession = require('../models/ImportSession');
 const { success, error } = require('../utils/apiResponse');
+const { requireFeature } = require('../middleware/featureGate');
 
 const router = express.Router();
+router.use(requireFeature('inventory'));
 
 function parseCSV(text) {
   const lines = text.split(/\r?\n/);
@@ -245,6 +247,21 @@ router.post('/import/commit', auth, requirePermission('serial_validation.import'
         totalProcessed: session.records.length
       }
     });
+  } catch (err) {
+    return error(res, { status: 500, message: err.message });
+  }
+});
+
+// List Registered Product Units (Tenant Scoped)
+router.get('/units', auth, async (req, res) => {
+  try {
+    const companyId = req.user?.companyId;
+    const filter = companyId ? { companyId } : {};
+    if (req.query.materialCode) filter.materialCode = req.query.materialCode.toUpperCase();
+    if (req.query.status) filter.status = req.query.status;
+
+    const units = await SerialRegistry.find(filter).sort({ createdAt: -1 }).limit(100).lean();
+    return success(res, { units, count: units.length });
   } catch (err) {
     return error(res, { status: 500, message: err.message });
   }

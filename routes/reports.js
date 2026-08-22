@@ -1,7 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const XLSX = require('xlsx');
 const { auth } = require('../middleware/auth');
+const { requireFeature } = require('../middleware/featureGate');
+
+router.use(requireFeature('reports'));
 
 // Import all models
 const Order = require('../models/Order');
@@ -15,6 +19,25 @@ const Lead = require('../models/Lead');
 const Contact = require('../models/Contact');
 const User = require('../models/User');
 const Retailer = require('../models/Retailer');
+const SerialRegistry = require('../models/SerialRegistry');
+const StockTransfer = require('../models/StockTransfer');
+const SerialValidationHistory = require('../models/SerialValidationHistory');
+const ApiKey = require('../models/ApiKey');
+const Company = require('../models/Company');
+
+// Multi-tenant query filter helper
+function getCompanyFilter(req) {
+    const role = String(req.user?.role || '').toLowerCase();
+    let companyId = req.user?.companyId;
+    if ((role === 'super-admin' || role === 'superadmin') && req.query.companyId) {
+        companyId = req.query.companyId;
+    } else if ((role === 'super-admin' || role === 'superadmin') && !companyId) {
+        return {};
+    }
+    if (!companyId) return {};
+    const compObjectId = mongoose.Types.ObjectId.isValid(companyId) ? new mongoose.Types.ObjectId(companyId) : companyId;
+    return { companyId: compObjectId };
+}
 
 // Helper function to convert JSON to CSV
 function jsonToCSV(data) {
@@ -70,7 +93,7 @@ router.get('/orders', auth, async (req, res) => {
     try {
         const { startDate, endDate, status } = req.query;
         
-        let query = {};
+        let query = { ...getCompanyFilter(req) };
         if (startDate && endDate) {
             query.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
         }
@@ -132,7 +155,7 @@ router.get('/deliveries', auth, async (req, res) => {
     try {
         const { startDate, endDate, status } = req.query;
         
-        let query = {};
+        let query = { ...getCompanyFilter(req) };
         if (startDate && endDate) {
             query.dispatchDate = { $gte: new Date(startDate), $lte: new Date(endDate) };
         }
@@ -183,7 +206,7 @@ router.get('/services', auth, async (req, res) => {
     try {
         const { startDate, endDate, status } = req.query;
         
-        let query = {};
+        let query = { ...getCompanyFilter(req) };
         if (startDate && endDate) {
             query.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
         }
@@ -236,7 +259,7 @@ router.get('/services', auth, async (req, res) => {
 // Get Service Centers Report (CSV)
 router.get('/service-centers', auth, async (req, res) => {
     try {
-        const centers = await ServiceCenter.find().lean();
+        const centers = await ServiceCenter.find(getCompanyFilter(req)).lean();
         
         // Only essential service center fields
         const flatCenters = centers.map(center => ({
@@ -269,7 +292,7 @@ router.get('/content-requests', auth, async (req, res) => {
     try {
         const { startDate, endDate, status } = req.query;
         
-        let query = {};
+        let query = { ...getCompanyFilter(req) };
         if (startDate && endDate) {
             query.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
         }
@@ -292,7 +315,7 @@ router.get('/content-requests', auth, async (req, res) => {
 // Get Content Uploads Report (CSV)
 router.get('/content-uploads', auth, async (req, res) => {
     try {
-        const uploads = await ContentUpload.find().lean();
+        const uploads = await ContentUpload.find(getCompanyFilter(req)).lean();
         const flatUploads = uploads.map(upload => flattenObject(upload));
         const csv = jsonToCSV(flatUploads);
         
@@ -309,7 +332,7 @@ router.get('/content-uploads', auth, async (req, res) => {
 // Get Logistic Partners Report (CSV)
 router.get('/logistic-partners', auth, async (req, res) => {
     try {
-        const partners = await LogisticPartner.find().lean();
+        const partners = await LogisticPartner.find(getCompanyFilter(req)).lean();
         
         // Only essential logistic partner fields
         const flatPartners = partners.map(partner => ({
@@ -341,7 +364,7 @@ router.get('/leads', auth, async (req, res) => {
     try {
         const { startDate, endDate, status } = req.query;
         
-        let query = {};
+        let query = { ...getCompanyFilter(req) };
         if (startDate && endDate) {
             query.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
         }
@@ -381,7 +404,7 @@ router.get('/leads', auth, async (req, res) => {
 // Get Contacts Report (CSV)
 router.get('/contacts', auth, async (req, res) => {
     try {
-        const contacts = await Contact.find().lean();
+        const contacts = await Contact.find(getCompanyFilter(req)).lean();
         
         // Only essential contact fields
         const flatContacts = contacts.map(contact => ({
@@ -411,7 +434,7 @@ router.get('/contacts', auth, async (req, res) => {
 // Get Users Report (CSV)
 router.get('/users', auth, async (req, res) => {
     try {
-        const users = await User.find().select('-password').lean();
+        const users = await User.find(getCompanyFilter(req)).select('-password').lean();
         
         // Only essential user fields
         const flatUsers = users.map(user => ({
@@ -439,7 +462,7 @@ router.get('/users', auth, async (req, res) => {
 // Get Retailers Report (CSV)
 router.get('/retailers', auth, async (req, res) => {
     try {
-        const retailers = await Retailer.find().lean();
+        const retailers = await Retailer.find(getCompanyFilter(req)).lean();
         
         // Only essential retailer fields
         const flatRetailers = retailers.map(retailer => ({
@@ -474,12 +497,13 @@ router.get('/retailers', auth, async (req, res) => {
 // Get Complete CRM Report (CSV - All data)
 router.get('/complete-crm', auth, async (req, res) => {
     try {
+        const compFilter = getCompanyFilter(req);
         const [orders, dispatches, services, leads, contacts] = await Promise.all([
-            Order.countDocuments(),
-            Dispatch.countDocuments(),
-            ServiceRequest.countDocuments(),
-            Lead.countDocuments(),
-            Contact.countDocuments()
+            Order.countDocuments(compFilter),
+            Dispatch.countDocuments(compFilter),
+            ServiceRequest.countDocuments(compFilter),
+            Lead.countDocuments(compFilter),
+            Contact.countDocuments(compFilter)
         ]);
         
         const summary = [{
@@ -505,9 +529,27 @@ router.get('/complete-crm', auth, async (req, res) => {
     }
 });
 
-// Get Report Summary (metadata about available reports)
+// Get Report Summary (metadata about available reports scoped to tenant & features)
 router.get('/summary', auth, async (req, res) => {
     try {
+        const compFilter = getCompanyFilter(req);
+
+        let features = {
+            orders: true,
+            logistics: true,
+            service: true,
+            customers: true,
+            sales: true,
+            dashboard: true
+        };
+
+        if (req.user?.companyId) {
+            const comp = await Company.findById(req.user.companyId).lean();
+            if (comp && comp.features) {
+                features = { ...features, ...comp.features };
+            }
+        }
+
         const [
             ordersCount,
             dispatchesCount,
@@ -518,39 +560,207 @@ router.get('/summary', auth, async (req, res) => {
             partnersCount,
             leadsCount,
             contactsCount,
-            usersCount
+            usersCount,
+            retailersCount
         ] = await Promise.all([
-            Order.countDocuments(),
-            Dispatch.countDocuments(),
-            ServiceRequest.countDocuments(),
-            ServiceCenter.countDocuments(),
-            ContentRequest.countDocuments(),
-            ContentUpload.countDocuments(),
-            LogisticPartner.countDocuments(),
-            Lead.countDocuments(),
-            Contact.countDocuments(),
-            User.countDocuments()
+            Order.countDocuments(compFilter),
+            Dispatch.countDocuments(compFilter),
+            ServiceRequest.countDocuments(compFilter),
+            ServiceCenter.countDocuments(compFilter),
+            ContentRequest.countDocuments(compFilter),
+            ContentUpload.countDocuments(compFilter),
+            LogisticPartner.countDocuments(compFilter),
+            Lead.countDocuments(compFilter),
+            Contact.countDocuments(compFilter),
+            User.countDocuments(compFilter),
+            Retailer.countDocuments(compFilter)
         ]);
-        
-        const retailersCount = await Retailer.countDocuments();
-        
+
+        const allReports = [
+            { key: 'orders', name: 'Orders Report', type: 'excel', endpoint: '/api/reports/orders', records: ordersCount },
+            { key: 'logistics', name: 'Deliveries Report', type: 'excel', endpoint: '/api/reports/deliveries', records: dispatchesCount },
+            { key: 'service', name: 'Services Report', type: 'excel', endpoint: '/api/reports/services', records: servicesCount },
+            { key: 'customers', name: 'Retailers Report', type: 'csv', endpoint: '/api/reports/retailers', records: retailersCount },
+            { key: 'sales', name: 'Leads', type: 'csv', endpoint: '/api/reports/leads', records: leadsCount },
+            { key: 'customers', name: 'Contacts', type: 'csv', endpoint: '/api/reports/contacts', records: contactsCount },
+            { key: 'dashboard', name: 'Users', type: 'csv', endpoint: '/api/reports/users', records: usersCount },
+            { key: 'service', name: 'Service Centers', type: 'csv', endpoint: '/api/reports/service-centers', records: centersCount },
+            { key: 'logistics', name: 'Logistic Partners', type: 'csv', endpoint: '/api/reports/logistic-partners', records: partnersCount },
+            { key: 'always', name: 'Complete CRM Summary', type: 'csv', endpoint: '/api/reports/complete-crm', records: 'Summary' }
+        ];
+
+        const availableReports = allReports.filter(r => r.key === 'always' || features[r.key] !== false);
+
         res.json({
-            availableReports: [
-                { name: 'Orders Report', type: 'excel', endpoint: '/api/reports/orders', records: ordersCount },
-                { name: 'Deliveries Report', type: 'excel', endpoint: '/api/reports/deliveries', records: dispatchesCount },
-                { name: 'Services Report', type: 'excel', endpoint: '/api/reports/services', records: servicesCount },
-                { name: 'Retailers Report', type: 'csv', endpoint: '/api/reports/retailers', records: retailersCount },
-                { name: 'Leads', type: 'csv', endpoint: '/api/reports/leads', records: leadsCount },
-                { name: 'Contacts', type: 'csv', endpoint: '/api/reports/contacts', records: contactsCount },
-                { name: 'Users', type: 'csv', endpoint: '/api/reports/users', records: usersCount },
-                { name: 'Service Centers', type: 'csv', endpoint: '/api/reports/service-centers', records: centersCount },
-                { name: 'Logistic Partners', type: 'csv', endpoint: '/api/reports/logistic-partners', records: partnersCount },
-                { name: 'Complete CRM Summary', type: 'csv', endpoint: '/api/reports/complete-crm', records: 'Summary' }
-            ],
-            totalRecords: ordersCount + dispatchesCount + servicesCount + centersCount + contentRequestsCount + contentUploadsCount + partnersCount + leadsCount + contactsCount + usersCount + retailersCount
+            availableReports,
+            totalRecords: availableReports.reduce((acc, curr) => acc + (typeof curr.records === 'number' ? curr.records : 0), 0)
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
+    }
+});
+
+// Company Admin Complete Operational Business Intelligence Summary
+router.get('/operational-summary', auth, async (req, res) => {
+    try {
+        let companyId = req.user.companyId;
+        const role = String(req.user?.role || '').toLowerCase();
+        if ((role === 'super-admin' || role === 'superadmin') && req.query.companyId) {
+            companyId = req.query.companyId;
+        }
+
+        if (!companyId) {
+            return res.status(400).json({ error: 'Company context required for operational report' });
+        }
+
+        const compObjectId = mongoose.Types.ObjectId.isValid(companyId) ? new mongoose.Types.ObjectId(companyId) : companyId;
+        const query = { companyId: compObjectId };
+
+        // 1. Sales & Orders
+        const [
+            leadsCount,
+            convertedLeadsCount,
+            orders,
+            revenueAgg
+        ] = await Promise.all([
+            Lead.countDocuments(query),
+            Lead.countDocuments({ ...query, status: { $in: ['converted', 'CONVERTED'] } }),
+            Order.find(query).select('amount totalAmount status createdAt region').lean(),
+            Order.aggregate([
+                { $match: { companyId: compObjectId } },
+                { $group: { _id: null, totalRevenue: { $sum: { $ifNull: ['$totalAmount', '$amount'] } }, count: { $sum: 1 } } }
+            ])
+        ]);
+
+        const totalOrders = orders.length;
+        const totalRevenue = revenueAgg[0]?.totalRevenue || 0;
+        const averageOrderValue = totalOrders > 0 ? Math.round(totalRevenue / totalOrders) : 0;
+
+        // 2. Inventory & Stock
+        const [
+            totalUnits,
+            availableUnits,
+            inTransitUnits,
+            distributorUnits,
+            dealerUnits,
+            retailerUnits,
+            soldUnits,
+            defectiveUnits
+        ] = await Promise.all([
+            SerialRegistry.countDocuments(query),
+            SerialRegistry.countDocuments({ ...query, status: 'IN_STOCK' }),
+            SerialRegistry.countDocuments({ ...query, status: 'IN_TRANSIT' }),
+            SerialRegistry.countDocuments({ ...query, currentHolderType: 'DISTRIBUTOR' }),
+            SerialRegistry.countDocuments({ ...query, currentHolderType: 'DEALER' }),
+            SerialRegistry.countDocuments({ ...query, currentHolderType: 'RETAILER' }),
+            SerialRegistry.countDocuments({ ...query, status: 'VALIDATED' }),
+            SerialRegistry.countDocuments({ ...query, status: { $in: ['DEFECTIVE', 'RETURNED'] } })
+        ]);
+
+        // 3. Distribution & Transfers
+        const [
+            totalTransfers,
+            pendingTransfers,
+            completedTransfers
+        ] = await Promise.all([
+            StockTransfer.countDocuments(query),
+            StockTransfer.countDocuments({ ...query, status: 'PENDING' }),
+            StockTransfer.countDocuments({ ...query, status: 'ACCEPTED' })
+        ]);
+
+        // 4. Product / Serial Validations
+        const [
+            totalApiRequests,
+            uniqueSerialsList,
+            successfulValidations,
+            dealerMismatches,
+            invalidSerials
+        ] = await Promise.all([
+            SerialValidationHistory.countDocuments(query),
+            SerialValidationHistory.distinct('serialNumber', query),
+            SerialValidationHistory.countDocuments({ ...query, validationResult: 'VALID' }),
+            SerialValidationHistory.countDocuments({ ...query, validationResult: 'DEALER_MISMATCH' }),
+            SerialValidationHistory.countDocuments({ ...query, validationResult: 'INVALID_SERIAL' })
+        ]);
+
+        // 5. Service & SLAs
+        const [
+            openServiceCases,
+            resolvedServiceCases,
+            slaBreaches
+        ] = await Promise.all([
+            ServiceRequest.countDocuments({ ...query, status: { $in: ['open', 'in-progress', 'Open', 'Assigned', 'In Progress'] } }),
+            ServiceRequest.countDocuments({ ...query, status: { $in: ['resolved', 'closed', 'Completed'] } }),
+            ServiceRequest.countDocuments({ ...query, slaBreached: true })
+        ]);
+
+        // 6. Customers & Retailers
+        const [
+            totalRetailers,
+            totalContacts
+        ] = await Promise.all([
+            Retailer.countDocuments(query),
+            Contact.countDocuments(query)
+        ]);
+
+        // 7. API Summary
+        const [
+            totalApis,
+            activeApis
+        ] = await Promise.all([
+            ApiKey.countDocuments(query),
+            ApiKey.countDocuments({ ...query, status: 'ACTIVE' })
+        ]);
+
+        res.json({
+            companyId,
+            sales: {
+                leads: leadsCount,
+                convertedLeads: convertedLeadsCount,
+                orders: totalOrders,
+                revenue: totalRevenue,
+                averageOrderValue
+            },
+            inventory: {
+                totalUnits,
+                availableUnits,
+                inTransitUnits,
+                distributorUnits,
+                dealerUnits,
+                retailerUnits,
+                soldUnits,
+                defectiveUnits
+            },
+            distribution: {
+                totalTransfers,
+                pendingTransfers,
+                completedTransfers
+            },
+            serialValidations: {
+                totalRequests: totalApiRequests,
+                uniqueSerials: uniqueSerialsList.length,
+                successfulValidations,
+                dealerMismatches,
+                invalidSerials
+            },
+            service: {
+                openCases: openServiceCases,
+                resolvedCases: resolvedServiceCases,
+                slaBreaches
+            },
+            customers: {
+                retailers: totalRetailers,
+                contacts: totalContacts
+            },
+            api: {
+                totalApis,
+                activeApis,
+                totalRequests: totalApiRequests,
+                uniqueSerials: uniqueSerialsList.length
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 });
 

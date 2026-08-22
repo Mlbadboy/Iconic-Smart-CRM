@@ -9,7 +9,7 @@ void main() {
         'user': {
           'id': 'user_001',
           'name': 'Shubham Kumar',
-          'email': 'shubham.kumar@iconicsmart.com',
+          'email': 'shubham.kumar@charlieai.com',
           'role': 'sales'
         }
       };
@@ -18,7 +18,7 @@ void main() {
 
       expect(user.id, equals('user_001'));
       expect(user.name, equals('Shubham Kumar'));
-      expect(user.email, equals('shubham.kumar@iconicsmart.com'));
+      expect(user.email, equals('shubham.kumar@charlieai.com'));
       expect(user.role, equals('sales'));
       expect(user.token, equals('jwt_mock_token_12345'));
     });

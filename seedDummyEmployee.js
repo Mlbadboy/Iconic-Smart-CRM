@@ -13,7 +13,7 @@ async function createDummyEmployee() {
         console.log('✅ Connected to MongoDB\n');
 
         // Check if employee already exists
-        const existingEmployee = await User.findOne({ email: 'shubham@iconicsmart.com' });
+        const existingEmployee = await User.findOne({ email: 'shubham@charlieai.com' });
         
         if (existingEmployee) {
             console.log('⚠️  Employee "Shubham Kumar" already exists!');
@@ -29,7 +29,7 @@ async function createDummyEmployee() {
         
         const dummyEmployee = new User({
             name: 'Shubham Kumar',
-            email: 'shubham@iconicsmart.com',
+            email: 'shubham@charlieai.com',
             password: hashedPassword,
             phone: '9876543210',
             role: 'sales',
@@ -43,7 +43,7 @@ async function createDummyEmployee() {
         console.log('✅ Dummy Sales Employee Created Successfully!\n');
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         console.log('👤 Name: Shubham Kumar');
-        console.log('📧 Email: shubham@iconicsmart.com');
+        console.log('📧 Email: shubham@charlieai.com');
         console.log('🔐 Password: shubham123');
         console.log('📱 Phone: 9876543210');
         console.log('👔 Role: Sales');

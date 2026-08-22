@@ -38,19 +38,23 @@ function initEmailService() {
   }
 }
 
-// Send email function
+// Send email function with tenant-aware sender support
 async function sendEmail(options) {
   const {
     to,
     subject,
     text,
     html,
-    attachments = []
+    attachments = [],
+    branding = {}
   } = options;
+
+  const senderName = branding.senderName || branding.displayName || "Charlie's CRM";
 
   // If email service is not configured, log and return
   if (!transporter) {
     logger.info('📧 Email (not sent - service not configured):');
+    logger.info(`   Sender: ${senderName}`);
     logger.info(`   To: ${to}`);
     logger.info(`   Subject: ${subject}`);
     return { sent: false, reason: 'Email service not configured' };
@@ -58,7 +62,7 @@ async function sendEmail(options) {
 
   try {
     const mailOptions = {
-      from: `"Iconic Smart CRM" <${process.env.EMAIL_USER}>`,
+      from: `"${senderName}" <${process.env.EMAIL_USER}>`,
       to: Array.isArray(to) ? to.join(', ') : to,
       subject: subject,
       text: text,
@@ -85,10 +89,14 @@ async function sendEmail(options) {
   }
 }
 
-// Email templates
+// Email templates with tenant white-label branding support
 const emailTemplates = {
   // Service Request Notification
-  serviceRequest: (requestData) => {
+  serviceRequest: (requestData, branding = {}) => {
+    const brandName = branding.displayName || branding.name || "Charlie's CRM";
+    const primaryColor = branding.primaryColor || '#667eea';
+    const footerText = branding.emailBranding?.footerText || `This is an automated notification from ${brandName}`;
+
     return {
       subject: `New Service Request - ${requestData.serviceId}`,
       html: `
@@ -98,7 +106,7 @@ const emailTemplates = {
           <style>
             body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: #667eea; color: white; padding: 20px; text-align: center; }
+            .header { background: ${primaryColor}; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
             .content { padding: 20px; background: #f9f9f9; }
             .detail { margin: 10px 0; }
             .label { font-weight: bold; }
@@ -108,7 +116,7 @@ const emailTemplates = {
         <body>
           <div class="container">
             <div class="header">
-              <h1>New Service Request</h1>
+              <h1>${brandName} — Service Request</h1>
             </div>
             <div class="content">
               <div class="detail"><span class="label">Service ID:</span> ${requestData.serviceId}</div>
@@ -121,7 +129,7 @@ const emailTemplates = {
               <div class="detail"><span class="label">Phone:</span> ${requestData.customerPhone || 'N/A'}</div>
             </div>
             <div class="footer">
-              <p>This is an automated notification from Iconic Smart CRM</p>
+              <p>${footerText}</p>
             </div>
           </div>
         </body>
@@ -138,13 +146,17 @@ Description: ${requestData.description}
 Customer: ${requestData.customerName || 'N/A'}
 Phone: ${requestData.customerPhone || 'N/A'}
 
-This is an automated notification from Iconic Smart CRM.
+${footerText}
       `
     };
   },
 
   // Order Confirmation
-  orderConfirmation: (orderData) => {
+  orderConfirmation: (orderData, branding = {}) => {
+    const brandName = branding.displayName || branding.name || "Charlie's CRM";
+    const primaryColor = branding.primaryColor || '#667eea';
+    const footerText = branding.emailBranding?.footerText || `This is an automated notification from ${brandName}`;
+
     return {
       subject: `Order Confirmation - ${orderData.orderNumber}`,
       html: `
@@ -154,30 +166,30 @@ This is an automated notification from Iconic Smart CRM.
           <style>
             body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: #667eea; color: white; padding: 20px; text-align: center; }
+            .header { background: ${primaryColor}; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
             .content { padding: 20px; background: #f9f9f9; }
             .detail { margin: 10px 0; }
             .label { font-weight: bold; }
-            .total { font-size: 18px; font-weight: bold; color: #667eea; margin-top: 20px; }
+            .total { font-size: 18px; font-weight: bold; color: ${primaryColor}; margin-top: 20px; }
             .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
           </style>
         </head>
         <body>
           <div class="container">
             <div class="header">
-              <h1>Order Confirmation</h1>
+              <h1>${brandName} — Order Confirmation</h1>
             </div>
             <div class="content">
               <div class="detail"><span class="label">Order Number:</span> ${orderData.orderNumber}</div>
               <div class="detail"><span class="label">Date:</span> ${new Date(orderData.createdAt).toLocaleDateString()}</div>
-              <div class="detail"><span class="label">Items:</span> ${orderData.items.length} item(s)</div>
-              <div class="detail"><span class="label">Subtotal:</span> ₹${orderData.subtotal.toFixed(2)}</div>
-              <div class="detail"><span class="label">GST (${orderData.gstRate}%):</span> ₹${orderData.gstAmount.toFixed(2)}</div>
-              <div class="total">Total Amount: ₹${orderData.amount.toFixed(2)}</div>
+              <div class="detail"><span class="label">Items:</span> ${orderData.items?.length || 0} item(s)</div>
+              <div class="detail"><span class="label">Subtotal:</span> ₹${(orderData.subtotal || 0).toFixed(2)}</div>
+              <div class="detail"><span class="label">GST (${orderData.gstRate || 18}%):</span> ₹${(orderData.gstAmount || 0).toFixed(2)}</div>
+              <div class="total">Total Amount: ₹${(orderData.amount || 0).toFixed(2)}</div>
             </div>
             <div class="footer">
               <p>Thank you for your order!</p>
-              <p>This is an automated notification from Iconic Smart CRM</p>
+              <p>${footerText}</p>
             </div>
           </div>
         </body>
@@ -188,59 +200,13 @@ Order Confirmation - ${orderData.orderNumber}
 
 Order Number: ${orderData.orderNumber}
 Date: ${new Date(orderData.createdAt).toLocaleDateString()}
-Items: ${orderData.items.length} item(s)
-Subtotal: ₹${orderData.subtotal.toFixed(2)}
-GST (${orderData.gstRate}%): ₹${orderData.gstAmount.toFixed(2)}
-Total Amount: ₹${orderData.amount.toFixed(2)}
+Items: ${orderData.items?.length || 0} item(s)
+Subtotal: ₹${(orderData.subtotal || 0).toFixed(2)}
+GST (${orderData.gstRate || 18}%): ₹${(orderData.gstAmount || 0).toFixed(2)}
+Total Amount: ₹${(orderData.amount || 0).toFixed(2)}
 
 Thank you for your order!
-      `
-    };
-  },
-
-  // Invoice Email
-  invoiceEmail: (invoiceData) => {
-    return {
-      subject: `Invoice - ${invoiceData.invoiceNumber}`,
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: #667eea; color: white; padding: 20px; text-align: center; }
-            .content { padding: 20px; background: #f9f9f9; }
-            .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>Invoice Generated</h1>
-            </div>
-            <div class="content">
-              <p>Your invoice has been generated successfully.</p>
-              <p><strong>Invoice Number:</strong> ${invoiceData.invoiceNumber}</p>
-              <p><strong>Order Number:</strong> ${invoiceData.orderNumber}</p>
-              <p><strong>Amount:</strong> ₹${invoiceData.amount.toFixed(2)}</p>
-              <p>Please find the attached PDF invoice.</p>
-            </div>
-            <div class="footer">
-              <p>This is an automated notification from Iconic Smart CRM</p>
-            </div>
-          </div>
-        </body>
-        </html>
-      `,
-      text: `
-Invoice Generated
-
-Invoice Number: ${invoiceData.invoiceNumber}
-Order Number: ${invoiceData.orderNumber}
-Amount: ₹${invoiceData.amount.toFixed(2)}
-
-Please find the attached PDF invoice.
+${footerText}
       `
     };
   }
@@ -254,6 +220,3 @@ module.exports = {
   emailTemplates,
   initEmailService
 };
-
-
-

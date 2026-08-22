@@ -69,36 +69,96 @@ async function clearDatabase() {
 async function seedUsers() {
   log.section('Seeding users...');
   
+  const superHash = await bcrypt.hash('Admin@123456', 10);
+  const adminHash = await bcrypt.hash('admin123', 10);
+  const salesHash = await bcrypt.hash('sales123', 10);
+  const serviceHash = await bcrypt.hash('service123', 10);
+  const managerHash = await bcrypt.hash('manager123', 10);
+  const supportHash = await bcrypt.hash('support123', 10);
+  const customerHash = await bcrypt.hash('demo123', 10);
+
   const users = [
+    // Super Administrators
     {
-      name: 'Admin User',
-      email: 'admin@iconic-crm.com',
-      password: await bcrypt.hash('admin123', 10),
-      role: 'admin'
+      name: 'Super Administrator',
+      email: 'superadmin@charlieai.com',
+      password: superHash,
+      role: 'super-admin',
+      scopeType: 'ALL'
     },
     {
-      name: 'John Manager',
-      email: 'manager@iconic-crm.com',
-      password: await bcrypt.hash('manager123', 10),
-      role: 'manager'
+      name: 'Super Administrator (India)',
+      email: 'superadmin@charlieai.in',
+      password: superHash,
+      role: 'super-admin',
+      scopeType: 'ALL'
+    },
+    // Company Administrators
+    {
+      name: 'Company Admin',
+      email: 'admin@charlieai.com',
+      password: adminHash,
+      role: 'company-admin',
+      scopeType: 'ALL'
     },
     {
-      name: 'Sarah Sales',
-      email: 'sales@iconic-crm.com',
-      password: await bcrypt.hash('sales123', 10),
-      role: 'user'
+      name: 'Company Admin (India)',
+      email: 'admin@charlieai.in',
+      password: adminHash,
+      role: 'company-admin',
+      scopeType: 'ALL'
+    },
+    // Sales Managers
+    {
+      name: 'Sales Manager',
+      email: 'sales@charlieai.com',
+      password: salesHash,
+      role: 'sales-manager',
+      scopeType: 'ALL'
     },
     {
-      name: 'Mike Support',
-      email: 'support@iconic-crm.com',
-      password: await bcrypt.hash('support123', 10),
-      role: 'user'
+      name: 'Sales Manager (India)',
+      email: 'sales@charlieai.in',
+      password: salesHash,
+      role: 'sales-manager',
+      scopeType: 'ALL'
+    },
+    // Service Agents
+    {
+      name: 'Service Agent',
+      email: 'service@charlieai.com',
+      password: serviceHash,
+      role: 'service-agent',
+      scopeType: 'ALL'
+    },
+    {
+      name: 'Service Agent (India)',
+      email: 'service@charlieai.in',
+      password: serviceHash,
+      role: 'service-agent',
+      scopeType: 'ALL'
+    },
+    // Operations & Support
+    {
+      name: 'Operations Manager',
+      email: 'manager@charlieai.com',
+      password: managerHash,
+      role: 'operations-manager',
+      scopeType: 'ALL'
+    },
+    {
+      name: 'Support Agent',
+      email: 'support@charlieai.com',
+      password: supportHash,
+      role: 'support-agent',
+      scopeType: 'ALL'
     },
     {
       name: 'Demo Customer',
       email: 'customer@example.com',
-      password: await bcrypt.hash('demo123', 10),
-      role: 'user'
+      password: customerHash,
+      role: 'user',
+      scopeType: 'SELF'
     }
   ];
 
@@ -527,10 +587,10 @@ async function seedDatabase() {
     console.log(`   Marketing Assets: ${assets.length}`);
     
     log.section('\n🔑 Demo Login Credentials:');
-    console.log(`   Admin: admin@iconic-crm.com / admin123`);
-    console.log(`   Manager: manager@iconic-crm.com / manager123`);
-    console.log(`   Sales: sales@iconic-crm.com / sales123`);
-    console.log(`   Support: support@iconic-crm.com / support123`);
+    console.log(`   Admin: admin@charlieai.com / admin123`);
+    console.log(`   Manager: manager@charlieai.com / manager123`);
+    console.log(`   Sales: sales@charlieai.com / sales123`);
+    console.log(`   Support: support@charlieai.com / support123`);
     console.log(`   Customer: customer@example.com / demo123\n`);
     
     log.success('✨ Database seeding completed successfully!\n');
@@ -550,16 +610,23 @@ async function autoSeedIfEmpty() {
     const User = require('./models/User');
     const userCount = await User.countDocuments();
     if (userCount === 0) {
-      console.log('🌱 Database is empty. Seeding initial admin users and data...');
-      const users = await seedUsers();
-      await seedContacts();
-      await seedLeads();
-      await seedOpportunities();
-      const orders = await seedOrders(users);
-      await seedServices(users, orders);
-      await seedDeliveries(orders);
-      await seedMarketingAssets();
-      console.log('✨ Auto-seeding completed successfully!');
+      const isProduction = process.env.NODE_ENV === 'production';
+      if (isProduction) {
+        console.log('🌱 Production database empty. Initializing essential system users...');
+        await seedUsers();
+        console.log('✨ Production initialization complete with clean database!');
+      } else {
+        console.log('🌱 Development database is empty. Seeding demo users and records...');
+        const users = await seedUsers();
+        await seedContacts();
+        await seedLeads();
+        await seedOpportunities();
+        const orders = await seedOrders(users);
+        await seedServices(users, orders);
+        await seedDeliveries(orders);
+        await seedMarketingAssets();
+        console.log('✨ Development auto-seeding completed successfully!');
+      }
     }
   } catch (error) {
     console.error('⚠️ Auto-seed failed:', error.message);

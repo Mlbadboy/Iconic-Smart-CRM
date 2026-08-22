@@ -218,7 +218,7 @@ npm run dev
 Visit: http://localhost:3000
 
 ### Test Flow:
-1. ✅ Login with: `admin@iconic-crm.com` / `admin123`
+1. ✅ Login with: `admin@charlieai.com` / `admin123`
 2. ✅ Navigate to Orders
 3. ✅ See orders list (might be empty)
 4. ✅ Click "Create Order" button

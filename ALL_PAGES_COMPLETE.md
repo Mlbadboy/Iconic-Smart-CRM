@@ -240,7 +240,7 @@ All pages include:
 ## 🧪 **Test Everything**
 
 ### **Quick Test Checklist**
-- [ ] Login with admin@iconic-crm.com / admin123
+- [ ] Login with admin@charlieai.com / admin123
 - [ ] Dashboard loads with stats
 - [ ] Click "View Orders" - see 6 orders
 - [ ] Click "Service Requests" - see 5 tickets

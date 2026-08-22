@@ -11,6 +11,14 @@ const apiKeySchema = new mongoose.Schema({
     type: String, 
     required: true 
   },
+  feature: {
+    type: String,
+    default: 'Serial Number Validation'
+  },
+  clientName: {
+    type: String,
+    trim: true
+  },
   description: { 
     type: String 
   },
@@ -28,10 +36,22 @@ const apiKeySchema = new mongoose.Schema({
     trim: true,
     lowercase: true
   },
+  companyId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Company',
+    required: true,
+    index: true
+  },
   userId: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'User', 
     required: true 
+  },
+  status: {
+    type: String,
+    enum: ['ACTIVE', 'REVOKED', 'EXPIRED'],
+    default: 'ACTIVE',
+    index: true
   },
   active: { 
     type: Boolean, 
@@ -39,7 +59,11 @@ const apiKeySchema = new mongoose.Schema({
   },
   permissions: [{
     type: String,
-    enum: ['read', 'write', 'delete', 'admin', 'serial_validation.validate', 'serial_validation.import']
+    enum: ['read', 'write', 'delete', 'admin', 'serial_validation.validate', 'serial_validation.import', 'product.verify', 'serial.verify']
+  }],
+  scope: [{
+    type: String,
+    trim: true
   }],
   dealerScope: [{
     type: String,
@@ -54,8 +78,16 @@ const apiKeySchema = new mongoose.Schema({
     totalRequests: { type: Number, default: 0 },
     lastUsed: { type: Date }
   },
+  lastUsedAt: {
+    type: Date,
+    default: null
+  },
   expiresAt: { 
     type: Date 
+  },
+  revokedAt: {
+    type: Date,
+    default: null
   },
   createdAt: { 
     type: Date, 
@@ -67,8 +99,27 @@ const apiKeySchema = new mongoose.Schema({
   }
 });
 
+// Pre-save synchronization
+apiKeySchema.pre('save', function(next) {
+  if (this.isModified('status')) {
+    this.active = (this.status === 'ACTIVE');
+  } else if (this.isModified('active') && !this.isModified('status')) {
+    this.status = this.active ? 'ACTIVE' : 'REVOKED';
+  }
+  if (!this.clientName && this.partnerName) {
+    this.clientName = this.partnerName;
+  } else if (!this.partnerName && this.clientName) {
+    this.partnerName = this.clientName;
+  }
+  if (this.usage?.lastUsed && !this.lastUsedAt) {
+    this.lastUsedAt = this.usage.lastUsed;
+  }
+  next();
+});
+
 // Index for faster lookups
-apiKeySchema.index({ key: 1, active: 1 });
+apiKeySchema.index({ key: 1, active: 1, companyId: 1 });
+apiKeySchema.index({ companyId: 1, status: 1 });
 apiKeySchema.index({ userId: 1 });
 
 module.exports = mongoose.model('ApiKey', apiKeySchema);

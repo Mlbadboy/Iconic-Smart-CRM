@@ -83,9 +83,9 @@ npm start
 
 | Role | Email | Password |
 |------|-------|----------|
-| **Admin** | admin@iconic-crm.com | admin123 |
-| **Manager** | manager@iconic-crm.com | manager123 |
-| **Sales** | sales@iconic-crm.com | sales123 |
+| **Admin** | admin@charlieai.com | admin123 |
+| **Manager** | manager@charlieai.com | manager123 |
+| **Sales** | sales@charlieai.com | sales123 |
 
 **Pro Tip**: On login page, press `Alt+A` to auto-fill admin credentials!
 
@@ -276,7 +276,7 @@ Help is always one click away
 4. **FAQs**: Common questions answered
 
 ### **Contact Support**
-- **Email**: support@iconic-crm.com
+- **Email**: support@charlieai.com
 - **Phone**: +1-555-0100
 - **Hours**: Monday-Friday, 9 AM - 5 PM EST
 

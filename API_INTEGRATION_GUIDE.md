@@ -26,7 +26,7 @@ The Iconic Smart CRM API supports:
 curl -X POST http://localhost:7000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "admin@iconic-crm.com",
+    "email": "admin@charlieai.com",
     "password": "admin123"
   }'
 

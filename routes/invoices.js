@@ -5,8 +5,10 @@ const path = require('path');
 const Order = require('../models/Order');
 const Retailer = require('../models/Retailer');
 const { auth } = require('../middleware/auth');
+const { requireFeature } = require('../middleware/featureGate');
 
 const router = express.Router();
+router.use(requireFeature('finance'));
 
 // Ensure invoices directory exists
 const invoicesDir = path.join(__dirname, '..', 'public', 'invoices');
@@ -23,9 +25,9 @@ function generateInvoicePDF(order, outputPath) {
             doc.pipe(stream);
 
             // Header - Company Info
-            doc.fontSize(24).fillColor('#667eea').text('ICONIC SMART', 50, 50);
-            doc.fontSize(10).fillColor('#666').text('www.iconicsmart.in', 50, 80);
-            doc.text('Email: info@iconicsmart.in', 50, 95);
+            doc.fontSize(24).fillColor('#667eea').text("CHARLIE'S CRM", 50, 50);
+            doc.fontSize(10).fillColor('#666').text('www.charlieai.com', 50, 80);
+            doc.text('Email: info@charlieai.com', 50, 95);
             doc.text('Phone: +91-XXXXXXXXXX', 50, 110);
 
             // Invoice Title

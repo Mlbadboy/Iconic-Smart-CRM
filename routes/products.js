@@ -4,6 +4,9 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const Product = require('../models/Product');
 const { auth } = require('../middleware/auth');
+const { requireFeature } = require('../middleware/featureGate');
+
+router.use(requireFeature('products'));
 
 // Cache for products to avoid repeated scraping
 let productsCache = {

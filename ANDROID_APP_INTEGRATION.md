@@ -41,7 +41,7 @@ Admin Dashboard:
 5. ✅ Created!
 
 Generated Credentials:
-Email: shubham.kumar@iconicsmart.com
+Email: shubham.kumar@charlieai.com
 Password: sales123
 Role: sales
 ```
@@ -65,7 +65,7 @@ Android App Login Screen:
 App sends:
 POST http://localhost:7000/api/auth/login
 {
-  "email": "shubham.kumar@iconicsmart.com",
+  "email": "shubham.kumar@charlieai.com",
   "password": "sales123"
 }
 
@@ -75,7 +75,7 @@ Response:
   "user": {
     "id": "6904fcf0a254947361617bb8",
     "name": "Shubham Kumar",
-    "email": "shubham.kumar@iconicsmart.com",
+    "email": "shubham.kumar@charlieai.com",
     "role": "sales"
   }
 }
@@ -134,7 +134,7 @@ Headers: {
 Body: {
   "employeeId": "6904fcf0a254947361617bb8",
   "employeeName": "Shubham Kumar",
-  "employeeEmail": "shubham.kumar@iconicsmart.com",
+  "employeeEmail": "shubham.kumar@charlieai.com",
   "checkInTime": "2025-10-31T09:30:00Z",
   "location": {
     "latitude": 28.6328,
@@ -540,7 +540,7 @@ Headers: {
 ### **Test 1: Employee Creation to Login**
 ```
 1. CRM: Admin creates employee "Test User"
-2. Generated: test.user@iconicsmart.com / sales123
+2. Generated: test.user@charlieai.com / sales123
 3. Android App: Login with these credentials
 4. ✅ Should login successfully
 5. ✅ Token received

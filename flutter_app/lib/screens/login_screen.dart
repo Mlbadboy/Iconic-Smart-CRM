@@ -55,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const Icon(Icons.shield_outlined, size: 64, color: Color(0xFF0F172A)),
                 const SizedBox(height: 16),
                 const Text(
-                  'Iconic Smart CRM',
+                  "Charlie's CRM",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),

@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 const { nextSequence } = require('../services/sequenceService');
 
 const serviceRequestSchema = new mongoose.Schema({
+    companyId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Company',
+        index: true
+    },
     serviceId: {
         type: String,
         required: false, // Auto-generated in pre-save hook

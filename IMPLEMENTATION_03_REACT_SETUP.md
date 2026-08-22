@@ -627,7 +627,7 @@ export default function Login() {
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-              placeholder="admin@iconic-crm.com"
+              placeholder="admin@charlieai.com"
             />
           </div>
 
@@ -658,10 +658,10 @@ export default function Login() {
         <div className="mt-6 p-4 bg-blue-50 rounded-lg">
           <p className="text-sm font-medium text-blue-900 mb-2">Demo Credentials:</p>
           <p className="text-xs text-blue-700">
-            <strong>Admin:</strong> admin@iconic-crm.com / admin123
+            <strong>Admin:</strong> admin@charlieai.com / admin123
           </p>
           <p className="text-xs text-blue-700">
-            <strong>User:</strong> sales@iconic-crm.com / sales123
+            <strong>User:</strong> sales@charlieai.com / sales123
           </p>
         </div>
       </div>
@@ -878,7 +878,7 @@ Visit: `http://localhost:3000`
 
 ### Test Flow
 1. ✅ Login page loads
-2. ✅ Enter credentials: admin@iconic-crm.com / admin123
+2. ✅ Enter credentials: admin@charlieai.com / admin123
 3. ✅ Click "Sign In"
 4. ✅ Redirect to dashboard
 5. ✅ See user name in header

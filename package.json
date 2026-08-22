@@ -12,11 +12,12 @@
     "build": "node -e \"console.log('build ready')\"",
     "install-client": "cd client && npm install",
     "heroku-postbuild": "npm run install-client && npm run build",
-    "test:audit": "node test-crm-audit-regression.js"
+    "test:audit": "node test-crm-audit-regression.js",
+    "test:multitenant": "node scratch/test-multitenant-e2e.js"
   },
-  "name": "iconic-smart-crm",
+  "name": "charlies-crm",
   "version": "1.0.0",
-  "description": "This repo is part of Git Integration & Wix CLI, a set of tools that allows you to write, test, and publish code for your Wix site locally on your computer.",
+  "description": "Charlie's CRM - Multi-Company Smart CRM Platform",
   "main": "index.js",
   "dependencies": {
     "abbrev": "^1.1.1",
@@ -217,6 +218,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.16",
     "mongodb-memory-server": "^10.2.3",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "playwright": "^1.62.1"
   }
 }

@@ -65,7 +65,7 @@ curl http://localhost:7000/api/beat-tracker/employees
 [{
   "_id": "6904fcf0a254947361617bb8",
   "name": "Shubham Kumar",
-  "email": "shubham@iconicsmart.com",
+  "email": "shubham@charlieai.com",
   "phone": "9876543210",
   "role": "sales",
   "department": "Sales"

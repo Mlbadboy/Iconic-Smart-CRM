@@ -3,455 +3,975 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Users - Iconic Smart CRM</title>
+    <title>User Administration — Charlie's CRM</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" data-branding="favicon">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --purple: #8b5cf6;
+        }
+
         body {
+            background-color: var(--bg-page);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f7fafc;
-            color: #2d3748;
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
         }
+
         .header {
-            background: white;
-            border-bottom: 2px solid #e2e8f0;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
             padding: 1rem 2rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .logo { font-size: 1.5rem; font-weight: bold; color: #667eea; }
-        .nav { display: flex; gap: 1rem; }
-        .btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: all 0.2s;
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             text-decoration: none;
-            display: inline-block;
         }
-        .btn-primary { background: #667eea; color: white; }
-        .btn-secondary { background: #f7fafc; color: #2d3748; border: 1px solid #e2e8f0; }
-        .btn-danger { background: #fc8181; color: white; }
-        .btn-success { background: #48bb78; color: white; }
-        .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+            background: #eef2ff;
+        }
+
         .container {
-            max-width: 1400px;
+            max-width: 1350px;
             margin: 2rem auto;
-            padding: 0 2rem;
+            padding: 0 1.5rem;
         }
-        .card {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
             margin-bottom: 2rem;
         }
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 1.25rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-card .val {
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-top: 0.35rem;
+        }
+
+        .main-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
             gap: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
+
+        .filters {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            align-items: center;
         }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 6px;
+
+        .search-box {
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            min-width: 250px;
         }
+
+        .select-filter {
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.25rem 0.65rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-ACTIVE { background: #dcfce7; color: #15803d; }
+        .status-LOCKED { background: #fee2e2; color: #b91c1c; border: 1px solid #f87171; }
+        .status-DISABLED { background: #f1f5f9; color: #64748b; }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-        }
-        th, td {
-            padding: 1rem;
             text-align: left;
-            border-bottom: 1px solid #e2e8f0;
         }
+
         th {
-            background: #f7fafc;
+            background: #f8fafc;
+            padding: 0.85rem 1rem;
+            font-size: 0.8rem;
             font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
         }
-        .badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-        .badge-admin { background: #fef5e7; color: #d68910; }
-        .badge-user { background: #d4edff; color: #0066cc; }
-        .badge-sales { background: #d1fae5; color: #047857; }
-        .badge-manager { background: #e0e7ff; color: #4338ca; }
-        .badge-active { background: #d1fae5; color: #047857; }
-        .badge-inactive { background: #fee2e2; color: #dc2626; }
-        .quick-add {
-            background: #edf2f7;
+
+        td {
             padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        .btn-group {
             display: flex;
             gap: 0.5rem;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.75rem;
+            font-size: 0.8rem;
+            border-radius: 6px;
+        }
+
+        .btn-unlock {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fca5a5;
+            font-weight: 600;
+        }
+
+        .btn-unlock:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+        /* Modal Styles */
+        .modal-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-backdrop.show { display: flex; }
+
+        .modal-box {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
             align-items: center;
         }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.35rem;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+        }
+
+        .scope-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            background: #e0e7ff;
+            color: #3730a3;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
         .toast {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
-            background: #2d3748;
+            padding: 0.85rem 1.5rem;
+            background: #1e293b;
             color: white;
-            padding: 1rem 1.5rem;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
             display: none;
-            z-index: 1000;
-        }
-        .toast.show { display: block; animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn {
-            from { transform: translateY(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .access-denied {
-            text-align: center;
-            padding: 5rem 2rem;
-        }
-        .access-denied h1 {
-            font-size: 3rem;
-            color: #fc8181;
-            margin-bottom: 1rem;
+            z-index: 2000;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
-    <div id="accessDenied" style="display: none;">
-        <header class="header">
-            <div class="header-content">
-                <div class="logo">🔒 Access Denied</div>
-                <div class="nav">
-                    <a href="/dashboard.html" class="btn btn-primary">← Back to Dashboard</a>
-                </div>
-            </div>
-        </header>
-        <div class="access-denied">
-            <h1>⛔</h1>
-            <h2>Access Denied</h2>
-            <p style="margin-top: 1rem; color: #718096;">Only administrators can access user management.</p>
-            <a href="/dashboard.html" class="btn btn-primary" style="margin-top: 2rem;">Go to Dashboard</a>
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 2rem;">
+            <a href="/dashboard.html" class="logo" data-branding="logo">
+                🚀 Charlie's CRM
+            </a>
+            <nav class="nav-links">
+                <a href="/dashboard.html" class="nav-link">Dashboard</a>
+                <a href="/manage-users.html" class="nav-link active">Users</a>
+                <a href="/roles.html" class="nav-link">Roles & Permissions</a>
+                <a href="/organization.html" class="nav-link">Organization</a>
+                <a href="/reports.html" class="nav-link">Reports</a>
+            </nav>
         </div>
-    </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <span id="userNameDisplay" style="font-size: 0.9rem; font-weight: 600; color: var(--text-muted);">Admin</span>
+            <button class="btn btn-secondary btn-sm" onclick="logout()">Logout</button>
+        </div>
+    </header>
 
-    <div id="mainContent" style="display: none;">
-        <header class="header">
-            <div class="header-content">
-                <div class="logo">👥 Manage Users (Admin Only)</div>
-                <div class="nav">
-                    <a href="/dashboard.html" class="btn btn-secondary">← Dashboard</a>
-                    <button class="btn btn-primary" onclick="logout()">Logout</button>
-                </div>
+    <main class="container">
+        <!-- Top Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="label">Total Team Members</div>
+                <div class="val" id="statTotalUsers">0</div>
             </div>
-        </header>
-
-        <div class="container">
-            <h1>User Management</h1>
-            <p style="color: #718096; margin-bottom: 2rem;">Add, edit, and remove CRM users. Only visible to administrators.</p>
-
-            <!-- Quick Add Sales Employee -->
-            <div class="card">
-                <div class="quick-add">
-                    <span style="flex: 1;"><strong>🚀 Quick Add:</strong> Add sales employee in one click!</span>
-                    <button class="btn btn-success" onclick="quickAddSalesEmployee()">➕ Add Sales Employee</button>
-                </div>
+            <div class="stat-card">
+                <div class="label">Active Users</div>
+                <div class="val" id="statActiveUsers" style="color: var(--success);">0</div>
             </div>
+            <div class="stat-card">
+                <div class="label">Locked Accounts</div>
+                <div class="val" id="statLockedUsers" style="color: var(--danger);">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Departments</div>
+                <div class="val" id="statDepartments">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Custom Roles</div>
+                <div class="val" id="statRoles">0</div>
+            </div>
+        </div>
 
-            <!-- Add New User -->
-            <div class="card">
-                <h2>➕ Add New User / Employee</h2>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Full Name *</label>
-                        <input type="text" id="userName" placeholder="John Doe">
-                    </div>
-                    <div class="form-group">
-                        <label>Email *</label>
-                        <input type="email" id="userEmail" placeholder="john@example.com">
-                    </div>
-                    <div class="form-group">
-                        <label>Phone</label>
-                        <input type="tel" id="userPhone" placeholder="9876543210">
-                    </div>
-                    <div class="form-group">
-                        <label>Role *</label>
-                        <select id="userRole">
-                            <option value="user">User</option>
-                            <option value="admin">Admin</option>
-                            <option value="manager">Manager</option>
-                            <option value="sales">Sales</option>
-                        </select>
-                    </div>
+        <!-- Main User Table Card -->
+        <div class="main-card">
+            <div class="toolbar">
+                <div class="filters">
+                    <input type="text" id="searchInput" class="search-box" placeholder="🔍 Search name, email, phone..." oninput="filterUsers()">
+                    <select id="departmentFilter" class="select-filter" onchange="filterUsers()">
+                        <option value="">All Departments</option>
+                    </select>
+                    <select id="statusFilter" class="select-filter" onchange="filterUsers()">
+                        <option value="">All Statuses</option>
+                        <option value="ACTIVE">Active</option>
+                        <option value="LOCKED">🔒 Locked</option>
+                        <option value="DISABLED">Disabled</option>
+                    </select>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Password *</label>
-                        <input type="password" id="userPassword" placeholder="Minimum 6 characters">
-                    </div>
-                    <div class="form-group">
-                        <label>Department</label>
-                        <input type="text" id="userDepartment" placeholder="Sales, Support, etc.">
-                    </div>
-                    <div class="form-group">
-                        <label>Status</label>
-                        <select id="userStatus">
-                            <option value="true">Active</option>
-                            <option value="false">Inactive</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="display: flex; align-items: flex-end;">
-                        <button class="btn btn-success" onclick="addUser()" style="width: 100%;">➕ Add User</button>
-                    </div>
+                <div>
+                    <button class="btn btn-primary" onclick="openAddUserModal()">+ Add New User</button>
                 </div>
             </div>
 
-            <!-- Users List -->
-            <div class="card">
-                <h2>👥 All Users</h2>
-                <button class="btn btn-primary" onclick="loadUsers()" style="margin-bottom: 1rem;">🔄 Refresh</button>
+            <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Role</th>
+                            <th>User</th>
                             <th>Department</th>
+                            <th>Role</th>
+                            <th>Data Scope</th>
+                            <th>Reporting Manager</th>
                             <th>Status</th>
-                            <th>Last Login</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="usersBody">
+                    <tbody id="usersTableBody">
                         <tr>
-                            <td colspan="8" style="text-align: center;">Loading...</td>
+                            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                Loading team members...
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
+    </main>
+
+    <!-- Add / Edit User Modal -->
+    <div class="modal-backdrop" id="userModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title" id="userModalTitle">Add New Team Member</h3>
+                <button style="background:none; border:none; font-size:1.5rem; cursor:pointer;" onclick="closeModal('userModal')">&times;</button>
+            </div>
+            <form id="userForm" onsubmit="handleUserSubmit(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="userIdInput">
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>Full Name *</label>
+                            <input type="text" id="userNameInput" required placeholder="e.g. Rahul Sharma">
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address *</label>
+                            <input type="email" id="userEmailInput" required placeholder="rahul@company.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="userPhoneInput" placeholder="+91 98765 43210">
+                        </div>
+                        <div class="form-group">
+                            <label>Department</label>
+                            <select id="userDepartmentSelect" onchange="syncDepartmentRoles()">
+                                <option value="">Select Department</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Role *</label>
+                            <select id="userRoleSelect" required>
+                                <option value="">Select Role</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Reporting Manager</label>
+                            <select id="userManagerSelect">
+                                <option value="">None (Self / Top Manager)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Data Scope</label>
+                            <select id="userScopeSelect" onchange="toggleScopeValueInput()">
+                                <option value="ALL">ALL (Company Wide)</option>
+                                <option value="REGION">REGION (e.g. West, North)</option>
+                                <option value="TERRITORY">TERRITORY (e.g. Mumbai, Pune)</option>
+                                <option value="DISTRIBUTOR">DISTRIBUTOR Network</option>
+                                <option value="DEALER">DEALER Network</option>
+                                <option value="SELF">SELF (Only Own Records)</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width" id="scopeValueGroup" style="display:none;">
+                            <label>Scope Values (comma-separated, e.g. West, North)</label>
+                            <input type="text" id="userScopeValuesInput" placeholder="West, North, DLR001">
+                        </div>
+                        <div class="form-group full-width" id="passwordGroup">
+                            <label>Initial Password *</label>
+                            <input type="password" id="userPasswordInput" placeholder="Minimum 8 characters">
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select id="userStatusSelect">
+                                <option value="ACTIVE">Active</option>
+                                <option value="DISABLED">Disabled</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div style="padding: 1.25rem 1.5rem; background: #f8fafc; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.75rem; border-radius: 0 0 16px 16px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('userModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveUserBtn">Save User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Details / Lockout Modal -->
+    <div class="modal-backdrop" id="detailsModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title">Team Member Profile</h3>
+                <button style="background:none; border:none; font-size:1.5rem; cursor:pointer;" onclick="closeModal('detailsModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="detailsModalContent">
+                <!-- Populated dynamically -->
+            </div>
+            <div style="padding: 1.25rem 1.5rem; background: #f8fafc; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; border-radius: 0 0 16px 16px;" id="detailsModalActions">
+                <!-- Dynamic actions -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Password Modal -->
+    <div class="modal-backdrop" id="passwordModal">
+        <div class="modal-box" style="max-width: 450px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Reset User Password</h3>
+                <button style="background:none; border:none; font-size:1.5rem; cursor:pointer;" onclick="closeModal('passwordModal')">&times;</button>
+            </div>
+            <form onsubmit="handleResetPasswordSubmit(event)">
+                <input type="hidden" id="resetUserId">
+                <div class="modal-body">
+                    <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem;" id="resetUserPrompt">
+                        Set a new password for this user.
+                    </p>
+                    <div class="form-group">
+                        <label>New Password (min 8 chars) *</label>
+                        <input type="password" id="newPasswordInput" required minlength="8" placeholder="••••••••">
+                    </div>
+                </div>
+                <div style="padding: 1.25rem 1.5rem; background: #f8fafc; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.75rem; border-radius: 0 0 16px 16px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('passwordModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Password</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <div id="toast" class="toast"></div>
 
+    <script src="/js/feature-guard.js"></script>
+    <script src="/js/tenant-branding.js"></script>
+    <script src="/js/tenant-notifications.js"></script>
     <script>
-        const API_URL = 'http://localhost:7000/api';
+        const API_URL = window.location.origin + '/api';
         const token = localStorage.getItem('authToken');
-        
+        let allUsers = [];
+        let allRoles = [];
+        let allDepartments = [];
+
         if (!token) {
             window.location.href = '/login.html';
         }
 
-        // Check if user is admin
-        async function checkAdminAccess() {
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 3500);
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        async function initPage() {
             try {
-                const response = await fetch(`${API_URL}/auth/me`, {
+                const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                if (user.name) document.getElementById('userNameDisplay').textContent = user.name;
+
+                await Promise.all([
+                    loadOverviewStats(),
+                    loadDepartments(),
+                    loadRoles(),
+                    loadUsers()
+                ]);
+            } catch (err) {
+                console.error('Init error:', err);
+            }
+        }
+
+        async function loadOverviewStats() {
+            try {
+                const res = await fetch(`${API_URL}/users/stats/overview`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-
-                if (!response.ok) {
-                    window.location.href = '/login.html';
-                    return;
-                }
-
-                const user = await response.json();
-                
-                if (user.role !== 'admin') {
-                    // Not admin - show access denied
-                    document.getElementById('accessDenied').style.display = 'block';
-                    document.getElementById('mainContent').style.display = 'none';
-                } else {
-                    // Is admin - show content
-                    document.getElementById('accessDenied').style.display = 'none';
-                    document.getElementById('mainContent').style.display = 'block';
-                    loadUsers();
-                }
-            } catch (error) {
-                console.error('Access check error:', error);
-                window.location.href = '/dashboard.html';
+                if (!res.ok) return;
+                const data = await res.json();
+                document.getElementById('statTotalUsers').textContent = data.totalUsers || 0;
+                document.getElementById('statActiveUsers').textContent = data.activeUsers || 0;
+                document.getElementById('statLockedUsers').textContent = data.lockedUsers || 0;
+                document.getElementById('statDepartments').textContent = data.departmentsCount || 0;
+                document.getElementById('statRoles').textContent = data.rolesCount || 0;
+            } catch (e) {
+                console.error(e);
             }
         }
 
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        // Quick add sales employee with auto-generated credentials
-        async function quickAddSalesEmployee() {
-            const timestamp = Date.now();
-            const name = prompt('Enter employee name:', 'New Sales Employee');
-            
-            if (!name) return;
-            
-            const email = `${name.toLowerCase().replace(/\s+/g, '.')}@iconicsmart.com`;
-            const password = 'sales123'; // Default password
-            
-            if (!confirm(`Create sales employee?\n\nName: ${name}\nEmail: ${email}\nPassword: ${password}\nRole: Sales`)) {
-                return;
-            }
-            
+        async function loadDepartments() {
             try {
-                const response = await fetch(`${API_URL}/auth/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        name,
-                        email,
-                        password,
-                        role: 'sales',
-                        department: 'Sales',
-                        isActive: true
-                    })
+                const res = await fetch(`${API_URL}/departments`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
-
-                if (response.ok) {
-                    showToast(`✅ Sales employee ${name} created! Password: ${password}`);
-                    loadUsers();
-                } else {
-                    const error = await response.json();
-                    showToast(`❌ ${error.message || 'Failed to create employee'}`);
+                if (res.ok) {
+                    allDepartments = await res.json();
+                    const deptFilter = document.getElementById('departmentFilter');
+                    const deptSelect = document.getElementById('userDepartmentSelect');
+                    
+                    deptFilter.innerHTML = '<option value="">All Departments</option>' + 
+                        allDepartments.map(d => `<option value="${d.name}">${d.name}</option>`).join('');
+                    deptSelect.innerHTML = '<option value="">Select Department</option>' + 
+                        allDepartments.map(d => `<option value="${d._id}">${d.name}</option>`).join('');
                 }
-            } catch (error) {
-                showToast('❌ Failed to create employee');
-                console.error(error);
+            } catch (e) {
+                console.error(e);
             }
         }
 
-        async function addUser() {
-            const name = document.getElementById('userName').value.trim();
-            const email = document.getElementById('userEmail').value.trim();
-            const phone = document.getElementById('userPhone').value.trim();
-            const role = document.getElementById('userRole').value;
-            const password = document.getElementById('userPassword').value;
-            const department = document.getElementById('userDepartment').value.trim();
-            const isActive = document.getElementById('userStatus').value === 'true';
-
-            if (!name || !email || !password) {
-                showToast('❌ Please fill required fields');
-                return;
-            }
-
-            if (password.length < 6) {
-                showToast('❌ Password must be at least 6 characters');
-                return;
-            }
-
+        async function loadRoles() {
             try {
-                const response = await fetch(`${API_URL}/auth/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        name,
-                        email,
-                        phone,
-                        password,
-                        role,
-                        department,
-                        isActive
-                    })
+                const res = await fetch(`${API_URL}/roles`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
-
-                if (response.ok) {
-                    showToast('✅ User added successfully!');
-                    document.getElementById('userName').value = '';
-                    document.getElementById('userEmail').value = '';
-                    document.getElementById('userPhone').value = '';
-                    document.getElementById('userPassword').value = '';
-                    document.getElementById('userDepartment').value = '';
-                    loadUsers();
-                } else {
-                    const error = await response.json();
-                    showToast(`❌ ${error.message || 'Failed to add user'}`);
+                if (res.ok) {
+                    allRoles = await res.json();
+                    populateRoleDropdown();
                 }
-            } catch (error) {
-                showToast('❌ Failed to add user');
-                console.error(error);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function populateRoleDropdown(filteredRoles = null) {
+            const roleSelect = document.getElementById('userRoleSelect');
+            const rolesToUse = filteredRoles || allRoles;
+            
+            let options = '<option value="">Select Role</option>';
+            // Include system default roles
+            options += '<optgroup label="Standard Roles">';
+            options += `
+                <option value="company-admin">Company Admin (Full Access)</option>
+                <option value="sales-manager">Sales Manager</option>
+                <option value="sales-executive">Sales Executive</option>
+                <option value="service-manager">Service Manager</option>
+                <option value="service-agent">Service Agent</option>
+                <option value="logistics-manager">Logistics Manager</option>
+                <option value="finance-manager">Finance Manager</option>
+                <option value="marketing-manager">Marketing Manager</option>
+                <option value="user">Standard User</option>
+            `;
+            options += '</optgroup>';
+
+            if (rolesToUse.length > 0) {
+                options += '<optgroup label="Custom Roles">';
+                options += rolesToUse.map(r => `<option value="custom:${r._id}">${r.name} (${r.department || 'General'})</option>`).join('');
+                options += '</optgroup>';
+            }
+            roleSelect.innerHTML = options;
+        }
+
+        function syncDepartmentRoles() {
+            const deptId = document.getElementById('userDepartmentSelect').value;
+            if (!deptId) {
+                populateRoleDropdown();
+                return;
+            }
+            const dept = allDepartments.find(d => d._id === deptId);
+            if (dept) {
+                const matched = allRoles.filter(r => r.department === dept.name || r.departmentId === dept._id);
+                populateRoleDropdown(matched.length > 0 ? matched : null);
             }
         }
 
         async function loadUsers() {
             try {
-                const response = await fetch(`${API_URL}/users`, {
+                const res = await fetch(`${API_URL}/users`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-
-                if (!response.ok) throw new Error('Failed to load users');
-
-                const users = await response.json();
-                const tbody = document.getElementById('usersBody');
-
-                if (users.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">No users found</td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = users.map(user => `
-                    <tr>
-                        <td><strong>${user.name}</strong></td>
-                        <td>${user.email}</td>
-                        <td>${user.phone || 'N/A'}</td>
-                        <td><span class="badge badge-${user.role}">${user.role}</span></td>
-                        <td>${user.department || 'N/A'}</td>
-                        <td><span class="badge badge-${user.isActive ? 'active' : 'inactive'}">${user.isActive ? 'Active' : 'Inactive'}</span></td>
-                        <td>${user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Never'}</td>
-                        <td>
-                            ${user.role !== 'admin' ? `<button class="btn btn-danger" style="padding: 0.25rem 0.75rem; font-size: 0.85rem;" onclick="deleteUser('${user._id}', '${user.name}')">🗑️ Delete</button>` : '<span style="color: #718096;">Protected</span>'}
-                        </td>
-                    </tr>
-                `).join('');
-            } catch (error) {
-                showToast('❌ Failed to load users');
-                console.error(error);
+                if (!res.ok) throw new Error('Failed to fetch users');
+                allUsers = await res.json();
+                renderUsersTable(allUsers);
+                populateManagerDropdown();
+            } catch (err) {
+                document.getElementById('usersTableBody').innerHTML = `
+                    <tr><td colspan="7" style="text-align:center; color:var(--danger); padding:2rem;">
+                        ${err.message}
+                    </td></tr>
+                `;
             }
         }
 
-        async function deleteUser(userId, userName) {
-            if (!confirm(`Delete user: ${userName}?\n\nThis action cannot be undone.`)) {
+        function populateManagerDropdown() {
+            const mgrSelect = document.getElementById('userManagerSelect');
+            const managers = allUsers.filter(u => u.status === 'ACTIVE');
+            mgrSelect.innerHTML = '<option value="">None (Self / Top Manager)</option>' + 
+                managers.map(m => `<option value="${m._id}">${m.name} (${m.role})</option>`).join('');
+        }
+
+        function renderUsersTable(users) {
+            const tbody = document.getElementById('usersTableBody');
+            if (!users || users.length === 0) {
+                tbody.innerHTML = `
+                    <tr><td colspan="7" style="text-align:center; padding:2.5rem; color:var(--text-muted);">
+                        No team members found matching your search.
+                    </td></tr>
+                `;
                 return;
             }
 
+            tbody.innerHTML = users.map(u => {
+                const roleName = u.customRoleId ? u.customRoleId.name : (u.role || 'user');
+                const deptName = u.department || 'General';
+                const managerName = u.reportingManagerId ? u.reportingManagerId.name : '—';
+                const isLocked = u.isLocked || u.status === 'LOCKED';
+                const statusClass = isLocked ? 'status-LOCKED' : (u.status === 'DISABLED' ? 'status-DISABLED' : 'status-ACTIVE');
+                const statusLabel = isLocked ? '🔒 Locked' : (u.status || 'Active');
+
+                return `
+                    <tr>
+                        <td>
+                            <div style="font-weight:600; color:var(--text-main);">${u.name}</div>
+                            <div style="font-size:0.8rem; color:var(--text-muted);">${u.email}</div>
+                        </td>
+                        <td>${deptName}</td>
+                        <td><strong>${roleName}</strong></td>
+                        <td><span class="scope-badge">${u.scopeType || 'ALL'}</span></td>
+                        <td>${managerName}</td>
+                        <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn btn-secondary btn-sm" onclick="viewUserDetails('${u._id}')">View</button>
+                                ${isLocked ? `<button class="btn btn-sm btn-unlock" onclick="unlockUserAccount('${u._id}', '${u.name}')">🔓 Unlock</button>` : ''}
+                                <button class="btn btn-secondary btn-sm" onclick="openResetPasswordModal('${u._id}', '${u.name}')">Password</button>
+                                ${u.status !== 'DISABLED' ? 
+                                    `<button class="btn btn-secondary btn-sm" style="color:var(--danger);" onclick="toggleUserActive('${u._id}', false, '${u.name}')">Disable</button>` : 
+                                    `<button class="btn btn-secondary btn-sm" style="color:var(--success);" onclick="toggleUserActive('${u._id}', true, '${u.name}')">Activate</button>`
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterUsers() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const dept = document.getElementById('departmentFilter').value;
+            const status = document.getElementById('statusFilter').value;
+
+            const filtered = allUsers.filter(u => {
+                const matchSearch = !query || 
+                    u.name.toLowerCase().includes(query) || 
+                    u.email.toLowerCase().includes(query) || 
+                    (u.phone && u.phone.includes(query));
+                
+                const matchDept = !dept || u.department === dept;
+                
+                let matchStatus = true;
+                if (status === 'LOCKED') matchStatus = (u.isLocked || u.status === 'LOCKED');
+                else if (status === 'DISABLED') matchStatus = (u.status === 'DISABLED' || u.isActive === false);
+                else if (status === 'ACTIVE') matchStatus = (u.status === 'ACTIVE' && !u.isLocked);
+
+                return matchSearch && matchDept && matchStatus;
+            });
+
+            renderUsersTable(filtered);
+        }
+
+        function toggleScopeValueInput() {
+            const scope = document.getElementById('userScopeSelect').value;
+            const grp = document.getElementById('scopeValueGroup');
+            grp.style.display = (scope === 'REGION' || scope === 'TERRITORY' || scope === 'DISTRIBUTOR' || scope === 'DEALER') ? 'block' : 'none';
+        }
+
+        function openAddUserModal() {
+            document.getElementById('userModalTitle').textContent = 'Add New Team Member';
+            document.getElementById('userIdInput').value = '';
+            document.getElementById('userNameInput').value = '';
+            document.getElementById('userEmailInput').value = '';
+            document.getElementById('userPhoneInput').value = '';
+            document.getElementById('userDepartmentSelect').value = '';
+            document.getElementById('userRoleSelect').value = '';
+            document.getElementById('userManagerSelect').value = '';
+            document.getElementById('userScopeSelect').value = 'ALL';
+            document.getElementById('userScopeValuesInput').value = '';
+            document.getElementById('userPasswordInput').value = '';
+            document.getElementById('passwordGroup').style.display = 'block';
+            document.getElementById('userPasswordInput').required = true;
+            document.getElementById('userStatusSelect').value = 'ACTIVE';
+            toggleScopeValueInput();
+            document.getElementById('userModal').classList.add('show');
+        }
+
+        async function handleUserSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('userIdInput').value;
+            const name = document.getElementById('userNameInput').value.trim();
+            const email = document.getElementById('userEmailInput').value.trim();
+            const phone = document.getElementById('userPhoneInput').value.trim();
+            const departmentId = document.getElementById('userDepartmentSelect').value || null;
+            const roleVal = document.getElementById('userRoleSelect').value;
+            const reportingManagerId = document.getElementById('userManagerSelect').value || null;
+            const scopeType = document.getElementById('userScopeSelect').value;
+            const scopeValuesStr = document.getElementById('userScopeValuesInput').value;
+            const scopeValues = scopeValuesStr ? scopeValuesStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+            const password = document.getElementById('userPasswordInput').value;
+            const status = document.getElementById('userStatusSelect').value;
+
+            let role = roleVal;
+            let customRoleId = null;
+            if (roleVal.startsWith('custom:')) {
+                customRoleId = roleVal.replace('custom:', '');
+                role = 'user';
+            }
+
+            const payload = {
+                name, email, phone, role, customRoleId, departmentId,
+                reportingManagerId, scopeType, scopeValues, status
+            };
+            if (password) payload.password = password;
+
             try {
-                const response = await fetch(`${API_URL}/users/${userId}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
+                const method = id ? 'PUT' : 'POST';
+                const url = id ? `${API_URL}/users/${id}` : `${API_URL}/users`;
+                
+                const res = await fetch(url, {
+                    method,
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
                 });
 
-                if (response.ok) {
-                    showToast(`✅ User ${userName} deleted`);
-                    loadUsers();
-                } else {
-                    const error = await response.json();
-                    showToast(`❌ ${error.message || 'Failed to delete user'}`);
-                }
-            } catch (error) {
-                showToast('❌ Failed to delete user');
-                console.error(error);
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || data.error || 'Failed to save user');
+
+                showToast(id ? '✅ User updated successfully' : '✅ Team member added successfully');
+                closeModal('userModal');
+                await loadOverviewStats();
+                await loadUsers();
+            } catch (err) {
+                alert('❌ Error: ' + err.message);
+            }
+        }
+
+        async function viewUserDetails(id) {
+            try {
+                const res = await fetch(`${API_URL}/users/${id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Failed to load user profile');
+                const u = await res.json();
+
+                const isLocked = u.isLocked || u.status === 'LOCKED';
+                const content = document.getElementById('detailsModalContent');
+                content.innerHTML = `
+                    <div style="margin-bottom: 1.5rem; text-align: center;">
+                        <div style="font-size: 2rem;">👤</div>
+                        <h2 style="margin: 0.25rem 0;">${u.name}</h2>
+                        <p style="color: var(--text-muted); margin: 0;">${u.email} • ${u.phone || 'No phone'}</p>
+                    </div>
+                    <div style="background: #f8fafc; padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.9rem;">
+                        <div><strong>Department:</strong><br>${u.department || 'General'}</div>
+                        <div><strong>Role:</strong><br>${u.customRoleId?.name || u.role}</div>
+                        <div><strong>Data Scope:</strong><br><span class="scope-badge">${u.scopeType || 'ALL'}</span> ${u.scopeValues?.join(', ') || ''}</div>
+                        <div><strong>Reporting Manager:</strong><br>${u.reportingManagerId?.name || 'None'}</div>
+                        <div><strong>Last Login:</strong><br>${u.lastLogin ? new Date(u.lastLogin).toLocaleString() : 'Never'}</div>
+                        <div><strong>Failed Attempts:</strong><br><span style="color:${(u.failedLoginAttempts > 0 ? 'var(--danger)' : 'inherit')}">${u.failedLoginAttempts || 0}</span></div>
+                        <div style="grid-column: span 2;">
+                            <strong>Account Status:</strong><br>
+                            <span class="status-pill ${isLocked ? 'status-LOCKED' : (u.status === 'DISABLED' ? 'status-DISABLED' : 'status-ACTIVE')}">
+                                ${isLocked ? '🔒 LOCKED (' + (u.lockReason || 'Failed attempts') + ')' : (u.status || 'ACTIVE')}
+                            </span>
+                        </div>
+                    </div>
+                `;
+
+                const actions = document.getElementById('detailsModalActions');
+                actions.innerHTML = `
+                    <div>
+                        ${isLocked ? `<button class="btn btn-unlock btn-sm" onclick="unlockUserAccount('${u._id}', '${u.name}')">🔓 Unlock Account</button>` : ''}
+                    </div>
+                    <div style="display:flex; gap:0.5rem;">
+                        <button class="btn btn-secondary btn-sm" onclick="openResetPasswordModal('${u._id}', '${u.name}')">Reset Password</button>
+                        <button class="btn btn-primary btn-sm" onclick="editUser('${u._id}')">Edit Profile</button>
+                    </div>
+                `;
+
+                document.getElementById('detailsModal').classList.add('show');
+            } catch (e) {
+                alert('Error loading profile: ' + e.message);
+            }
+        }
+
+        async function unlockUserAccount(id, name) {
+            if (!confirm(`Unlock account for ${name}? This will clear login lockout counters and allow immediate login.`)) return;
+            try {
+                const res = await fetch(`${API_URL}/users/${id}/unlock`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Failed to unlock');
+                showToast(`✅ ${name}'s account has been unlocked!`);
+                closeModal('detailsModal');
+                await loadOverviewStats();
+                await loadUsers();
+            } catch (e) {
+                alert('❌ ' + e.message);
+            }
+        }
+
+        function openResetPasswordModal(id, name) {
+            document.getElementById('resetUserId').value = id;
+            document.getElementById('resetUserPrompt').textContent = `Set a new password for ${name}.`;
+            document.getElementById('newPasswordInput').value = '';
+            document.getElementById('passwordModal').classList.add('show');
+        }
+
+        async function handleResetPasswordSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('resetUserId').value;
+            const newPassword = document.getElementById('newPasswordInput').value;
+
+            try {
+                const res = await fetch(`${API_URL}/users/${id}/reset-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ newPassword })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Failed to reset password');
+                showToast('✅ Password reset successfully');
+                closeModal('passwordModal');
+            } catch (e) {
+                alert('❌ ' + e.message);
+            }
+        }
+
+        async function toggleUserActive(id, activate, name) {
+            const action = activate ? 'activate' : 'deactivate';
+            if (!confirm(`Are you sure you want to ${action} ${name}?`)) return;
+
+            try {
+                const res = await fetch(`${API_URL}/users/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: activate ? 'ACTIVE' : 'DISABLED', isActive: activate })
+                });
+                if (!res.ok) throw new Error(`Failed to ${action} user`);
+                showToast(`✅ User ${activate ? 'activated' : 'deactivated'}`);
+                await loadOverviewStats();
+                await loadUsers();
+            } catch (e) {
+                alert('❌ ' + e.message);
+            }
+        }
+
+        async function editUser(id) {
+            closeModal('detailsModal');
+            try {
+                const res = await fetch(`${API_URL}/users/${id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const u = await res.json();
+                
+                document.getElementById('userModalTitle').textContent = 'Edit Team Member Profile';
+                document.getElementById('userIdInput').value = u._id;
+                document.getElementById('userNameInput').value = u.name;
+                document.getElementById('userEmailInput').value = u.email;
+                document.getElementById('userPhoneInput').value = u.phone || '';
+                document.getElementById('userDepartmentSelect').value = u.departmentId?._id || u.departmentId || '';
+                document.getElementById('userRoleSelect').value = u.customRoleId?._id ? `custom:${u.customRoleId._id}` : (u.role || 'user');
+                document.getElementById('userManagerSelect').value = u.reportingManagerId?._id || u.reportingManagerId || '';
+                document.getElementById('userScopeSelect').value = u.scopeType || 'ALL';
+                document.getElementById('userScopeValuesInput').value = u.scopeValues?.join(', ') || '';
+                document.getElementById('passwordGroup').style.display = 'none';
+                document.getElementById('userPasswordInput').required = false;
+                document.getElementById('userStatusSelect').value = u.status || 'ACTIVE';
+                
+                toggleScopeValueInput();
+                document.getElementById('userModal').classList.add('show');
+            } catch (e) {
+                alert('Error opening edit form: ' + e.message);
             }
         }
 
@@ -460,8 +980,7 @@
             window.location.href = '/login.html';
         }
 
-        // Check admin access on page load
-        checkAdminAccess();
+        window.addEventListener('DOMContentLoaded', initPage);
     </script>
 </body>
 </html>

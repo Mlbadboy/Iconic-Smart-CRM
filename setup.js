@@ -182,7 +182,7 @@ async function displayNextSteps() {
   console.log('  3. Access the API:');
   console.log(`     ${colors.blue}http://localhost:5000/api/health${colors.reset}\n`);
   console.log('  4. Default login (if seeded):');
-  console.log(`     Email: ${colors.bright}admin@iconic-crm.com${colors.reset}`);
+  console.log(`     Email: ${colors.bright}admin@charlieai.com${colors.reset}`);
   console.log(`     Password: ${colors.bright}admin123${colors.reset}\n`);
   console.log('📚 Documentation: See README.md for API endpoints\n');
 }

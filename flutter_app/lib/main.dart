@@ -6,11 +6,11 @@ import 'state/serial_validation_provider.dart';
 import 'screens/login_screen.dart';
 
 void main() {
-  runApp(const IconicSmartCrmApp());
+  runApp(const CharliesCrmApp());
 }
 
-class IconicSmartCrmApp extends StatelessWidget {
-  const IconicSmartCrmApp({super.key});
+class CharliesCrmApp extends StatelessWidget {
+  const CharliesCrmApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class IconicSmartCrmApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SerialValidationProvider()),
       ],
       child: MaterialApp(
-        title: 'Iconic Smart CRM',
+        title: "Charlie's CRM",
         theme: AppTheme.theme,
         home: const LoginScreen(),
         debugShowCheckedModeBanner: false,

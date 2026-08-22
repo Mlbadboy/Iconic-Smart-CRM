@@ -1,49 +1,38 @@
-# 🚀 MASTER INSTALLATION GUIDE
-## Complete React CRM Modernization
+# 🚀 MASTER INSTALLATION & ARCHITECTURE GUIDE
+## Charlie's CRM — Enterprise Multi-Tenant Platform
 
-**Last Updated**: Nov 4, 2025, 6:00 PM IST  
-**Total Files**: 36 production-ready components  
-**Total Lines**: ~8,000+ lines of React code  
-**Installation Time**: 1-2 hours  
-**Difficulty**: ⭐⭐ Intermediate
+**Platform Version**: 2.5.0 Multi-Tenant Enterprise  
+**Production Domain**: `https://www.charlieai.in/`  
+**Super Admin**: `superadmin@charlieai.in` (Password: `Admin@123456`)  
+**Company Admin**: `admin@charlieai.in` (Password: `admin123`)  
+**Reference Document**: See [MASTER_GUIDE.md](file:///c:/Users/mayur_hlx0x09/Downloads/Iconic-Smart-CRM-main/Iconic-Smart-CRM-main/MASTER_GUIDE.md) for full architectural specifications.
 
 ---
 
 ## 📦 WHAT YOU'RE GETTING
 
-### ✅ COMPLETE FEATURES (All Ready to Install):
+### ✅ COMPLETE MULTI-TENANT & CRM MODULES:
 
-1. **Security** (2 files)
-   - Rate limiting
-   - Security headers (Helmet.js)
+1. **Multi-Tenant Architecture & Subdomains**
+   - Subdomain resolution (`tenant.domain.com`)
+   - Super Admin platform console (`/super-admin.html`, `/tenant-control.html`)
+   - 18-Feature Entitlement Engine per company
 
-2. **Dashboard** (8 files)
-   - Statistics cards
-   - Sales & status charts
-   - Recent orders
-   - Quick actions
+2. **Security & RBAC Hierarchy**
+   - 3-Layer Authorization: Super Admin $\to$ Company Admin $\to$ Roles $\to$ Users
+   - 5-Strike Login Lockout (`HTTP 423 ACCOUNT_LOCKED`)
+   - Data Scopes: `ALL`, `REGION`, `TERRITORY`, `DISTRIBUTOR`, `DEALER`, `SELF`
+   - Soft-deactivation (`DISABLED`) with audit trails
 
-3. **Orders** (10 files)
-   - Complete order management
-   - Create, view, update
-   - Admin status control
+3. **18 Core CRM Modules**
+   - Dashboard, Sales, Customers, Orders, Products, Inventory, Distribution
+   - Serial Validation, QR Verification, Service & Support, Warranty
+   - Marketing, Finance & Invoicing, Field Force Beat Tracking, Logistics
+   - Reports, Self-Serve Partner API Keys, Analytics
 
-4. **Service Requests** (6 files)
-   - Create service tickets
-   - Priority management
-   - Admin assignment
-
-5. **Products** (5 files)
-   - Product catalog
-   - Add/edit products
-   - Web scraping feature
-
-6. **User Management** (5 files)
-   - Admin only feature
-   - Create/edit users
-   - Role management
-
-**Total: 36 files, fully production-ready!**
+4. **Cross-Platform Clients**
+   - Vanilla JS SPA Web Dashboard
+   - Flutter Mobile, Desktop & Web Client (`flutter_app/`)
 
 ---
 
@@ -51,11 +40,8 @@
 
 Before starting, ensure you have:
 - ✅ Node.js 18+ installed
-- ✅ MongoDB running
-- ✅ Backend server working
-- ✅ Git for backups
-- ✅ Text editor (VS Code recommended)
-- ✅ 1-2 hours of time
+- ✅ MongoDB 6.0+ running (Local, Docker, or Atlas)
+- ✅ Git & npm
 
 ---
 
@@ -306,7 +292,7 @@ npm run dev
 **Visit**: http://localhost:3000
 
 **Test Flow**:
-1. Login: `admin@iconic-crm.com` / `admin123`
+1. Login: `admin@charlieai.com` / `admin123`
 2. Dashboard loads with charts ✅
 3. Navigate to Orders ✅
 4. Create an order ✅

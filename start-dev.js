@@ -12,12 +12,11 @@ async function start() {
   process.env.PORT = '7000';
   process.env.NODE_ENV = 'development';
 
-  console.log('🌱 Seeding database in-process...');
-  const seedDatabase = require('./seed');
-  await seedDatabase();
-
   console.log('🚀 Starting Express CRM Server on port 7000...');
   require('./server.js');
+
+  // Keep daemon process persistent
+  setInterval(() => {}, 1000 * 60 * 60);
 }
 
 start().catch(err => {

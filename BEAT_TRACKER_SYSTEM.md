@@ -194,7 +194,7 @@ Get all field employees
 [{
   "_id": "507f1f77bcf86cd799439011",
   "name": "Rajesh Kumar",
-  "email": "rajesh@iconicsmart.com",
+  "email": "rajesh@charlieai.com",
   "role": "sales",
   "phone": "9876543210"
 }]

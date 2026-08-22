@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketing & Content - Iconic Smart CRM</title>
+    <title>Marketing & Content - Charlie's CRM</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -303,7 +303,7 @@
 <body>
     <header class="header">
         <div class="header-content">
-            <div class="logo">🚀 Iconic Smart CRM</div>
+            <div class="logo">🚀 Charlie's CRM</div>
             <div class="nav">
                 <a href="/dashboard.html" class="btn btn-secondary">← Back to Dashboard</a>
                 <button class="btn btn-primary" onclick="logout()">Logout</button>
@@ -485,11 +485,12 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:7000/api';
+        const API_URL = window.location.origin + '/api';
         let authToken = localStorage.getItem('authToken');
         let selectedFiles = [];
 
         if (!authToken) window.location.href = '/login.html';
+        if (typeof requirePageFeature === 'function') requirePageFeature('marketing');
 
         // Indian Festivals Calendar 2025-2034 (10 Years)
         const indianFestivals = [
@@ -937,5 +938,8 @@
 
         window.addEventListener('DOMContentLoaded', loadContentRequests);
     </script>
+    <script src="/js/feature-guard.js"></script>
+    <script src="/js/tenant-branding.js"></script>
+    <script src="/js/tenant-notifications.js"></script>
 </body>
 </html>

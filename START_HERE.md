@@ -256,7 +256,7 @@ curl -I http://localhost:7000/api/health
 
 # Test 3: React login
 # Visit http://localhost:3000
-# Try: admin@iconic-crm.com / admin123
+# Try: admin@charlieai.com / admin123
 
 # Test 4: Order creation
 # Login → Create Order → Select retailer → Add products → Submit

@@ -5,8 +5,10 @@ const { requirePermission } = require('../middleware/rbac');
 const { recordAuditEvent } = require('../services/auditService');
 const { assertTransition } = require('../services/workflowService');
 const { parseListOptions, pagination } = require('../utils/queryOptions');
+const { requireFeature } = require('../middleware/featureGate');
 
 const router = express.Router();
+router.use(requireFeature('sales'));
 
 router.post('/', auth, requirePermission('lead.create'), async (req, res) => {
   try {

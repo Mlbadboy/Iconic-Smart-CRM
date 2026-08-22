@@ -6,9 +6,11 @@ const { hasPermission, requirePermission } = require('../middleware/rbac');
 const { recordAuditEvent } = require('../services/auditService');
 const { sendEmail, emailTemplates } = require('../services/emailService');
 const { notifications } = require('../services/notificationService');
+const { requireFeature } = require('../middleware/featureGate');
 const logger = require('../services/logger');
 
 const router = express.Router();
+router.use(requireFeature('orders'));
 
 // Create order with retailer and GST calculation
 router.post('/', auth, requirePermission('order.create'), async (req, res) => {

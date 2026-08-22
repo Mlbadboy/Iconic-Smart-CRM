@@ -70,7 +70,7 @@ console.log(localStorage.getItem('authToken'));
 1. Close all browser tabs
 2. Open new incognito/private window
 3. Go to: http://localhost:7000
-4. Login with: admin@iconic-crm.com / admin123
+4. Login with: admin@charlieai.com / admin123
 5. Dashboard should load
 ```
 
@@ -133,7 +133,7 @@ window.location.href = '/login.html';
 ```bash
 curl -X POST http://localhost:7000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d "{\"email\":\"admin@iconic-crm.com\",\"password\":\"admin123\"}"
+  -d "{\"email\":\"admin@charlieai.com\",\"password\":\"admin123\"}"
 
 # Should return:
 # {"token":"eyJ...","user":{...}}

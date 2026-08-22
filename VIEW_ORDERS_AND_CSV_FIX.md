@@ -333,7 +333,7 @@ Invoice Path: /invoices/invoice_ORD001.pdf
 ### **Users Report - Sample Row:**
 ```
 Name: John Doe
-Email: john@iconicsmart.com
+Email: john@charlieai.com
 Role: Admin
 Created At: 10/15/2025 9:00 AM
 Last Login: 10/31/2025 3:45 PM
