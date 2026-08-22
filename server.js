@@ -159,6 +159,12 @@ initializeDatabase().then(async (connected) => {
   } catch (err) {
     logger.warn('Multi-tenant migration notice:', err.message);
   }
+  try {
+    startQueueWorker(2000);
+    logger.info('📱 WhatsApp campaign queue worker started.');
+  } catch (err) {
+    logger.warn('WhatsApp queue worker notice:', err.message);
+  }
 }).catch(err => {
   logger.error('Database initialization error:', err.message);
 });
@@ -218,7 +224,6 @@ app.use('/api/super-admin/whatsapp', require('./routes/superAdminWhatsApp'));
 // Start WhatsApp background campaign queue worker
 const { setSocketIO, startQueueWorker } = require('./services/whatsAppQueueService');
 setSocketIO(io);
-startQueueWorker(1500);
 
 // Health check endpoint for Railway
 app.get('/api/health', (req, res) => {
