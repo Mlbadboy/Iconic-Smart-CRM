@@ -15,7 +15,6 @@
       --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
       --accent-whatsapp: #25d366;
       --accent-meta: #0081fb;
-      --accent-ig: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
       --accent-ai: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
@@ -82,15 +81,6 @@
     .nav-item:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.03); }
     .nav-item.active { color: #fff; background: rgba(59, 130, 246, 0.1); border-left-color: var(--primary); font-weight: 600; }
     .nav-item i { font-size: 1.1rem; width: 20px; text-align: center; }
-    .badge-count {
-      margin-left: auto;
-      background: rgba(239, 68, 68, 0.2);
-      color: var(--danger);
-      font-size: 0.7rem;
-      font-weight: 700;
-      padding: 0.15rem 0.45rem;
-      border-radius: 9999px;
-    }
 
     /* Content Area */
     .content-area { flex: 1; overflow-y: auto; padding: 1.75rem; }
@@ -98,7 +88,7 @@
     .tab-content.active { display: block; animation: fadeIn 0.25s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Header Cards & Metric Grids */
+    /* Metrics & Cards */
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem; }
     .page-title { font-size: 1.6rem; font-weight: 700; }
     .page-desc { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem; }
@@ -111,14 +101,12 @@
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
-      position: relative;
-      overflow: hidden;
     }
     .metric-title { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
     .metric-value { font-size: 1.75rem; font-weight: 700; }
     .metric-subtitle { font-size: 0.75rem; color: var(--success); display: flex; align-items: center; gap: 0.25rem; }
 
-    /* Buttons & Controls */
+    /* Buttons */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -133,7 +121,6 @@
       text-decoration: none;
     }
     .btn-primary { background: var(--primary-gradient); color: #fff; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); }
-    .btn-primary:hover { opacity: 0.95; transform: translateY(-1px); }
     .btn-whatsapp { background: #25d366; color: #fff; }
     .btn-meta { background: #0081fb; color: #fff; }
     .btn-ai { background: var(--accent-ai); color: #fff; }
@@ -142,7 +129,7 @@
     .btn-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
     .btn-sm { padding: 0.4rem 0.75rem; font-size: 0.8rem; }
 
-    /* Tables & Grids */
+    /* Card & Tables */
     .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
     .card-title { font-size: 1.15rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; }
     table { width: 100%; border-collapse: collapse; text-align: left; }
@@ -165,7 +152,7 @@
     .status-draft { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); }
     .status-failed, .status-rejected { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
 
-    /* Modal Styling */
+    /* Modals */
     .modal {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -183,7 +170,7 @@
       border: 1px solid var(--border-color);
       border-radius: 16px;
       width: 100%;
-      max-width: 750px;
+      max-width: 780px;
       max-height: 90vh;
       overflow-y: auto;
       padding: 1.75rem;
@@ -194,7 +181,7 @@
     .close-modal { font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
     .close-modal:hover { color: #fff; }
 
-    /* Forms & Inputs */
+    /* Forms */
     .form-group { margin-bottom: 1.2rem; }
     .form-label { display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: #cbd5e1; }
     .form-control {
@@ -209,63 +196,24 @@
     .form-control:focus { outline: none; border-color: var(--primary); }
     textarea.form-control { min-height: 100px; resize: vertical; }
 
-    /* Live Preview Box */
-    .preview-phone {
-      width: 320px;
-      background: #000;
-      border: 6px solid #334155;
-      border-radius: 28px;
-      padding: 1rem;
-      margin: 0 auto;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-      color: #fff;
-      font-size: 0.8rem;
-    }
-
-    /* Content Asset Grid */
-    .asset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
-    .asset-card {
+    /* Preflight Table Box */
+    .preflight-table {
+      width: 100%;
       background: #0f172a;
       border: 1px solid var(--border-color);
-      border-radius: 8px;
+      border-radius: 10px;
       overflow: hidden;
-      cursor: pointer;
-      transition: all 0.2s;
+      margin-bottom: 1.25rem;
     }
-    .asset-card:hover { transform: translateY(-2px); border-color: var(--primary); }
-    .asset-thumb { width: 100%; height: 120px; object-fit: cover; background: #334155; }
-    .asset-info { padding: 0.6rem; }
-    .asset-title { font-size: 0.8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-    /* Calendar Grid */
-    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; }
-    .calendar-day-header { text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); padding: 0.5rem; }
-    .calendar-day {
-      background: #0f172a;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      min-height: 90px;
-      padding: 0.4rem;
-      font-size: 0.75rem;
+    .preflight-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.88rem;
     }
-    .calendar-day.today { border-color: var(--primary); background: rgba(59, 130, 246, 0.05); }
-    .day-number { font-weight: 700; margin-bottom: 0.3rem; }
-    .calendar-badge {
-      display: block;
-      padding: 0.15rem 0.35rem;
-      border-radius: 4px;
-      font-size: 0.65rem;
-      font-weight: 600;
-      margin-bottom: 0.2rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .badge-holiday { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
-    .badge-post { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
-    .badge-ad { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
-    .badge-wa { background: rgba(37, 211, 102, 0.2); color: #4ade80; }
+    .preflight-row:last-child { border-bottom: none; }
+    .preflight-highlight { background: rgba(59, 130, 246, 0.1); font-weight: 700; }
   </style>
 </head>
 <body>
@@ -280,8 +228,8 @@
       <button class="btn btn-secondary btn-sm" onclick="location.href='/dashboard.html'">
         <i class="fa-solid fa-arrow-left"></i> Back to CRM
       </button>
-      <button class="btn btn-ai btn-sm" onclick="switchTab('ai')">
-        <i class="fa-solid fa-wand-magic-sparkles"></i> Charlie AI Assistant
+      <button class="btn btn-secondary btn-sm" onclick="openDiagnosticsModal()">
+        <i class="fa-solid fa-heart-pulse" style="color: #10b981;"></i> Meta Health Diagnostic
       </button>
       <div id="companyBadge" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">
         <i class="fa-solid fa-building"></i> Loading...
@@ -308,6 +256,11 @@
         <i class="fa-solid fa-rectangle-ad" style="color: #f59e0b;"></i> Meta Ads Manager
       </div>
 
+      <div class="nav-group-title">Closed-Loop CRM</div>
+      <div class="nav-item" onclick="switchTab('crm-segments')" id="nav-crm-segments">
+        <i class="fa-solid fa-users-viewfinder" style="color: #10b981;"></i> CRM Customer Segments
+      </div>
+
       <div class="nav-group-title">Content & Strategy</div>
       <div class="nav-item" onclick="switchTab('content-studio')" id="nav-content-studio">
         <i class="fa-solid fa-photo-film" style="color: #ec4899;"></i> Content Studio
@@ -322,7 +275,7 @@
       <div class="nav-group-title">Governance</div>
       <div class="nav-item" onclick="switchTab('approvals')" id="nav-approvals">
         <i class="fa-solid fa-shield-halved" style="color: #10b981;"></i> Approvals
-        <span class="badge-count" id="pendingApprovalsBadge" style="display: none;">0</span>
+        <span class="badge-count" id="pendingApprovalsBadge" style="display: none; margin-left: auto; background: rgba(239, 68, 68, 0.2); color: var(--danger); font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.45rem; border-radius: 9999px;">0</span>
       </div>
       <div class="nav-item" onclick="switchTab('meta-settings')" id="nav-meta-settings">
         <i class="fa-brands fa-meta" style="color: #0081fb;"></i> Meta Connection
@@ -339,21 +292,21 @@
         <div class="page-header">
           <div>
             <h1 class="page-title">Marketing Command Center</h1>
-            <p class="page-desc">Omnichannel campaign performance, live reach, and customer acquisition engine.</p>
+            <p class="page-desc">Closed-Loop CRM Customer Acquisition, Omnichannel Reach, and Real-Time ROAS.</p>
           </div>
           <div style="display: flex; gap: 0.75rem;">
-            <button class="btn btn-whatsapp" onclick="openNewCampaignModal()">
+            <button class="btn btn-whatsapp" onclick="openWhatsAppPreflightWizard()">
               <i class="fa-brands fa-whatsapp"></i> New WhatsApp Broadcast
             </button>
-            <button class="btn btn-primary" onclick="openNewPostModal()">
-              <i class="fa-solid fa-plus"></i> Create Post / Reel
+            <button class="btn btn-meta" onclick="openMetaAdsWizard()">
+              <i class="fa-solid fa-bullseye"></i> Launch Meta Ad
             </button>
           </div>
         </div>
 
         <div class="metrics-grid">
           <div class="metric-card">
-            <span class="metric-title">Total Audience Reach</span>
+            <span class="metric-title">Total CRM Reach</span>
             <span class="metric-value" id="kpiTotalReach">142.5K</span>
             <span class="metric-subtitle"><i class="fa-solid fa-arrow-trend-up"></i> +18.4% this month</span>
           </div>
@@ -363,22 +316,21 @@
             <span class="metric-subtitle"><i class="fa-solid fa-check-double"></i> 24,120 messages</span>
           </div>
           <div class="metric-card">
-            <span class="metric-title">Social Engagements</span>
-            <span class="metric-value" id="kpiSocialEngagements">12,480</span>
-            <span class="metric-subtitle"><i class="fa-solid fa-heart"></i> Likes, comments, shares</span>
+            <span class="metric-title">CRM Closed-Loop Leads</span>
+            <span class="metric-value" id="kpiCrmLeads">342</span>
+            <span class="metric-subtitle"><i class="fa-solid fa-user-plus"></i> Ingested into CRM</span>
           </div>
           <div class="metric-card">
-            <span class="metric-title">Meta Ads ROAS</span>
+            <span class="metric-title">Campaign Conversion ROI</span>
             <span class="metric-value" id="kpiAdsRoas">4.2x</span>
-            <span class="metric-subtitle"><i class="fa-solid fa-indian-rupee-sign"></i> ₹1.85L Pipeline</span>
+            <span class="metric-subtitle"><i class="fa-solid fa-indian-rupee-sign"></i> ₹1.85L Revenue</span>
           </div>
         </div>
 
-        <!-- Omnichannel Quick Actions & Calendar Preview -->
         <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
           <div class="card">
             <div class="card-title">
-              <span><i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Active & Upcoming Campaigns</span>
+              <span><i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Omnichannel Campaign Roadmaps</span>
               <button class="btn btn-secondary btn-sm" onclick="switchTab('calendar')">View Calendar</button>
             </div>
             <div id="activeCampaignsList">
@@ -403,15 +355,12 @@
       <section id="tab-whatsapp" class="tab-content">
         <div class="page-header">
           <div>
-            <h1 class="page-title">WhatsApp Marketing Engine</h1>
+            <h1 class="page-title">WhatsApp Marketing Hub</h1>
             <p class="page-desc">Cloud API campaigns, CSV safety deduplication, templates, and pre-paid wallet.</p>
           </div>
           <div style="display: flex; gap: 0.75rem;">
-            <button class="btn btn-secondary" onclick="openCsvImportModal()">
-              <i class="fa-solid fa-file-csv"></i> Import Contacts CSV
-            </button>
-            <button class="btn btn-whatsapp" onclick="openNewCampaignModal()">
-              <i class="fa-solid fa-paper-plane"></i> Launch WhatsApp Campaign
+            <button class="btn btn-whatsapp" onclick="openWhatsAppPreflightWizard()">
+              <i class="fa-solid fa-shield-halved"></i> Preflight & Launch Campaign
             </button>
           </div>
         </div>
@@ -437,7 +386,7 @@
         <div class="card">
           <div class="card-title">
             <span>Recent WhatsApp Broadcast Campaigns</span>
-            <button class="btn btn-secondary btn-sm" onclick="loadWhatsAppCampaigns()">Refresh</button>
+            <button class="btn btn-secondary btn-sm" onclick="loadWhatsAppHub()">Refresh</button>
           </div>
           <div style="overflow-x: auto;">
             <table>
@@ -461,7 +410,46 @@
       </section>
 
       <!-- ======================================================== -->
-      <!-- TAB 3: SOCIAL & REELS -->
+      <!-- TAB: CLOSED-LOOP CRM CUSTOMER SEGMENTS -->
+      <!-- ======================================================== -->
+      <section id="tab-crm-segments" class="tab-content">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">CRM Audience Segments</h1>
+            <p class="page-desc">Query live CRM database by warranty expiry, purchase history, or lead status and launch targeted campaigns.</p>
+          </div>
+          <button class="btn btn-primary" onclick="openCreateSegmentModal()">
+            <i class="fa-solid fa-plus"></i> Create Dynamic Cohort
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>Saved CRM Customer Cohorts</span>
+            <button class="btn btn-secondary btn-sm" onclick="loadCrmSegments()">Refresh</button>
+          </div>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Cohort Name</th>
+                  <th>Target Entity</th>
+                  <th>Criteria Summary</th>
+                  <th>Audience Size</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="segmentsTableBody">
+                <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">Loading CRM segments...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- TAB: SOCIAL & REELS -->
       <!-- ======================================================== -->
       <section id="tab-social" class="tab-content">
         <div class="page-header">
@@ -477,14 +465,6 @@
         <div class="card">
           <div class="card-title">
             <span>All Published & Scheduled Content</span>
-            <div style="display: flex; gap: 0.5rem;">
-              <select class="form-control" style="width: auto; padding: 0.3rem 0.6rem; font-size: 0.8rem;" id="socialTypeFilter" onchange="loadSocialPosts()">
-                <option value="">All Formats</option>
-                <option value="POST">Posts</option>
-                <option value="REEL">Reels</option>
-                <option value="STORY">Stories</option>
-              </select>
-            </div>
           </div>
           <div style="overflow-x: auto;">
             <table>
@@ -493,7 +473,7 @@
                   <th>Content</th>
                   <th>Type</th>
                   <th>Platforms</th>
-                  <th>Scheduled / Published</th>
+                  <th>Date</th>
                   <th>Engagement</th>
                   <th>Status</th>
                   <th>Actions</th>
@@ -508,15 +488,15 @@
       </section>
 
       <!-- ======================================================== -->
-      <!-- TAB 4: META ADS MANAGER -->
+      <!-- TAB: META ADS MANAGER -->
       <!-- ======================================================== -->
       <section id="tab-meta-ads" class="tab-content">
         <div class="page-header">
           <div>
             <h1 class="page-title">Meta Ads Manager</h1>
-            <p class="page-desc">Objective-driven lead ads, boost high-performing posts, and monitor ROAS.</p>
+            <p class="page-desc">Objective-driven lead ads with preflight validation and reach forecasting.</p>
           </div>
-          <button class="btn btn-meta" onclick="openNewAdModal()">
+          <button class="btn btn-meta" onclick="openMetaAdsWizard()">
             <i class="fa-solid fa-bullseye"></i> Create Ad Campaign
           </button>
         </div>
@@ -533,7 +513,7 @@
                   <th>Campaign Name</th>
                   <th>Objective</th>
                   <th>Budget</th>
-                  <th>Spend / Impressions / Clicks</th>
+                  <th>Spend / Impressions</th>
                   <th>Leads</th>
                   <th>Status</th>
                   <th>Action</th>
@@ -548,7 +528,7 @@
       </section>
 
       <!-- ======================================================== -->
-      <!-- TAB 5: CONTENT STUDIO -->
+      <!-- TAB: CONTENT STUDIO -->
       <!-- ======================================================== -->
       <section id="tab-content-studio" class="tab-content">
         <div class="page-header">
@@ -556,24 +536,19 @@
             <h1 class="page-title">Content Studio & Asset Library</h1>
             <p class="page-desc">Centralized repository for product photos, reel clips, brand banners, and brochures.</p>
           </div>
-          <button class="btn btn-primary" onclick="openUploadAssetModal()">
-            <i class="fa-solid fa-cloud-arrow-up"></i> Upload Asset
-          </button>
         </div>
-
         <div class="card">
           <div class="card-title">
             <span>Brand & Product Assets</span>
-            <input type="text" class="form-control" style="width: 240px; font-size: 0.85rem;" placeholder="Search by tag or product..." id="assetSearchInput" oninput="loadContentAssets()">
           </div>
-          <div class="asset-grid" id="contentAssetsGrid">
+          <div class="asset-grid" id="contentAssetsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem;">
             <p style="color: var(--text-muted); font-size: 0.9rem;">Loading asset library...</p>
           </div>
         </div>
       </section>
 
       <!-- ======================================================== -->
-      <!-- TAB 6: MARKETING CALENDAR & HOLIDAY PLANNER -->
+      <!-- TAB: MARKETING CALENDAR -->
       <!-- ======================================================== -->
       <section id="tab-calendar" class="tab-content">
         <div class="page-header">
@@ -585,71 +560,49 @@
             <i class="fa-solid fa-wand-magic-sparkles"></i> 1-Click Festival Plan
           </button>
         </div>
-
         <div class="card">
-          <div class="calendar-header">
-            <h3 id="currentCalendarMonth" style="font-weight: 700;">August 2026</h3>
-            <div style="display: flex; gap: 0.5rem;">
-              <span class="badge-holiday" style="padding: 0.2rem 0.5rem; border-radius: 4px;">🪔 Holiday Flag</span>
-              <span class="badge-wa" style="padding: 0.2rem 0.5rem; border-radius: 4px;">💬 WhatsApp</span>
-              <span class="badge-post" style="padding: 0.2rem 0.5rem; border-radius: 4px;">📱 Social / Reel</span>
-              <span class="badge-ad" style="padding: 0.2rem 0.5rem; border-radius: 4px;">🎯 Meta Ad</span>
-            </div>
-          </div>
-          <div class="calendar-grid" id="calendarGridContainer">
+          <div class="calendar-grid" id="calendarGridContainer" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem;">
             <!-- Rendered by JS -->
           </div>
         </div>
       </section>
 
       <!-- ======================================================== -->
-      <!-- TAB 7: CHARLIE AI ASSISTANT -->
+      <!-- TAB: CHARLIE AI ASSISTANT -->
       <!-- ======================================================== -->
       <section id="tab-ai" class="tab-content">
         <div class="page-header">
           <div>
-            <h1 class="page-title">Charlie AI Marketing Assistant</h1>
+            <h1 class="page-title">Charlie AI Copy Generator</h1>
             <p class="page-desc">Generate festive copy, high-converting ad headlines, hashtags, and omnichannel variations.</p>
           </div>
         </div>
-
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
           <div class="card">
             <h3 class="card-title">Prompt Engine</h3>
             <div class="form-group">
-              <label class="form-label">Product / Campaign Topic</label>
+              <label class="form-label">Topic / Product</label>
               <input type="text" class="form-control" id="aiTopic" placeholder="e.g. Smart RO Water Purifier Festive Dhamaka">
             </div>
             <div class="form-group">
-              <label class="form-label">Offer / Discount Details</label>
-              <input type="text" class="form-control" id="aiOffer" placeholder="e.g. 25% Off + 10-Year Warranty + Free Gift">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Tone & Style</label>
-              <select class="form-control" id="aiTone">
-                <option value="FESTIVE">✨ Festive & Auspicious</option>
-                <option value="PROMOTIONAL">🔥 High-Urgency Promotion</option>
-                <option value="PREMIUM">💎 Premium & Elegant</option>
-                <option value="URGENT">⏰ Final Call / Expiring Soon</option>
-                <option value="ENGAGING">💡 Educational & Engaging</option>
-              </select>
+              <label class="form-label">Offer / Discount</label>
+              <input type="text" class="form-control" id="aiOffer" placeholder="e.g. 25% Off + 10-Year Warranty">
             </div>
             <button class="btn btn-ai" style="width: 100%; justify-content: center;" onclick="generateAiMarketingCopy()">
-              <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Omnichannel Copy
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Copy
             </button>
           </div>
-
           <div class="card">
-            <h3 class="card-title">Generated Copy Variations</h3>
+            <h3 class="card-title">Variations</h3>
             <div id="aiGeneratedOutput" style="font-size: 0.88rem; line-height: 1.5; color: #cbd5e1; white-space: pre-line; max-height: 400px; overflow-y: auto;">
-              Click "Generate Omnichannel Copy" to create tailored captions for Instagram, Facebook, WhatsApp, and Meta Ads.
+              Generated copy will appear here...
             </div>
           </div>
         </div>
       </section>
 
       <!-- ======================================================== -->
-      <!-- TAB 8: APPROVALS QUEUE -->
+      <!-- TAB: APPROVALS -->
       <!-- ======================================================== -->
       <section id="tab-approvals" class="tab-content">
         <div class="page-header">
@@ -658,12 +611,7 @@
             <p class="page-desc">Review pending posts, reels, and paid advertising budgets before launch.</p>
           </div>
         </div>
-
         <div class="card">
-          <div class="card-title">
-            <span>Pending Submissions</span>
-            <button class="btn btn-secondary btn-sm" onclick="loadApprovals()">Refresh</button>
-          </div>
           <div style="overflow-x: auto;">
             <table>
               <thead>
@@ -685,111 +633,198 @@
       </section>
 
       <!-- ======================================================== -->
-      <!-- TAB 9: META CONNECTION SETTINGS -->
+      <!-- TAB: META SETTINGS -->
       <!-- ======================================================== -->
       <section id="tab-meta-settings" class="tab-content">
         <div class="page-header">
           <div>
-            <h1 class="page-title">Meta Business Account Connection</h1>
-            <p class="page-desc">Connect your Meta Business Portfolio to discover Facebook Pages, Instagram accounts, and Ad Accounts.</p>
+            <h1 class="page-title">Meta Business Connection</h1>
+            <p class="page-desc">Connect your Meta Business Portfolio to discover Facebook Pages, Instagram, and Ad Accounts.</p>
           </div>
         </div>
-
         <div class="card" style="max-width: 650px;">
-          <h3 class="card-title"><i class="fa-brands fa-meta" style="color: #0081fb;"></i> Connect with Meta Graph API</h3>
-          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
-            Authenticate via Meta OAuth to grant Charlie CRM permission to publish organic posts, reels, and manage lead ads.
-          </p>
-
           <div class="form-group">
             <label class="form-label">User Access Token / System User Token</label>
             <input type="password" class="form-control" id="metaDirectTokenInput" placeholder="EAAB..." autocomplete="off">
-            <small style="color: var(--text-muted); font-size: 0.75rem;">Tokens are encrypted using AES-256-GCM and never exposed in browser responses.</small>
           </div>
-
-          <div style="display: flex; gap: 0.75rem; margin-top: 1.25rem;">
-            <button class="btn btn-meta" onclick="connectMetaDirectToken()">
-              <i class="fa-brands fa-meta"></i> Connect Meta Account
-            </button>
-            <button class="btn btn-secondary" onclick="startMetaOAuth()">
-              <i class="fa-solid fa-arrow-up-right-from-square"></i> Connect with Facebook Login
-            </button>
-          </div>
+          <button class="btn btn-meta" onclick="connectMetaDirectToken()">Connect Meta Account</button>
         </div>
       </section>
 
     </main>
   </div>
 
-  <!-- Create Post / Reel Modal -->
-  <div class="modal" id="createPostModal">
+  <!-- ======================================================== -->
+  <!-- WHATSAPP CAMPAIGN PREFLIGHT MODAL -->
+  <!-- ======================================================== -->
+  <div class="modal" id="whatsappPreflightModal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 class="modal-title"><i class="fa-solid fa-pen-to-square"></i> Create Post / Reel</h3>
-        <span class="close-modal" onclick="closeModal('createPostModal')">&times;</span>
+        <h3 class="modal-title"><i class="fa-brands fa-whatsapp" style="color: #25d366;"></i> WhatsApp Campaign Preflight Audit</h3>
+        <span class="close-modal" onclick="closeModal('whatsappPreflightModal')">&times;</span>
       </div>
-      <div class="form-group">
-        <label class="form-label">Post Format</label>
-        <select class="form-control" id="postTypeSelect">
-          <option value="POST">📱 Feed Post (Image / Multi-photo)</option>
-          <option value="REEL">🎬 Instagram & Facebook Reel (Video)</option>
-          <option value="STORY">⚡ Story (24h Ephemeral)</option>
-        </select>
+
+      <div id="preflightStep1">
+        <div class="form-group">
+          <label class="form-label">Campaign Name</label>
+          <input type="text" class="form-control" id="wfCampaignName" placeholder="e.g. Diwali Festive Broadcast">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Select Approved Template</label>
+          <select class="form-control" id="wfTemplateSelect">
+            <option value="">Loading approved templates...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Audience Source</label>
+          <select class="form-control" id="wfAudienceSource" onchange="togglePreflightAudienceSource()">
+            <option value="CSV">Upload CSV File</option>
+            <option value="CRM_SEGMENT">CRM Customer Cohort</option>
+          </select>
+        </div>
+        <div class="form-group" id="wfCsvUploadGroup">
+          <label class="form-label">Paste CSV Content (mobile,name,email)</label>
+          <textarea class="form-control" id="wfCsvTextInput" placeholder="mobile,name,email&#10;+919876543210,Aarav Sharma,aarav@example.com&#10;9876543211,Priya Patel,priya@example.com"></textarea>
+        </div>
+        <div class="form-group" id="wfSegmentSelectGroup" style="display: none;">
+          <label class="form-label">Select CRM Segment</label>
+          <select class="form-control" id="wfSegmentSelect">
+            <option value="">Loading segments...</option>
+          </select>
+        </div>
+
+        <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="runWhatsAppPreflightAudit()">
+          <i class="fa-solid fa-magnifying-glass-chart"></i> Run Campaign Preflight Analysis
+        </button>
       </div>
-      <div class="form-group">
-        <label class="form-label">Platforms</label>
-        <div style="display: flex; gap: 1.5rem; font-size: 0.9rem;">
-          <label><input type="checkbox" id="postPlatformInstagram" checked> Instagram (@charlieappliances)</label>
-          <label><input type="checkbox" id="postPlatformFacebook" checked> Facebook Page</label>
+
+      <!-- Preflight Results View -->
+      <div id="preflightStep2" style="display: none;">
+        <div class="preflight-table">
+          <div class="preflight-row"><span>Total CSV Records</span><strong id="pfTotalRecords">0</strong></div>
+          <div class="preflight-row"><span>Valid Mobile Numbers (+91 E.164)</span><strong id="pfValidNumbers" style="color: #10b981;">0</strong></div>
+          <div class="preflight-row"><span>Invalid Numbers</span><strong id="pfInvalidNumbers" style="color: #ef4444;">0</strong></div>
+          <div class="preflight-row"><span>Duplicate Phone Numbers</span><strong id="pfDuplicates" style="color: #f59e0b;">0</strong></div>
+          <div class="preflight-row"><span>Missing Names</span><strong id="pfMissingNames">0</strong></div>
+          <div class="preflight-row"><span>Opted-Out Contacts Suppressed</span><strong id="pfOptedOut" style="color: #94a3b8;">0</strong></div>
+          <div class="preflight-row preflight-highlight"><span>Estimated Messages to Send</span><strong id="pfEstimatedMessages">0</strong></div>
+          <div class="preflight-row preflight-highlight"><span>Estimated Total Cost</span><strong id="pfEstimatedCost">₹0.00</strong></div>
+          <div class="preflight-row"><span>Current Wallet Balance</span><strong id="pfWalletBalance">₹0.00</strong></div>
+        </div>
+
+        <div id="pfWalletAlert" style="margin-bottom: 1.25rem;"></div>
+
+        <div style="display: flex; justify-content: space-between; gap: 0.75rem;">
+          <button class="btn btn-secondary" onclick="resetPreflightModal()"><i class="fa-solid fa-arrow-left"></i> Fix Errors / Edit</button>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-secondary btn-sm" onclick="downloadInvalidCsvRows()"><i class="fa-solid fa-download"></i> Export Errors</button>
+            <button class="btn btn-whatsapp" id="pfLaunchButton" onclick="submitPreflightLaunch()"><i class="fa-solid fa-paper-plane"></i> Confirm & Launch</button>
+          </div>
         </div>
       </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- META ADS PREFLIGHT WIZARD MODAL -->
+  <!-- ======================================================== -->
+  <div class="modal" id="metaAdsWizardModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-brands fa-meta" style="color: #0081fb;"></i> Meta Ads Preflight & Launch Wizard</h3>
+        <span class="close-modal" onclick="closeModal('metaAdsWizardModal')">&times;</span>
+      </div>
+
       <div class="form-group">
-        <label class="form-label">Caption & Copy</label>
-        <textarea class="form-control" id="postCaptionInput" placeholder="Write caption or generate with AI..."></textarea>
+        <label class="form-label">Campaign Name</label>
+        <input type="text" class="form-control" id="metaAdName" placeholder="e.g. Festive Lead Generation Ad">
       </div>
       <div class="form-group">
-        <label class="form-label">Media Asset URL (Image or MP4 Video)</label>
-        <input type="text" class="form-control" id="postMediaUrlInput" placeholder="https://images.unsplash.com/...">
+        <label class="form-label">Campaign Objective</label>
+        <select class="form-control" id="metaAdObjective">
+          <option value="OUTCOME_LEADS">🎯 Lead Generation (Forms & Instant Inquiries)</option>
+          <option value="OUTCOME_SALES">🛒 Conversions & Sales (Catalog / Website)</option>
+          <option value="OUTCOME_ENGAGEMENT">💬 Engagement & WhatsApp Chats</option>
+          <option value="OUTCOME_AWARENESS">📢 Brand Awareness & Reach</option>
+        </select>
       </div>
-      <div class="form-group">
-        <label class="form-label">Schedule Publication (Leave blank to publish now)</label>
-        <input type="datetime-local" class="form-control" id="postScheduleInput">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label class="form-label">Daily Budget (₹)</label>
+          <input type="number" class="form-control" id="metaAdDailyBudget" value="500">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Duration (Days)</label>
+          <input type="number" class="form-control" id="metaAdDurationDays" value="7">
+        </div>
       </div>
-      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
-        <button class="btn btn-secondary" onclick="closeModal('createPostModal')">Cancel</button>
-        <button class="btn btn-primary" onclick="submitCreatePost()">Submit / Schedule</button>
+
+      <button class="btn btn-secondary" style="width: 100%; justify-content: center; margin-bottom: 1rem;" onclick="runMetaAdsPreflight()">
+        <i class="fa-solid fa-magnifying-glass-chart"></i> Validate & Forecast Reach
+      </button>
+
+      <div id="metaAdsPreflightResult" style="display: none; background: #0f172a; border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+        <div style="font-size: 0.85rem; display: flex; flex-direction: column; gap: 0.4rem;">
+          <div><strong>Total Campaign Spend:</strong> <span id="metaPfTotalSpend">₹3,500</span></div>
+          <div><strong>Estimated Daily Reach:</strong> <span id="metaPfDailyReach">1,750 - 4,100 people</span></div>
+          <div><strong>Estimated Leads Generated:</strong> <span id="metaPfLeads">50 - 150 leads</span></div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button class="btn btn-secondary" onclick="closeModal('metaAdsWizardModal')">Cancel</button>
+        <button class="btn btn-meta" onclick="submitLaunchMetaAd()">Launch Meta Ad</button>
       </div>
     </div>
   </div>
 
-  <!-- 1-Click Festival Campaign Plan Modal -->
-  <div class="modal" id="holidayCampaignModal">
+  <!-- ======================================================== -->
+  <!-- INTEGRATION DIAGNOSTICS MODAL -->
+  <!-- ======================================================== -->
+  <div class="modal" id="integrationDiagnosticsModal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 class="modal-title">🪔 1-Click Festival Campaign Planner</h3>
-        <span class="close-modal" onclick="closeModal('holidayCampaignModal')">&times;</span>
+        <h3 class="modal-title"><i class="fa-solid fa-heart-pulse" style="color: #10b981;"></i> Meta & WhatsApp Integration Diagnostics</h3>
+        <span class="close-modal" onclick="closeModal('integrationDiagnosticsModal')">&times;</span>
+      </div>
+
+      <div id="diagnosticsOutput" style="font-size: 0.88rem; line-height: 1.5; color: #cbd5e1;">
+        <p><i class="fa-solid fa-spinner fa-spin"></i> Running diagnostic health checks against Meta Graph API...</p>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+        <button class="btn btn-secondary" onclick="closeModal('integrationDiagnosticsModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Segment Modal -->
+  <div class="modal" id="createSegmentModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-users-viewfinder"></i> Create CRM Customer Cohort</h3>
+        <span class="close-modal" onclick="closeModal('createSegmentModal')">&times;</span>
       </div>
       <div class="form-group">
-        <label class="form-label">Select Festival / Holiday</label>
-        <select class="form-control" id="holidaySelectDropdown">
-          <option value="">Loading master holidays...</option>
+        <label class="form-label">Cohort Name</label>
+        <input type="text" class="form-control" id="segName" placeholder="e.g. Water Purifier Owners - Warranty Expiring 30 Days">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Target Audience Entity</label>
+        <select class="form-control" id="segEntity">
+          <option value="CUSTOMERS">Registered CRM Customers</option>
+          <option value="LEADS">Unconverted Inquiries / Leads</option>
+          <option value="ALL">All Contacts</option>
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">Total Multi-Channel Budget (₹)</label>
-        <input type="number" class="form-control" id="holidayCampaignBudget" value="15000">
-      </div>
-      <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 8px; padding: 1rem; margin-bottom: 1.25rem; font-size: 0.85rem;">
-        <strong>Automated Roadmap Generator:</strong>
-        <p style="color: var(--text-muted); margin-top: 0.25rem;">
-          Charlie will generate multi-stage milestones across Instagram Teaser $\rightarrow$ Reel Showcase $\rightarrow$ Meta Ads Launch $\rightarrow$ WhatsApp VIP Blast $\rightarrow$ Last Day Reminder.
-        </p>
+        <label class="form-label">Target Cities (Comma-separated, optional)</label>
+        <input type="text" class="form-control" id="segCities" placeholder="Mumbai, Pune, Ahmedabad">
       </div>
       <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
-        <button class="btn btn-secondary" onclick="closeModal('holidayCampaignModal')">Cancel</button>
-        <button class="btn btn-ai" onclick="submitGenerateHolidayCampaign()">
-          <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Full Campaign Plan
-        </button>
+        <button class="btn btn-secondary" onclick="closeModal('createSegmentModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitCreateSegment()">Save & Calculate Cohort</button>
       </div>
     </div>
   </div>

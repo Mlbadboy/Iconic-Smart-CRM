@@ -993,8 +993,90 @@ router.get('/audit-logs', requirePermission('marketing.view'), async (req, res) 
     const logs = await MarketingAuditLog.find({ companyId: req.companyId })
       .sort({ createdAt: -1 })
       .limit(100);
-
     res.json({ count: logs.length, logs });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// =========================================================================
+// 9. META ADS PREFLIGHT WIZARD
+// =========================================================================
+
+/**
+ * Meta Ads Preflight Validator
+ */
+router.post('/ads/preflight', requireFeature('marketing.meta_ads'), requirePermission('marketing.ads.create'), async (req, res) => {
+  try {
+    const { analyzeMetaAdPreflight } = require('../services/campaignPreflightService');
+    const preflight = await analyzeMetaAdPreflight(req.companyId, req.body);
+    res.json({ success: true, preflight });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+// =========================================================================
+// 10. CLOSED-LOOP CRM AUDIENCE SEGMENTATION
+// =========================================================================
+
+const MarketingSegment = require('../models/MarketingSegment');
+const { resolveSegmentContacts, saveAndCalculateSegment } = require('../services/marketingSegmentService');
+
+/**
+ * List CRM Marketing Segments
+ */
+router.get('/segments', requirePermission('marketing.view'), async (req, res) => {
+  try {
+    const segments = await MarketingSegment.find({ companyId: req.companyId })
+      .sort({ createdAt: -1 })
+      .populate('createdBy', 'name email');
+    res.json({ count: segments.length, segments });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * Create Dynamic CRM Segment
+ */
+router.post('/segments', requirePermission('marketing.campaign.create'), async (req, res) => {
+  try {
+    const result = await saveAndCalculateSegment(req.companyId, req.body, req.user.id);
+    res.status(201).json({ success: true, ...result });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+/**
+ * Resolve Segment Contacts for Campaign Dispatch
+ */
+router.get('/segments/:id/contacts', requirePermission('marketing.campaign.create'), async (req, res) => {
+  try {
+    const segment = await MarketingSegment.findOne({ _id: req.params.id, companyId: req.companyId });
+    if (!segment) return res.status(404).json({ error: 'Segment not found' });
+
+    const contacts = await resolveSegmentContacts(req.companyId, segment.filterCriteria, segment.targetEntity);
+    res.json({ count: contacts.length, contacts });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// =========================================================================
+// 11. EXTERNAL THIRD-PARTY INTEGRATION DIAGNOSTICS
+// =========================================================================
+
+const { runIntegrationDiagnostics } = require('../services/metaDiagnosticService');
+
+/**
+ * Run Live Meta & WhatsApp API Health Diagnostics
+ */
+router.get('/diagnostics/health', requirePermission('marketing.view'), async (req, res) => {
+  try {
+    const diagnostics = await runIntegrationDiagnostics(req.companyId);
+    res.json({ success: true, diagnostics });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

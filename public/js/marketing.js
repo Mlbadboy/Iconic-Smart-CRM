@@ -2,6 +2,8 @@
 
 const TOKEN_KEY = 'token';
 let currentTenantConfig = null;
+let currentPreflightResult = null;
+let currentPreflightPayload = null;
 
 function getToken() {
   return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
@@ -27,6 +29,7 @@ function switchTab(tabId) {
 
   // Trigger tab-specific loaders
   if (tabId === 'whatsapp') loadWhatsAppHub();
+  if (tabId === 'crm-segments') loadCrmSegments();
   if (tabId === 'social') loadSocialPosts();
   if (tabId === 'meta-ads') loadMetaAds();
   if (tabId === 'content-studio') loadContentAssets();
@@ -46,7 +49,7 @@ function closeModal(modalId) {
 }
 
 // -------------------------------------------------------------
-// INITIALIZATION & COMMERCIAL FEATURE GATE ENFORCEMENT
+// INITIALIZATION
 // -------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', async () => {
   const token = getToken();
@@ -75,14 +78,12 @@ async function loadCompanyProfileAndEntitlements() {
     const badge = document.getElementById('companyBadge');
     if (badge) badge.innerHTML = `<i class="fa-solid fa-building"></i> ${company.name || "Charlie's Primary"}`;
 
-    // Dynamically enforce commercial feature visibility on sidebar navigation
     if (features.marketing === false) {
       alert('Marketing Platform is currently disabled by Super Admin for this company.');
       window.location.href = '/dashboard.html';
       return;
     }
 
-    // Hide tabs if commercially disabled by Super Admin
     if (marketingConfig.whatsapp === false) hideNav('nav-whatsapp');
     if (marketingConfig.social === false) hideNav('nav-social');
     if (marketingConfig.meta_ads === false) hideNav('nav-meta-ads');
@@ -152,7 +153,6 @@ async function loadCommandCenterOverview() {
             <div style="display: flex; justify-content: space-between;"><span>Business:</span> <strong>${acc.businessName || 'Meta Portfolio'}</strong></div>
             <div style="display: flex; justify-content: space-between;"><span>Pages:</span> <span>${acc.pages?.length || 0} Active</span></div>
             <div style="display: flex; justify-content: space-between;"><span>Instagram:</span> <span>${acc.instagramAccounts?.length || 0} Accounts</span></div>
-            <div style="display: flex; justify-content: space-between;"><span>Ad Accounts:</span> <span>${acc.adAccounts?.length || 0} Connected</span></div>
           `;
         } else {
           overviewEl.innerHTML = `
@@ -168,7 +168,363 @@ async function loadCommandCenterOverview() {
 }
 
 // -------------------------------------------------------------
-// 2. WHATSAPP HUB
+// 2. WHATSAPP CAMPAIGN PREFLIGHT AUDIT & LAUNCH
+// -------------------------------------------------------------
+async function openWhatsAppPreflightWizard() {
+  resetPreflightModal();
+  openModal('whatsappPreflightModal');
+
+  // Load templates & segments
+  const [tmplRes, segRes] = await Promise.all([
+    fetch('/api/whatsapp/templates', { headers: getAuthHeaders() }),
+    fetch('/api/social-marketing/segments', { headers: getAuthHeaders() })
+  ]);
+
+  if (tmplRes.ok) {
+    const tData = await tmplRes.json();
+    const select = document.getElementById('wfTemplateSelect');
+    if (select) {
+      select.innerHTML = (tData.templates || []).map(t => `<option value="${t.name}">Template: ${t.name} (${t.category})</option>`).join('');
+    }
+  }
+
+  if (segRes.ok) {
+    const sData = await segRes.json();
+    const segSelect = document.getElementById('wfSegmentSelect');
+    if (segSelect) {
+      segSelect.innerHTML = (sData.segments || []).map(s => `<option value="${s._id}">${s.name} (${s.calculatedCount} contacts)</option>`).join('');
+    }
+  }
+}
+
+function togglePreflightAudienceSource() {
+  const source = document.getElementById('wfAudienceSource').value;
+  document.getElementById('wfCsvUploadGroup').style.display = source === 'CSV' ? 'block' : 'none';
+  document.getElementById('wfSegmentSelectGroup').style.display = source === 'CRM_SEGMENT' ? 'block' : 'none';
+}
+
+function resetPreflightModal() {
+  document.getElementById('preflightStep1').style.display = 'block';
+  document.getElementById('preflightStep2').style.display = 'none';
+  currentPreflightResult = null;
+  currentPreflightPayload = null;
+}
+
+async function runWhatsAppPreflightAudit() {
+  const campaignName = document.getElementById('wfCampaignName').value;
+  const templateName = document.getElementById('wfTemplateSelect').value;
+  const source = document.getElementById('wfAudienceSource').value;
+
+  if (!campaignName || !templateName) {
+    alert('Please enter campaign name and select template');
+    return;
+  }
+
+  let contacts = [];
+  if (source === 'CSV') {
+    const text = document.getElementById('wfCsvTextInput').value;
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    if (lines.length === 0) {
+      alert('Please paste CSV rows');
+      return;
+    }
+    // Parse CSV lines
+    const startIdx = lines[0].toLowerCase().includes('mobile') || lines[0].toLowerCase().includes('phone') ? 1 : 0;
+    for (let i = startIdx; i < lines.length; i++) {
+      const parts = lines[i].split(',').map(p => p.trim());
+      if (parts[0]) {
+        contacts.push({ phone: parts[0], name: parts[1] || '', email: parts[2] || '' });
+      }
+    }
+  } else {
+    const segId = document.getElementById('wfSegmentSelect').value;
+    if (!segId) {
+      alert('Please select a CRM segment');
+      return;
+    }
+    const segRes = await fetch(`/api/social-marketing/segments/${segId}/contacts`, { headers: getAuthHeaders() });
+    if (segRes.ok) {
+      const sData = await segRes.json();
+      contacts = sData.contacts || [];
+    }
+  }
+
+  try {
+    const res = await fetch('/api/whatsapp/campaigns/preflight', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ contacts, templateName })
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.error || 'Preflight analysis failed');
+      return;
+    }
+
+    const pf = data.preflight;
+    currentPreflightResult = pf;
+    currentPreflightPayload = { name: campaignName, templateName, contacts: pf.validRecipients };
+
+    document.getElementById('pfTotalRecords').innerText = pf.summary.totalRecords.toLocaleString();
+    document.getElementById('pfValidNumbers').innerText = pf.summary.validNumbers.toLocaleString();
+    document.getElementById('pfInvalidNumbers').innerText = pf.summary.invalidNumbers.toLocaleString();
+    document.getElementById('pfDuplicates').innerText = pf.summary.duplicateCount.toLocaleString();
+    document.getElementById('pfMissingNames').innerText = pf.summary.missingNameCount.toLocaleString();
+    document.getElementById('pfOptedOut').innerText = pf.summary.optedOutCount.toLocaleString();
+    document.getElementById('pfEstimatedMessages').innerText = pf.summary.estimatedMessages.toLocaleString();
+    document.getElementById('pfEstimatedCost').innerText = `₹${pf.financials.estimatedCost.toFixed(2)}`;
+    document.getElementById('pfWalletBalance').innerText = `₹${pf.financials.walletBalance.toFixed(2)}`;
+
+    const alertEl = document.getElementById('pfWalletAlert');
+    const launchBtn = document.getElementById('pfLaunchButton');
+
+    if (pf.financials.isWalletSufficient) {
+      alertEl.innerHTML = `<div style="color: #10b981; font-size: 0.85rem; font-weight: 600;"><i class="fa-solid fa-circle-check"></i> Wallet balance is sufficient for this broadcast.</div>`;
+      launchBtn.disabled = false;
+      launchBtn.style.opacity = '1';
+    } else {
+      alertEl.innerHTML = `<div style="color: #ef4444; font-size: 0.85rem; font-weight: 600;"><i class="fa-solid fa-circle-exclamation"></i> Insufficient Wallet Balance. Deficit: ₹${pf.financials.balanceDeficit.toFixed(2)}. Please recharge wallet before launching.</div>`;
+      launchBtn.disabled = true;
+      launchBtn.style.opacity = '0.5';
+    }
+
+    document.getElementById('preflightStep1').style.display = 'none';
+    document.getElementById('preflightStep2').style.display = 'block';
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+function downloadInvalidCsvRows() {
+  if (!currentPreflightResult || !currentPreflightResult.invalidRows || currentPreflightResult.invalidRows.length === 0) {
+    alert('No invalid rows detected in preflight!');
+    return;
+  }
+
+  let csvContent = "data:text/csv;charset=utf-8,Row,Phone,Name,RejectionReason\n";
+  currentPreflightResult.invalidRows.forEach(r => {
+    csvContent += `${r.rowIndex},"${r.rawPhone}","${r.name}","${r.reason}"\n`;
+  });
+
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", "whatsapp_campaign_preflight_errors.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+async function submitPreflightLaunch() {
+  if (!currentPreflightPayload) return;
+
+  try {
+    const res = await fetch('/api/whatsapp/campaigns', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        name: currentPreflightPayload.name,
+        templateName: currentPreflightPayload.templateName,
+        audienceType: 'CSV_UPLOAD',
+        csvContacts: currentPreflightPayload.contacts
+      })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      alert('Campaign created and queued for broadcast!');
+      closeModal('whatsappPreflightModal');
+      switchTab('whatsapp');
+    } else {
+      alert(data.message || data.error || 'Failed to launch campaign');
+    }
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+// -------------------------------------------------------------
+// 3. CLOSED-LOOP CRM AUDIENCE SEGMENTATION
+// -------------------------------------------------------------
+async function loadCrmSegments() {
+  try {
+    const res = await fetch('/api/social-marketing/segments', { headers: getAuthHeaders() });
+    if (!res.ok) return;
+
+    const data = await res.json();
+    const tbody = document.getElementById('segmentsTableBody');
+    if (!tbody) return;
+
+    if (!data.segments || data.segments.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">No dynamic customer cohorts created yet.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.segments.map(s => `
+      <tr>
+        <td><strong>${s.name}</strong></td>
+        <td><span class="status-pill status-draft">${s.targetEntity}</span></td>
+        <td>${s.filterCriteria?.city?.join(', ') || 'All Locations'}</td>
+        <td><strong style="color: #10b981;">${s.calculatedCount} Contacts</strong></td>
+        <td>${new Date(s.createdAt).toLocaleDateString()}</td>
+        <td>
+          <button class="btn btn-whatsapp btn-sm" onclick="openWhatsAppPreflightWizard()"><i class="fa-brands fa-whatsapp"></i> Broadcast</button>
+        </td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    console.error('Error loading CRM segments:', err);
+  }
+}
+
+function openCreateSegmentModal() {
+  openModal('createSegmentModal');
+}
+
+async function submitCreateSegment() {
+  const name = document.getElementById('segName').value;
+  const targetEntity = document.getElementById('segEntity').value;
+  const citiesText = document.getElementById('segCities').value;
+  const cities = citiesText.split(',').map(c => c.trim()).filter(Boolean);
+
+  if (!name) {
+    alert('Please enter cohort name');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/social-marketing/segments', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        name,
+        targetEntity,
+        filterCriteria: { city: cities }
+      })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      alert(`Cohort created with ${data.totalCount} eligible CRM contacts!`);
+      closeModal('createSegmentModal');
+      loadCrmSegments();
+    } else {
+      alert(data.error || 'Failed to create segment');
+    }
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+// -------------------------------------------------------------
+// 4. META ADS PREFLIGHT WIZARD
+// -------------------------------------------------------------
+function openMetaAdsWizard() {
+  openModal('metaAdsWizardModal');
+}
+
+async function runMetaAdsPreflight() {
+  const name = document.getElementById('metaAdName').value;
+  const objective = document.getElementById('metaAdObjective').value;
+  const dailyBudget = Number(document.getElementById('metaAdDailyBudget').value);
+  const durationDays = Number(document.getElementById('metaAdDurationDays').value);
+
+  if (!name) {
+    alert('Please enter campaign name');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/social-marketing/ads/preflight', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ name, objective, budgetAmount: dailyBudget, durationDays })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      const pf = data.preflight;
+      document.getElementById('metaPfTotalSpend').innerText = `₹${pf.budget.totalBudget.toLocaleString()}`;
+      document.getElementById('metaPfDailyReach').innerText = pf.estimates.dailyReachRange;
+      document.getElementById('metaPfLeads').innerText = pf.estimates.estimatedLeadsRange;
+      document.getElementById('metaAdsPreflightResult').style.display = 'block';
+    } else {
+      alert(data.error || 'Meta Ads preflight failed');
+    }
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function submitLaunchMetaAd() {
+  const name = document.getElementById('metaAdName').value;
+  const objective = document.getElementById('metaAdObjective').value;
+  const budgetAmount = Number(document.getElementById('metaAdDailyBudget').value);
+
+  if (!name) {
+    alert('Please enter campaign name');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/social-marketing/ads/campaigns', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ name, objective, budgetAmount, budgetType: 'DAILY' })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      alert(data.message || 'Meta Ad Campaign submitted successfully!');
+      closeModal('metaAdsWizardModal');
+      switchTab('meta-ads');
+    } else {
+      alert(data.error || 'Failed to launch Meta Ad');
+    }
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+// -------------------------------------------------------------
+// 5. INTEGRATION DIAGNOSTICS
+// -------------------------------------------------------------
+async function openDiagnosticsModal() {
+  openModal('integrationDiagnosticsModal');
+  const outEl = document.getElementById('diagnosticsOutput');
+  outEl.innerHTML = '<p><i class="fa-solid fa-spinner fa-spin"></i> Running diagnostic health checks against Meta Graph API...</p>';
+
+  try {
+    const res = await fetch('/api/social-marketing/diagnostics/health', { headers: getAuthHeaders() });
+    const data = await res.json();
+
+    if (res.ok) {
+      const d = data.diagnostics;
+      outEl.innerHTML = `
+        <div style="margin-bottom: 1.25rem; background: #0f172a; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+          <h4 style="color: #60a5fa; margin-bottom: 0.5rem;"><i class="fa-brands fa-meta"></i> Meta Business Graph API</h4>
+          <div><strong>Token Health:</strong> <span class="status-pill status-published">${d.meta.tokenHealth}</span></div>
+          <div style="margin-top: 0.35rem;"><strong>Verified Permissions:</strong> ${d.meta.permissionsVerified.join(', ') || 'None'}</div>
+        </div>
+
+        <div style="background: #0f172a; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+          <h4 style="color: #25d366; margin-bottom: 0.5rem;"><i class="fa-brands fa-whatsapp"></i> WhatsApp Cloud API</h4>
+          <div><strong>Phone Status:</strong> <span class="status-pill status-published">${d.whatsApp.phoneStatus}</span></div>
+          <div style="margin-top: 0.35rem;"><strong>WABA Quality Rating:</strong> ${d.whatsApp.wabaStatus}</div>
+          <div style="margin-top: 0.35rem;"><strong>Webhook SHA-256 Signature Verification:</strong> <span style="color: #10b981;">ACTIVE</span></div>
+        </div>
+      `;
+    } else {
+      outEl.innerText = data.error || 'Diagnostics check failed';
+    }
+  } catch (err) {
+    outEl.innerText = err.message;
+  }
+}
+
+// -------------------------------------------------------------
+// HELPER TAB LOADERS
 // -------------------------------------------------------------
 async function loadWhatsAppHub() {
   try {
@@ -184,520 +540,182 @@ async function loadWhatsAppHub() {
       const balEl = document.getElementById('waWalletBalance');
       if (balEl) balEl.innerText = `₹${(accData.walletBalance || 0).toFixed(2)}`;
     }
-
     if (contactsRes.ok) {
       const cData = await contactsRes.json();
       const cEl = document.getElementById('waContactsCount');
       if (cEl) cEl.innerText = (cData.total || cData.contacts?.length || 0).toLocaleString();
     }
-
     if (tmplRes.ok) {
       const tData = await tmplRes.json();
       const tEl = document.getElementById('waTemplatesCount');
       if (tEl) tEl.innerText = (tData.templates?.length || 0).toLocaleString();
     }
-
     if (campRes.ok) {
       const campData = await campRes.json();
       const tbody = document.getElementById('waCampaignsTableBody');
-      if (tbody) {
-        if (campData.campaigns && campData.campaigns.length > 0) {
-          tbody.innerHTML = campData.campaigns.map(c => `
-            <tr>
-              <td><strong>${c.name}</strong></td>
-              <td>${c.templateName || 'Template'}</td>
-              <td>${c.stats?.totalRecipients || 0}</td>
-              <td>${c.stats?.sentCount || 0} / ${c.stats?.deliveredCount || 0} / ${c.stats?.readCount || 0}</td>
-              <td>₹${(c.estimatedCost || 0).toFixed(2)}</td>
-              <td><span class="status-pill status-${c.status.toLowerCase()}">${c.status}</span></td>
-              <td>
-                <button class="btn btn-secondary btn-sm" onclick="location.href='/whatsapp-campaigns.html'">View</button>
-              </td>
-            </tr>
-          `).join('');
-        }
+      if (tbody && campData.campaigns) {
+        tbody.innerHTML = campData.campaigns.map(c => `
+          <tr>
+            <td><strong>${c.name}</strong></td>
+            <td>${c.templateName || 'Template'}</td>
+            <td>${c.stats?.totalRecipients || 0}</td>
+            <td>${c.stats?.sentCount || 0} / ${c.stats?.deliveredCount || 0} / ${c.stats?.readCount || 0}</td>
+            <td>₹${(c.estimatedCost || 0).toFixed(2)}</td>
+            <td><span class="status-pill status-${c.status.toLowerCase()}">${c.status}</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="location.href='/whatsapp-campaigns.html'">View</button></td>
+          </tr>
+        `).join('');
       }
     }
   } catch (err) {
-    console.error('Error loading WhatsApp hub:', err);
+    console.error('Error in loadWhatsAppHub:', err);
   }
 }
 
-// -------------------------------------------------------------
-// 3. SOCIAL POSTS & REELS
-// -------------------------------------------------------------
 async function loadSocialPosts() {
   try {
     const res = await fetch('/api/social-marketing/posts', { headers: getAuthHeaders() });
     if (!res.ok) return;
-
     const data = await res.json();
     const tbody = document.getElementById('socialPostsTableBody');
-    if (!tbody) return;
-
-    if (!data.posts || data.posts.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No posts or reels created yet. Click "Create Post / Reel" to begin.</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = data.posts.map(p => `
-      <tr>
-        <td>
-          <div style="display: flex; align-items: center; gap: 0.75rem;">
-            ${p.mediaUrls?.[0]?.url ? `<img src="${p.mediaUrls[0].url}" style="width: 44px; height: 44px; border-radius: 6px; object-fit: cover;">` : `<div style="width: 44px; height: 44px; background: #334155; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><i class="fa-regular fa-image"></i></div>`}
-            <div>
-              <strong>${p.title}</strong>
-              <p style="font-size: 0.75rem; color: var(--text-muted); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.caption}</p>
-            </div>
-          </div>
-        </td>
-        <td><span class="status-pill status-draft">${p.postType}</span></td>
-        <td>${p.platforms.map(plat => plat === 'INSTAGRAM' ? '<i class="fa-brands fa-instagram" style="color: #ec4899;"></i>' : '<i class="fa-brands fa-facebook" style="color: #3b82f6;"></i>').join(' ')}</td>
-        <td>${p.publishedAt ? new Date(p.publishedAt).toLocaleDateString() : (p.scheduledAt ? `Scheduled: ${new Date(p.scheduledAt).toLocaleDateString()}` : 'Draft')}</td>
-        <td>❤️ ${p.metrics?.likes || 0} • 💬 ${p.metrics?.comments || 0}</td>
-        <td><span class="status-pill status-${p.status.toLowerCase()}">${p.status}</span></td>
-        <td>
-          <div style="display: flex; gap: 0.4rem;">
-            ${p.status === 'DRAFT' || p.status === 'APPROVED' ? `<button class="btn btn-primary btn-sm" onclick="publishSocialPost('${p._id}')">Publish</button>` : ''}
-            ${p.status === 'PUBLISHED' ? `<button class="btn btn-meta btn-sm" onclick="boostSocialPost('${p._id}')"><i class="fa-solid fa-rocket"></i> Boost</button>` : ''}
-          </div>
-        </td>
-      </tr>
-    `).join('');
-  } catch (err) {
-    console.error('Error loading social posts:', err);
-  }
-}
-
-function openNewPostModal() {
-  openModal('createPostModal');
-}
-
-async function submitCreatePost() {
-  const postType = document.getElementById('postTypeSelect').value;
-  const caption = document.getElementById('postCaptionInput').value;
-  const mediaUrl = document.getElementById('postMediaUrlInput').value;
-  const scheduledAt = document.getElementById('postScheduleInput').value;
-
-  const platforms = [];
-  if (document.getElementById('postPlatformInstagram').checked) platforms.push('INSTAGRAM');
-  if (document.getElementById('postPlatformFacebook').checked) platforms.push('FACEBOOK');
-
-  if (!caption) {
-    alert('Please enter a caption');
-    return;
-  }
-
-  try {
-    const res = await fetch('/api/social-marketing/posts', {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({
-        title: `${postType} - ${new Date().toLocaleDateString()}`,
-        postType,
-        platforms,
-        caption,
-        mediaUrls: mediaUrl ? [{ url: mediaUrl, mediaType: postType === 'REEL' ? 'VIDEO' : 'IMAGE' }] : [],
-        scheduledAt: scheduledAt || null
-      })
-    });
-
-    const data = await res.json();
-    if (res.ok) {
-      alert(data.message || 'Post saved successfully!');
-      closeModal('createPostModal');
-      loadSocialPosts();
-    } else {
-      alert(data.error || 'Failed to create post');
+    if (tbody && data.posts) {
+      tbody.innerHTML = data.posts.map(p => `
+        <tr>
+          <td><strong>${p.title}</strong><br><small style="color: var(--text-muted);">${p.caption?.substring(0, 40)}...</small></td>
+          <td><span class="status-pill status-draft">${p.postType}</span></td>
+          <td>${p.platforms.join(', ')}</td>
+          <td>${p.publishedAt ? new Date(p.publishedAt).toLocaleDateString() : 'Draft'}</td>
+          <td>❤️ ${p.metrics?.likes || 0}</td>
+          <td><span class="status-pill status-${p.status.toLowerCase()}">${p.status}</span></td>
+          <td><button class="btn btn-primary btn-sm" onclick="publishSocialPost('${p._id}')">Publish</button></td>
+        </tr>
+      `).join('');
     }
   } catch (err) {
-    alert(err.message);
+    console.error(err);
   }
 }
 
-async function publishSocialPost(postId) {
-  if (!confirm('Are you sure you want to publish this post to connected social channels now?')) return;
-  try {
-    const res = await fetch(`/api/social-marketing/posts/${postId}/publish`, {
-      method: 'POST',
-      headers: getAuthHeaders()
-    });
-    const data = await res.json();
-    if (res.ok) {
-      alert('Post published successfully!');
-      loadSocialPosts();
-    } else {
-      alert(data.error || 'Failed to publish post');
-    }
-  } catch (err) {
-    alert(err.message);
-  }
-}
-
-async function boostSocialPost(postId) {
-  const budget = prompt('Enter daily budget in INR for boosting this post:', '500');
-  if (!budget) return;
-
-  try {
-    const res = await fetch(`/api/social-marketing/posts/${postId}/boost`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ dailyBudget: Number(budget), durationDays: 7 })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      alert(data.message || 'Boost campaign created!');
-      loadSocialPosts();
-    } else {
-      alert(data.error || 'Failed to boost post');
-    }
-  } catch (err) {
-    alert(err.message);
-  }
-}
-
-// -------------------------------------------------------------
-// 4. META ADS MANAGER
-// -------------------------------------------------------------
 async function loadMetaAds() {
   try {
     const res = await fetch('/api/social-marketing/ads/campaigns', { headers: getAuthHeaders() });
     if (!res.ok) return;
-
     const data = await res.json();
     const tbody = document.getElementById('metaAdsTableBody');
-    if (!tbody) return;
-
-    if (!data.campaigns || data.campaigns.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No paid Meta campaigns active.</td></tr>`;
-      return;
+    if (tbody && data.campaigns) {
+      tbody.innerHTML = data.campaigns.map(ad => `
+        <tr>
+          <td><strong>${ad.name}</strong></td>
+          <td>${ad.objective.replace('OUTCOME_', '')}</td>
+          <td>₹${ad.budgetAmount}/day</td>
+          <td>₹${ad.insights?.spend || 0} / ${ad.insights?.impressions || 0}</td>
+          <td><strong>${ad.insights?.leads || 0}</strong></td>
+          <td><span class="status-pill status-${ad.status.toLowerCase()}">${ad.status}</span></td>
+          <td><button class="btn btn-secondary btn-sm">View</button></td>
+        </tr>
+      `).join('');
     }
-
-    tbody.innerHTML = data.campaigns.map(ad => `
-      <tr>
-        <td><strong>${ad.name}</strong></td>
-        <td>${ad.objective.replace('OUTCOME_', '')}</td>
-        <td>₹${ad.budgetAmount}/day</td>
-        <td>₹${ad.insights?.spend || 0} / ${ad.insights?.impressions || 0} / ${ad.insights?.clicks || 0}</td>
-        <td><strong>${ad.insights?.leads || 0}</strong></td>
-        <td><span class="status-pill status-${ad.status.toLowerCase()}">${ad.status}</span></td>
-        <td><button class="btn btn-secondary btn-sm">View</button></td>
-      </tr>
-    `).join('');
   } catch (err) {
-    console.error('Error loading Meta ads:', err);
+    console.error(err);
   }
 }
 
-// -------------------------------------------------------------
-// 5. CONTENT STUDIO
-// -------------------------------------------------------------
 async function loadContentAssets() {
   try {
-    const search = document.getElementById('assetSearchInput')?.value || '';
-    const res = await fetch(`/api/social-marketing/content/assets?search=${encodeURIComponent(search)}`, { headers: getAuthHeaders() });
+    const res = await fetch('/api/social-marketing/content/assets', { headers: getAuthHeaders() });
     if (!res.ok) return;
-
     const data = await res.json();
     const grid = document.getElementById('contentAssetsGrid');
-    if (!grid) return;
-
-    if (!data.assets || data.assets.length === 0) {
-      grid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; padding: 2rem;">No assets uploaded yet.</p>`;
-      return;
-    }
-
-    grid.innerHTML = data.assets.map(a => `
-      <div class="asset-card">
-        <img src="${a.thumbnailUrl || a.url}" class="asset-thumb" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300'">
-        <div class="asset-info">
-          <div class="asset-title">${a.title}</div>
-          <span style="font-size: 0.7rem; color: var(--text-muted);">${a.category || 'General'}</span>
+    if (grid && data.assets) {
+      grid.innerHTML = data.assets.map(a => `
+        <div style="background: #0f172a; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden;">
+          <img src="${a.thumbnailUrl || a.url}" style="width: 100%; height: 120px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300'">
+          <div style="padding: 0.5rem; font-size: 0.8rem; font-weight: 600;">${a.title}</div>
         </div>
-      </div>
-    `).join('');
+      `).join('');
+    }
   } catch (err) {
-    console.error('Error loading content assets:', err);
+    console.error(err);
   }
 }
 
-// -------------------------------------------------------------
-// 6. MARKETING CALENDAR & FESTIVAL PLANNER
-// -------------------------------------------------------------
 async function loadMarketingCalendar() {
   try {
     const [eventsRes, holidaysRes] = await Promise.all([
       fetch('/api/social-marketing/calendar/events', { headers: getAuthHeaders() }),
       fetch('/api/social-marketing/calendar/holidays', { headers: getAuthHeaders() })
     ]);
-
     if (eventsRes.ok) {
       const data = await eventsRes.json();
-      renderCalendarDays(data.events || []);
-    }
-
-    if (holidaysRes.ok) {
-      const hData = await holidaysRes.json();
-      const select = document.getElementById('holidaySelectDropdown');
-      if (select) {
-        select.innerHTML = hData.holidays.map(h => `
-          <option value="${h._id}">🪔 ${h.name} (${h.category})</option>
+      const container = document.getElementById('calendarGridContainer');
+      if (container) {
+        container.innerHTML = (data.events || []).slice(0, 14).map(e => `
+          <div style="background: #0f172a; border: 1px solid var(--border-color); border-radius: 8px; padding: 0.5rem; font-size: 0.75rem;">
+            <strong>${e.title}</strong>
+          </div>
         `).join('');
       }
     }
   } catch (err) {
-    console.error('Error loading calendar:', err);
+    console.error(err);
   }
 }
 
-function renderCalendarDays(events) {
-  const container = document.getElementById('calendarGridContainer');
-  if (!container) return;
-
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  let html = daysOfWeek.map(d => `<div class="calendar-day-header">${d}</div>`).join('');
-
-  // Render 35 day slots for month
-  const now = new Date();
-  for (let i = 1; i <= 31; i++) {
-    const dayEvents = events.filter(e => {
-      const d = new Date(e.date);
-      return d.getDate() === i;
-    });
-
-    html += `
-      <div class="calendar-day ${i === now.getDate() ? 'today' : ''}">
-        <div class="day-number">${i}</div>
-        ${dayEvents.map(e => `
-          <span class="calendar-badge ${e.type === 'HOLIDAY' ? 'badge-holiday' : (e.type === 'REEL' || e.type === 'POST' ? 'badge-post' : (e.type === 'META_AD' ? 'badge-ad' : 'badge-wa'))}" title="${e.title}">
-            ${e.title}
-          </span>
-        `).join('')}
-      </div>
-    `;
-  }
-  container.innerHTML = html;
-}
-
-function openHolidayCampaignModal() {
-  openModal('holidayCampaignModal');
-}
-
-async function submitGenerateHolidayCampaign() {
-  const holidayId = document.getElementById('holidaySelectDropdown').value;
-  const totalBudget = document.getElementById('holidayCampaignBudget').value;
-
-  if (!holidayId) {
-    alert('Please select a holiday');
-    return;
-  }
-
-  try {
-    const res = await fetch('/api/social-marketing/calendar/generate-campaign', {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ holidayId, totalBudget: Number(totalBudget) })
-    });
-
-    const data = await res.json();
-    if (res.ok) {
-      alert(data.message || 'Omnichannel campaign generated successfully!');
-      closeModal('holidayCampaignModal');
-      loadMarketingCalendar();
-    } else {
-      alert(data.error || 'Failed to generate plan');
-    }
-  } catch (err) {
-    alert(err.message);
-  }
-}
-
-// -------------------------------------------------------------
-// 7. CHARLIE AI MARKETING ASSISTANT
-// -------------------------------------------------------------
 async function generateAiMarketingCopy() {
   const topic = document.getElementById('aiTopic').value;
   const offerDetails = document.getElementById('aiOffer').value;
-  const tone = document.getElementById('aiTone').value;
-  const outputEl = document.getElementById('aiGeneratedOutput');
+  const outEl = document.getElementById('aiGeneratedOutput');
+  if (!topic) return;
 
-  if (!topic) {
-    alert('Please enter a campaign topic');
-    return;
-  }
-
-  outputEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating tailored copy with Charlie AI...';
-
+  outEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating copy with Charlie AI...';
   try {
     const res = await fetch('/api/social-marketing/ai/multi-channel', {
       method: 'POST',
       headers: getAuthHeaders(),
-      body: JSON.stringify({ topic, offerDetails, tone })
+      body: JSON.stringify({ topic, offerDetails })
     });
-
     const data = await res.json();
     if (res.ok) {
-      const v = data.variations;
-      outputEl.innerHTML = `
-        <div style="margin-bottom: 1.25rem;">
-          <strong style="color: #ec4899;"><i class="fa-brands fa-instagram"></i> Instagram Post / Reel:</strong>
-          <p style="margin-top: 0.35rem;">${v.instagramPost.caption}</p>
-        </div>
-        <div style="margin-bottom: 1.25rem;">
-          <strong style="color: #3b82f6;"><i class="fa-brands fa-facebook"></i> Facebook Page Post:</strong>
-          <p style="margin-top: 0.35rem;">${v.facebookPost.caption}</p>
-        </div>
-        <div style="margin-bottom: 1.25rem;">
-          <strong style="color: #25d366;"><i class="fa-brands fa-whatsapp"></i> WhatsApp VIP Broadcast:</strong>
-          <p style="margin-top: 0.35rem;">${v.whatsAppBroadcast.caption}</p>
-        </div>
-        <div>
-          <strong style="color: #f59e0b;"><i class="fa-solid fa-bullseye"></i> Meta Performance Ad Copy:</strong>
-          <p style="margin-top: 0.35rem;">${v.metaAdCopy.caption}</p>
-        </div>
-      `;
-    } else {
-      outputEl.innerText = data.error || 'Failed to generate AI copy';
+      outEl.innerText = data.variations?.instagramPost?.caption || 'Done!';
     }
   } catch (err) {
-    outputEl.innerText = err.message;
+    outEl.innerText = err.message;
   }
 }
 
-// -------------------------------------------------------------
-// 8. APPROVALS QUEUE
-// -------------------------------------------------------------
 async function loadApprovals() {
   try {
     const res = await fetch('/api/social-marketing/approvals/pending', { headers: getAuthHeaders() });
     if (!res.ok) return;
-
     const data = await res.json();
     const tbody = document.getElementById('approvalsTableBody');
-    const badge = document.getElementById('pendingApprovalsBadge');
-
-    if (badge) {
-      if (data.count > 0) {
-        badge.innerText = data.count;
-        badge.style.display = 'inline-block';
-      } else {
-        badge.style.display = 'none';
-      }
+    if (tbody && data.approvals) {
+      tbody.innerHTML = data.approvals.map(a => `
+        <tr>
+          <td><strong>${a.itemTitle}</strong></td>
+          <td>${a.itemType}</td>
+          <td>${a.requestedBy?.name || 'User'}</td>
+          <td>${a.estimatedBudget ? `₹${a.estimatedBudget}` : '-'}</td>
+          <td>${new Date(a.requestedAt).toLocaleDateString()}</td>
+          <td>
+            <button class="btn btn-primary btn-sm" onclick="approveSubmission('${a._id}')">Approve</button>
+          </td>
+        </tr>
+      `).join('');
     }
-
-    if (!tbody) return;
-
-    if (!data.approvals || data.approvals.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">No pending approvals in queue.</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = data.approvals.map(a => `
-      <tr>
-        <td><strong>${a.itemTitle}</strong></td>
-        <td><span class="status-pill status-pending">${a.itemType}</span></td>
-        <td>${a.requestedBy?.name || 'Executive'} (${a.requestedBy?.role || 'User'})</td>
-        <td>${a.estimatedBudget ? `₹${a.estimatedBudget}` : 'N/A'}</td>
-        <td>${new Date(a.requestedAt).toLocaleDateString()}</td>
-        <td>
-          <button class="btn btn-primary btn-sm" onclick="approveSubmission('${a._id}')">Approve</button>
-          <button class="btn btn-danger btn-sm" onclick="rejectSubmission('${a._id}')">Reject</button>
-        </td>
-      </tr>
-    `).join('');
   } catch (err) {
-    console.error('Error loading approvals:', err);
+    console.error(err);
   }
 }
 
-async function approveSubmission(id) {
-  try {
-    const res = await fetch(`/api/social-marketing/approvals/${id}/approve`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ notes: 'Approved by Manager' })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      alert(data.message || 'Approved successfully!');
-      loadApprovals();
-    } else {
-      alert(data.error || 'Failed to approve');
-    }
-  } catch (err) {
-    alert(err.message);
-  }
-}
-
-async function rejectSubmission(id) {
-  const reason = prompt('Enter reason for rejection:');
-  if (!reason) return;
-
-  try {
-    const res = await fetch(`/api/social-marketing/approvals/${id}/reject`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ reason })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      alert(data.message || 'Rejected');
-      loadApprovals();
-    } else {
-      alert(data.error || 'Failed to reject');
-    }
-  } catch (err) {
-    alert(err.message);
-  }
-}
-
-// -------------------------------------------------------------
-// 9. META CONNECTION
-// -------------------------------------------------------------
-async function loadMetaSettings() {
-  try {
-    const res = await fetch('/api/social-marketing/meta/assets', { headers: getAuthHeaders() });
-    if (!res.ok) return;
-    const data = await res.json();
-    // Pre-populate connection UI if already connected
-  } catch (err) {
-    console.error('Error loading meta settings:', err);
-  }
-}
-
+async function loadMetaSettings() {}
 async function connectMetaDirectToken() {
   const token = document.getElementById('metaDirectTokenInput').value;
-  if (!token) {
-    alert('Please enter a Meta Access Token');
-    return;
-  }
-
-  try {
-    const res = await fetch('/api/social-marketing/meta/connect', {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ accessToken: token })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      alert('Meta Business Account connected successfully!');
-      switchTab('command-center');
-    } else {
-      alert(data.error || 'Failed to connect Meta account');
-    }
-  } catch (err) {
-    alert(err.message);
-  }
-}
-
-async function startMetaOAuth() {
-  try {
-    const res = await fetch('/api/social-marketing/meta/auth-url', { headers: getAuthHeaders() });
-    const data = await res.json();
-    if (data.authUrl) {
-      window.location.href = data.authUrl;
-    }
-  } catch (err) {
-    alert(err.message);
-  }
+  if (!token) return;
+  const res = await fetch('/api/social-marketing/meta/connect', {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ accessToken: token })
+  });
+  if (res.ok) alert('Meta connected!');
 }

@@ -115,6 +115,10 @@ async function main() {
     console.log('🧪 Running Omnichannel Marketing Command Center tests...');
     await runCommand('node', ['scratch/test-omnichannel-marketing-suite.js'], process.env);
 
+    // 20. Run Campaign Preflight, Spend Limits & Closed-Loop CRM Attribution Tests
+    console.log('🧪 Running Campaign Preflight & Closed-Loop CRM Attribution tests...');
+    await runCommand('node', ['scratch/test-preflight-closed-loop-suite.js'], process.env);
+
     console.log('🎉 All test suites passed successfully!');
     
     // Clean up

@@ -535,6 +535,24 @@ router.get('/campaigns/:id', requirePermission('marketing.campaign.view'), async
 });
 
 /**
+ * Campaign Preflight Engine (Safety Audit & Cost Prediction)
+ */
+router.post('/campaigns/preflight', requirePermission('marketing.campaign.create'), async (req, res) => {
+  try {
+    const { contacts = [], templateName, mediaUrl } = req.body;
+    const { analyzeWhatsAppCampaignPreflight } = require('../services/campaignPreflightService');
+    const preflight = await analyzeWhatsAppCampaignPreflight(req.companyId, {
+      contacts,
+      templateName,
+      mediaUrl
+    });
+    res.json({ success: true, preflight });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+/**
  * Create WhatsApp Campaign (11-Step Builder API)
  */
 router.post('/campaigns', requirePermission('marketing.campaign.create'), async (req, res) => {
