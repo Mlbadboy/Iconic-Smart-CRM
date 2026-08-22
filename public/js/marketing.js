@@ -1,543 +1,703 @@
-/**
- * Charlie CRM — WhatsApp Marketing Hub Client Controller
- */
+// Charlie's Marketing Command Center Controller
 
-const API_BASE = '/api/whatsapp';
-let currentToken = localStorage.getItem('authToken');
-let selectedCsvFile = null;
-let socket = null;
+const TOKEN_KEY = 'token';
+let currentTenantConfig = null;
 
-// Auth check
-if (!currentToken) {
+function getToken() {
+  return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
+}
+
+function getAuthHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${getToken()}`
+  };
+}
+
+// Tab Switching
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.remove('active'));
+
+  const targetTab = document.getElementById(`tab-${tabId}`);
+  const targetNav = document.getElementById(`nav-${tabId}`);
+
+  if (targetTab) targetTab.classList.add('active');
+  if (targetNav) targetNav.classList.add('active');
+
+  // Trigger tab-specific loaders
+  if (tabId === 'whatsapp') loadWhatsAppHub();
+  if (tabId === 'social') loadSocialPosts();
+  if (tabId === 'meta-ads') loadMetaAds();
+  if (tabId === 'content-studio') loadContentAssets();
+  if (tabId === 'calendar') loadMarketingCalendar();
+  if (tabId === 'approvals') loadApprovals();
+  if (tabId === 'meta-settings') loadMetaSettings();
+}
+
+function openModal(modalId) {
+  const m = document.getElementById(modalId);
+  if (m) m.classList.add('active');
+}
+
+function closeModal(modalId) {
+  const m = document.getElementById(modalId);
+  if (m) m.classList.remove('active');
+}
+
+// -------------------------------------------------------------
+// INITIALIZATION & COMMERCIAL FEATURE GATE ENFORCEMENT
+// -------------------------------------------------------------
+document.addEventListener('DOMContentLoaded', async () => {
+  const token = getToken();
+  if (!token) {
     window.location.href = '/login.html';
-}
+    return;
+  }
 
-function getAuthHeaders(extra = {}) {
-    return {
-        'Authorization': `Bearer ${currentToken}`,
-        ...extra
-    };
-}
-
-// Initialize on load
-document.addEventListener('DOMContentLoaded', () => {
-    initSocket();
-    loadDashboardKPIs();
-    loadCampaigns();
-    loadWabaAccount();
+  await loadCompanyProfileAndEntitlements();
+  loadCommandCenterOverview();
 });
 
-function initSocket() {
-    try {
-        socket = io({ auth: { token: currentToken } });
-        socket.on('campaign:progress', (data) => {
-            updateLiveCampaignRow(data);
-        });
-    } catch (e) {
-        console.warn('Socket.IO connection notice:', e.message);
+async function loadCompanyProfileAndEntitlements() {
+  try {
+    const res = await fetch('/api/tenant/me', { headers: getAuthHeaders() });
+    if (!res.ok) {
+      if (res.status === 401) window.location.href = '/login.html';
+      return;
     }
-}
 
-function switchTab(tabId) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    const data = await res.json();
+    const company = data.company || {};
+    const features = company.features || {};
+    const marketingConfig = features.marketing_config || {};
 
-    const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick')?.includes(tabId));
-    if (activeBtn) activeBtn.classList.add('active');
+    const badge = document.getElementById('companyBadge');
+    if (badge) badge.innerHTML = `<i class="fa-solid fa-building"></i> ${company.name || "Charlie's Primary"}`;
 
-    const pane = document.getElementById(`tab-${tabId}`);
-    if (pane) pane.classList.add('active');
-
-    if (tabId === 'overview') loadCampaigns();
-    if (tabId === 'contacts') loadContacts();
-    if (tabId === 'templates') loadTemplates();
-    if (tabId === 'media') loadMedia();
-    if (tabId === 'waba') loadWabaAccount();
-    if (tabId === 'inbox') loadInbox();
-    if (tabId === 'wallet') loadWallet();
-}
-
-async function loadDashboardKPIs() {
-    try {
-        const [analyticsRes, walletRes] = await Promise.all([
-            fetch(`${API_BASE}/analytics/overview`, { headers: getAuthHeaders() }),
-            fetch(`${API_BASE}/wallet`, { headers: getAuthHeaders() })
-        ]);
-
-        if (analyticsRes.ok) {
-            const data = await analyticsRes.json();
-            document.getElementById('kpiCampaigns').textContent = data.totalCampaigns || 0;
-            document.getElementById('kpiSent').textContent = Number(data.sentCount || 0).toLocaleString();
-            document.getElementById('kpiDeliveryRate').textContent = `${data.rates?.deliveryRate || 0}%`;
-            document.getElementById('kpiReadRate').textContent = `${data.rates?.readRate || 0}%`;
-        }
-
-        if (walletRes.ok) {
-            const wData = await walletRes.json();
-            document.getElementById('kpiWallet').textContent = `₹${Number(wData.balance || 0).toFixed(2)}`;
-            if (document.getElementById('rateMarketing')) {
-                document.getElementById('rateMarketing').textContent = `₹${wData.rateCard?.MARKETING || 0.99} / msg`;
-            }
-            if (document.getElementById('rateUtility')) {
-                document.getElementById('rateUtility').textContent = `₹${wData.rateCard?.UTILITY || 0.40} / msg`;
-            }
-        }
-    } catch (err) {
-        console.error('KPI load error:', err);
+    // Dynamically enforce commercial feature visibility on sidebar navigation
+    if (features.marketing === false) {
+      alert('Marketing Platform is currently disabled by Super Admin for this company.');
+      window.location.href = '/dashboard.html';
+      return;
     }
+
+    // Hide tabs if commercially disabled by Super Admin
+    if (marketingConfig.whatsapp === false) hideNav('nav-whatsapp');
+    if (marketingConfig.social === false) hideNav('nav-social');
+    if (marketingConfig.meta_ads === false) hideNav('nav-meta-ads');
+    if (marketingConfig.content_studio === false) hideNav('nav-content-studio');
+    if (marketingConfig.calendar === false) hideNav('nav-calendar');
+    if (marketingConfig.ai_marketing === false) hideNav('nav-ai');
+    if (marketingConfig.approval_workflow === false) hideNav('nav-approvals');
+
+    currentTenantConfig = marketingConfig;
+  } catch (err) {
+    console.error('Error loading company entitlements:', err);
+  }
 }
 
-async function loadCampaigns() {
-    const tbody = document.getElementById('campaignsTableBody');
-    try {
-        const res = await fetch(`${API_BASE}/campaigns`, { headers: getAuthHeaders() });
-        const data = await res.json();
-
-        if (!data.success || !data.data.length) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#94a3b8; padding:30px;">No campaigns yet. Click "Create Campaign" to launch your first WhatsApp broadcast!</td></tr>`;
-            return;
-        }
-
-        tbody.innerHTML = data.data.map(c => {
-            const stats = c.stats || {};
-            const total = stats.eligibleCount || stats.totalRecipients || 1;
-            const sent = (stats.sentCount || 0) + (stats.failedCount || 0);
-            const percent = Math.min(100, Math.round((sent / total) * 100));
-
-            let statusBadge = `<span class="badge badge-info">${c.status}</span>`;
-            if (c.status === 'PROCESSING') statusBadge = `<span class="badge badge-warning"><i class="fa-solid fa-spinner fa-spin"></i> SENDING (${percent}%)</span>`;
-            if (c.status === 'COMPLETED') statusBadge = `<span class="badge badge-success"><i class="fa-solid fa-check"></i> COMPLETED</span>`;
-            if (c.status === 'PAUSED') statusBadge = `<span class="badge badge-danger"><i class="fa-solid fa-pause"></i> PAUSED</span>`;
-
-            return `
-                <tr id="campaign-row-${c._id}">
-                    <td><strong>${c.name}</strong><br><small style="color:#64748b;">${new Date(c.createdAt).toLocaleDateString()}</small></td>
-                    <td><code>${c.templateName}</code></td>
-                    <td><b>${stats.eligibleCount || 0}</b></td>
-                    <td style="min-width:140px;">
-                        <div class="progress-bar-container">
-                            <div class="progress-bar-fill" style="width:${percent}%"></div>
-                        </div>
-                        <small style="color:#64748b;">${stats.sentCount || 0} sent • ${stats.deliveredCount || 0} dlvd • ${stats.readCount || 0} read</small>
-                    </td>
-                    <td>${statusBadge}</td>
-                    <td>₹${c.actualCost || c.estimatedCost || 0}</td>
-                    <td>
-                        ${c.status === 'DRAFT' ? `<button class="btn btn-whatsapp btn-sm" onclick="sendCampaign('${c._id}')"><i class="fa-solid fa-paper-plane"></i> Launch</button>` : ''}
-                        ${c.status === 'PROCESSING' ? `<button class="btn btn-outline btn-sm" onclick="pauseCampaign('${c._id}')"><i class="fa-solid fa-pause"></i> Pause</button>` : ''}
-                        ${c.status === 'PAUSED' ? `<button class="btn btn-whatsapp btn-sm" onclick="resumeCampaign('${c._id}')"><i class="fa-solid fa-play"></i> Resume</button>` : ''}
-                    </td>
-                </tr>
-            `;
-        }).join('');
-    } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#ef4444;">Failed to load campaigns: ${err.message}</td></tr>`;
-    }
+function hideNav(navId) {
+  const el = document.getElementById(navId);
+  if (el) el.style.display = 'none';
 }
 
-function updateLiveCampaignRow(data) {
-    const row = document.getElementById(`campaign-row-${data.campaignId}`);
-    if (!row) return;
-    loadCampaigns(); // Refresh rows on socket event
-}
+// -------------------------------------------------------------
+// 1. COMMAND CENTER OVERVIEW
+// -------------------------------------------------------------
+async function loadCommandCenterOverview() {
+  try {
+    const [eventsRes, metaRes] = await Promise.all([
+      fetch('/api/social-marketing/calendar/events', { headers: getAuthHeaders() }),
+      fetch('/api/social-marketing/meta/assets', { headers: getAuthHeaders() })
+    ]);
 
-async function sendCampaign(id) {
-    if (!confirm('Are you sure you want to launch this campaign to all eligible recipients?')) return;
-    try {
-        const res = await fetch(`${API_BASE}/campaigns/${id}/send`, {
-            method: 'POST',
-            headers: getAuthHeaders({ 'Content-Type': 'application/json' })
-        });
-        const data = await res.json();
-        if (res.ok) {
-            alert('🚀 ' + data.message);
-            loadCampaigns();
-            loadDashboardKPIs();
-        } else {
-            alert('❌ Launch failed: ' + (data.message || 'Error'));
-        }
-    } catch (err) {
-        alert('Network error: ' + err.message);
-    }
-}
-
-async function pauseCampaign(id) {
-    try {
-        const res = await fetch(`${API_BASE}/campaigns/${id}/pause`, {
-            method: 'POST',
-            headers: getAuthHeaders({ 'Content-Type': 'application/json' })
-        });
-        if (res.ok) loadCampaigns();
-    } catch (e) {
-        console.error(e);
-    }
-}
-
-async function resumeCampaign(id) {
-    try {
-        const res = await fetch(`${API_BASE}/campaigns/${id}/resume`, {
-            method: 'POST',
-            headers: getAuthHeaders({ 'Content-Type': 'application/json' })
-        });
-        if (res.ok) loadCampaigns();
-    } catch (e) {
-        console.error(e);
-    }
-}
-
-async function loadContacts() {
-    const tbody = document.getElementById('contactsTableBody');
-    const search = document.getElementById('contactSearch')?.value || '';
-    const type = document.getElementById('contactTypeFilter')?.value || '';
-
-    try {
-        const res = await fetch(`${API_BASE}/contacts?search=${encodeURIComponent(search)}&customerType=${type}`, {
-            headers: getAuthHeaders()
-        });
-        const data = await res.json();
-
-        if (!data.data || !data.data.length) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#94a3b8; padding:30px;">No contacts found. Click "Import Contacts CSV" to add records.</td></tr>`;
-            return;
-        }
-
-        tbody.innerHTML = data.data.map(c => `
-            <tr>
-                <td><strong>${c.name}</strong></td>
-                <td><code>${c.normalizedPhone}</code></td>
-                <td>${c.email || '—'}</td>
-                <td>${c.city ? `${c.city}, ${c.state || ''}` : '—'}</td>
-                <td><span class="badge badge-info">${c.customerType}</span></td>
-                <td>${c.whatsappOptIn && !c.whatsappOptOut ? '<span class="badge badge-success"><i class="fa-solid fa-check"></i> OPTED-IN</span>' : '<span class="badge badge-danger">OPTED-OUT</span>'}</td>
-                <td><span class="badge badge-success">${c.status}</span></td>
-            </tr>
-        `).join('');
-    } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#ef4444;">Error loading contacts</td></tr>`;
-    }
-}
-
-let searchTimer = null;
-function debounceLoadContacts() {
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(loadContacts, 300);
-}
-
-async function loadTemplates() {
-    const grid = document.getElementById('templatesGrid');
-    try {
-        const res = await fetch(`${API_BASE}/templates`, { headers: getAuthHeaders() });
-        const data = await res.json();
-
-        if (!data.data || !data.data.length) {
-            grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#94a3b8; padding:40px;">No templates found. Click "Sync from Meta WABA" to fetch approved templates.</div>`;
-            return;
-        }
-
-        grid.innerHTML = data.data.map(t => `
-            <div class="item-card">
-                <div>
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
-                        <h4 style="margin:0; font-size:1rem; color:#0f172a;">${t.name}</h4>
-                        <span class="badge badge-success">${t.status}</span>
-                    </div>
-                    <div style="font-size:0.8rem; color:#64748b; margin-bottom:12px;">Category: <b>${t.category}</b> • Language: <b>${t.language}</b></div>
-                    <div style="background:#f8fafc; padding:12px; border-radius:6px; font-size:0.85rem; border:1px solid #e2e8f0; margin-bottom:12px;">
-                        ${t.bodyText.replace(/\n/g, '<br>')}
-                    </div>
+    if (eventsRes.ok) {
+      const data = await eventsRes.json();
+      const listEl = document.getElementById('activeCampaignsList');
+      if (listEl) {
+        if (data.campaignPlans && data.campaignPlans.length > 0) {
+          listEl.innerHTML = data.campaignPlans.map(p => `
+            <div style="background: #0f172a; border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem; margin-bottom: 0.6rem; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong style="font-size: 0.95rem; color: #fff;">${p.title}</strong>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">
+                  <span><i class="fa-solid fa-flag-checkered"></i> ${p.milestones.length} Milestones</span> • 
+                  <span><i class="fa-solid fa-indian-rupee-sign"></i> Budget: ₹${p.totalBudget || 0}</span>
                 </div>
-                <div style="font-size:0.8rem; color:#64748b;">Variables: ${(t.variables || []).length ? t.variables.map(v => `<code>{{${v.position}}}</code>`).join(' ') : 'None'}</div>
+              </div>
+              <span class="status-pill status-active">${p.status}</span>
             </div>
-        `).join('');
-    } catch (err) {
-        grid.innerHTML = `<div style="color:#ef4444;">Failed to load templates</div>`;
-    }
-}
-
-async function syncTemplatesFromMeta() {
-    try {
-        const res = await fetch(`${API_BASE}/templates/sync`, {
-            method: 'POST',
-            headers: getAuthHeaders({ 'Content-Type': 'application/json' })
-        });
-        const data = await res.json();
-        if (res.ok) {
-            alert('✅ ' + data.message);
-            loadTemplates();
+          `).join('');
         } else {
-            alert('❌ Template sync failed: ' + (data.message || 'Error'));
-        }
-    } catch (err) {
-        alert('Network error: ' + err.message);
-    }
-}
-
-async function loadMedia() {
-    const grid = document.getElementById('mediaGrid');
-    try {
-        const res = await fetch(`${API_BASE}/media`, { headers: getAuthHeaders() });
-        const data = await res.json();
-
-        if (!data.data || !data.data.length) {
-            grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#94a3b8; padding:40px;">No media files uploaded yet. Click "Upload Media" to add images, videos, or PDFs.</div>`;
-            return;
-        }
-
-        grid.innerHTML = data.data.map(m => `
-            <div class="item-card">
-                <div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <span class="badge badge-info">${m.fileType}</span>
-                        <small style="color:#64748b;">${(m.fileSize / 1024 / 1024).toFixed(2)} MB</small>
-                    </div>
-                    <h4 style="margin:0 0 10px 0; font-size:0.95rem; word-break:break-all;">${m.originalName}</h4>
-                    ${m.fileType === 'IMAGE' ? `<img src="${m.storageUrl}" style="width:100%; height:120px; object-fit:cover; border-radius:6px; margin-bottom:10px;">` : ''}
-                </div>
-                <div style="font-size:0.75rem; color:#64748b;">Uploaded: ${new Date(m.createdAt).toLocaleDateString()}</div>
+          listEl.innerHTML = `
+            <div style="text-align: center; padding: 1.5rem; color: var(--text-muted);">
+              <i class="fa-regular fa-calendar-plus" style="font-size: 2rem; margin-bottom: 0.5rem; color: #60a5fa;"></i>
+              <p>No active campaign roadmaps planned.</p>
+              <button class="btn btn-ai btn-sm" style="margin-top: 0.75rem;" onclick="switchTab('calendar')">Generate Festival Plan</button>
             </div>
-        `).join('');
-    } catch (err) {
-        grid.innerHTML = `<div style="color:#ef4444;">Failed to load media library</div>`;
+          `;
+        }
+      }
     }
-}
 
-async function loadWabaAccount() {
-    try {
-        const res = await fetch(`${API_BASE}/account`, { headers: getAuthHeaders() });
-        const data = await res.json();
-        const badge = document.getElementById('wabaStatusBadge');
-
-        if (data.connected && data.account) {
-            badge.className = 'badge badge-success';
-            badge.textContent = `CONNECTED (${data.account.qualityRating} Rating • ${data.account.messagingLimit})`;
-            document.getElementById('wabaIdInput').value = data.account.wabaId || '';
-            document.getElementById('phoneIdInput').value = data.account.phoneNumberId || '';
-            document.getElementById('displayPhoneInput').value = data.account.displayPhoneNumber || '';
-            document.getElementById('portfolioIdInput').value = data.account.businessPortfolioId || '';
-            document.getElementById('tokenInput').placeholder = data.account.maskedToken || '••••••••';
+    if (metaRes.ok) {
+      const metaData = await metaRes.json();
+      const overviewEl = document.getElementById('metaAssetStatusOverview');
+      if (overviewEl) {
+        if (metaData.connected) {
+          const acc = metaData.account;
+          overviewEl.innerHTML = `
+            <div style="display: flex; justify-content: space-between;"><span>Status:</span> <span class="status-pill status-published">CONNECTED</span></div>
+            <div style="display: flex; justify-content: space-between;"><span>Business:</span> <strong>${acc.businessName || 'Meta Portfolio'}</strong></div>
+            <div style="display: flex; justify-content: space-between;"><span>Pages:</span> <span>${acc.pages?.length || 0} Active</span></div>
+            <div style="display: flex; justify-content: space-between;"><span>Instagram:</span> <span>${acc.instagramAccounts?.length || 0} Accounts</span></div>
+            <div style="display: flex; justify-content: space-between;"><span>Ad Accounts:</span> <span>${acc.adAccounts?.length || 0} Connected</span></div>
+          `;
         } else {
-            badge.className = 'badge badge-warning';
-            badge.textContent = 'DISCONNECTED';
+          overviewEl.innerHTML = `
+            <p style="color: var(--text-muted);">No Meta Business Account connected.</p>
+            <button class="btn btn-meta btn-sm" onclick="switchTab('meta-settings')"><i class="fa-brands fa-meta"></i> Connect Meta</button>
+          `;
         }
-    } catch (err) {
-        console.error(err);
+      }
     }
+  } catch (err) {
+    console.error('Error loading command center:', err);
+  }
 }
 
-async function saveWabaConfig(e) {
-    e.preventDefault();
-    const wabaId = document.getElementById('wabaIdInput').value.trim();
-    const phoneNumberId = document.getElementById('phoneIdInput').value.trim();
-    const displayPhoneNumber = document.getElementById('displayPhoneInput').value.trim();
-    const businessPortfolioId = document.getElementById('portfolioIdInput').value.trim();
-    const accessToken = document.getElementById('tokenInput').value.trim();
+// -------------------------------------------------------------
+// 2. WHATSAPP HUB
+// -------------------------------------------------------------
+async function loadWhatsAppHub() {
+  try {
+    const [accRes, contactsRes, tmplRes, campRes] = await Promise.all([
+      fetch('/api/whatsapp/account', { headers: getAuthHeaders() }),
+      fetch('/api/whatsapp/contacts', { headers: getAuthHeaders() }),
+      fetch('/api/whatsapp/templates', { headers: getAuthHeaders() }),
+      fetch('/api/whatsapp/campaigns', { headers: getAuthHeaders() })
+    ]);
 
-    try {
-        const res = await fetch(`${API_BASE}/account`, {
-            method: 'POST',
-            headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
-            body: JSON.stringify({ wabaId, phoneNumberId, displayPhoneNumber, businessPortfolioId, accessToken })
-        });
-        const data = await res.json();
-        if (res.ok) {
-            alert('🎉 ' + data.message);
-            loadWabaAccount();
-        } else {
-            alert('❌ ' + (data.message || 'Save failed'));
-        }
-    } catch (err) {
-        alert('Network error: ' + err.message);
+    if (accRes.ok) {
+      const accData = await accRes.json();
+      const balEl = document.getElementById('waWalletBalance');
+      if (balEl) balEl.innerText = `₹${(accData.walletBalance || 0).toFixed(2)}`;
     }
-}
 
-async function testWabaConnection() {
-    try {
-        const res = await fetch(`${API_BASE}/account/test`, {
-            method: 'POST',
-            headers: getAuthHeaders()
-        });
-        const data = await res.json();
-        if (data.success) {
-            alert(`✅ Verified Meta Connection!\n\nVerified Name: ${data.verifiedName}\nPhone: ${data.displayPhoneNumber}\nQuality: ${data.qualityRating}`);
-            loadWabaAccount();
-        } else {
-            alert('❌ Test Failed: ' + (data.error || 'Check WABA credentials'));
-        }
-    } catch (err) {
-        alert('Network error: ' + err.message);
+    if (contactsRes.ok) {
+      const cData = await contactsRes.json();
+      const cEl = document.getElementById('waContactsCount');
+      if (cEl) cEl.innerText = (cData.total || cData.contacts?.length || 0).toLocaleString();
     }
-}
 
-async function loadInbox() {
-    const tbody = document.getElementById('inboxTableBody');
-    try {
-        const res = await fetch(`${API_BASE}/inbox/conversations`, { headers: getAuthHeaders() });
-        const data = await res.json();
+    if (tmplRes.ok) {
+      const tData = await tmplRes.json();
+      const tEl = document.getElementById('waTemplatesCount');
+      if (tEl) tEl.innerText = (tData.templates?.length || 0).toLocaleString();
+    }
 
-        if (!data.data || !data.data.length) {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8; padding:30px;">No inbound customer replies yet.</td></tr>`;
-            return;
-        }
-
-        tbody.innerHTML = data.data.map(conv => `
+    if (campRes.ok) {
+      const campData = await campRes.json();
+      const tbody = document.getElementById('waCampaignsTableBody');
+      if (tbody) {
+        if (campData.campaigns && campData.campaigns.length > 0) {
+          tbody.innerHTML = campData.campaigns.map(c => `
             <tr>
-                <td><strong>${conv._id}</strong></td>
-                <td>${conv.lastMessage || '—'}</td>
-                <td>${new Date(conv.lastTimestamp).toLocaleString()}</td>
-                <td><button class="btn btn-outline btn-sm" onclick="alert('Viewing conversation thread for ${conv._id}')">View</button></td>
+              <td><strong>${c.name}</strong></td>
+              <td>${c.templateName || 'Template'}</td>
+              <td>${c.stats?.totalRecipients || 0}</td>
+              <td>${c.stats?.sentCount || 0} / ${c.stats?.deliveredCount || 0} / ${c.stats?.readCount || 0}</td>
+              <td>₹${(c.estimatedCost || 0).toFixed(2)}</td>
+              <td><span class="status-pill status-${c.status.toLowerCase()}">${c.status}</span></td>
+              <td>
+                <button class="btn btn-secondary btn-sm" onclick="location.href='/whatsapp-campaigns.html'">View</button>
+              </td>
             </tr>
+          `).join('');
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Error loading WhatsApp hub:', err);
+  }
+}
+
+// -------------------------------------------------------------
+// 3. SOCIAL POSTS & REELS
+// -------------------------------------------------------------
+async function loadSocialPosts() {
+  try {
+    const res = await fetch('/api/social-marketing/posts', { headers: getAuthHeaders() });
+    if (!res.ok) return;
+
+    const data = await res.json();
+    const tbody = document.getElementById('socialPostsTableBody');
+    if (!tbody) return;
+
+    if (!data.posts || data.posts.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No posts or reels created yet. Click "Create Post / Reel" to begin.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.posts.map(p => `
+      <tr>
+        <td>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            ${p.mediaUrls?.[0]?.url ? `<img src="${p.mediaUrls[0].url}" style="width: 44px; height: 44px; border-radius: 6px; object-fit: cover;">` : `<div style="width: 44px; height: 44px; background: #334155; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><i class="fa-regular fa-image"></i></div>`}
+            <div>
+              <strong>${p.title}</strong>
+              <p style="font-size: 0.75rem; color: var(--text-muted); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.caption}</p>
+            </div>
+          </div>
+        </td>
+        <td><span class="status-pill status-draft">${p.postType}</span></td>
+        <td>${p.platforms.map(plat => plat === 'INSTAGRAM' ? '<i class="fa-brands fa-instagram" style="color: #ec4899;"></i>' : '<i class="fa-brands fa-facebook" style="color: #3b82f6;"></i>').join(' ')}</td>
+        <td>${p.publishedAt ? new Date(p.publishedAt).toLocaleDateString() : (p.scheduledAt ? `Scheduled: ${new Date(p.scheduledAt).toLocaleDateString()}` : 'Draft')}</td>
+        <td>❤️ ${p.metrics?.likes || 0} • 💬 ${p.metrics?.comments || 0}</td>
+        <td><span class="status-pill status-${p.status.toLowerCase()}">${p.status}</span></td>
+        <td>
+          <div style="display: flex; gap: 0.4rem;">
+            ${p.status === 'DRAFT' || p.status === 'APPROVED' ? `<button class="btn btn-primary btn-sm" onclick="publishSocialPost('${p._id}')">Publish</button>` : ''}
+            ${p.status === 'PUBLISHED' ? `<button class="btn btn-meta btn-sm" onclick="boostSocialPost('${p._id}')"><i class="fa-solid fa-rocket"></i> Boost</button>` : ''}
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    console.error('Error loading social posts:', err);
+  }
+}
+
+function openNewPostModal() {
+  openModal('createPostModal');
+}
+
+async function submitCreatePost() {
+  const postType = document.getElementById('postTypeSelect').value;
+  const caption = document.getElementById('postCaptionInput').value;
+  const mediaUrl = document.getElementById('postMediaUrlInput').value;
+  const scheduledAt = document.getElementById('postScheduleInput').value;
+
+  const platforms = [];
+  if (document.getElementById('postPlatformInstagram').checked) platforms.push('INSTAGRAM');
+  if (document.getElementById('postPlatformFacebook').checked) platforms.push('FACEBOOK');
+
+  if (!caption) {
+    alert('Please enter a caption');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/social-marketing/posts', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        title: `${postType} - ${new Date().toLocaleDateString()}`,
+        postType,
+        platforms,
+        caption,
+        mediaUrls: mediaUrl ? [{ url: mediaUrl, mediaType: postType === 'REEL' ? 'VIDEO' : 'IMAGE' }] : [],
+        scheduledAt: scheduledAt || null
+      })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      alert(data.message || 'Post saved successfully!');
+      closeModal('createPostModal');
+      loadSocialPosts();
+    } else {
+      alert(data.error || 'Failed to create post');
+    }
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function publishSocialPost(postId) {
+  if (!confirm('Are you sure you want to publish this post to connected social channels now?')) return;
+  try {
+    const res = await fetch(`/api/social-marketing/posts/${postId}/publish`, {
+      method: 'POST',
+      headers: getAuthHeaders()
+    });
+    const data = await res.json();
+    if (res.ok) {
+      alert('Post published successfully!');
+      loadSocialPosts();
+    } else {
+      alert(data.error || 'Failed to publish post');
+    }
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function boostSocialPost(postId) {
+  const budget = prompt('Enter daily budget in INR for boosting this post:', '500');
+  if (!budget) return;
+
+  try {
+    const res = await fetch(`/api/social-marketing/posts/${postId}/boost`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ dailyBudget: Number(budget), durationDays: 7 })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      alert(data.message || 'Boost campaign created!');
+      loadSocialPosts();
+    } else {
+      alert(data.error || 'Failed to boost post');
+    }
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+// -------------------------------------------------------------
+// 4. META ADS MANAGER
+// -------------------------------------------------------------
+async function loadMetaAds() {
+  try {
+    const res = await fetch('/api/social-marketing/ads/campaigns', { headers: getAuthHeaders() });
+    if (!res.ok) return;
+
+    const data = await res.json();
+    const tbody = document.getElementById('metaAdsTableBody');
+    if (!tbody) return;
+
+    if (!data.campaigns || data.campaigns.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No paid Meta campaigns active.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.campaigns.map(ad => `
+      <tr>
+        <td><strong>${ad.name}</strong></td>
+        <td>${ad.objective.replace('OUTCOME_', '')}</td>
+        <td>₹${ad.budgetAmount}/day</td>
+        <td>₹${ad.insights?.spend || 0} / ${ad.insights?.impressions || 0} / ${ad.insights?.clicks || 0}</td>
+        <td><strong>${ad.insights?.leads || 0}</strong></td>
+        <td><span class="status-pill status-${ad.status.toLowerCase()}">${ad.status}</span></td>
+        <td><button class="btn btn-secondary btn-sm">View</button></td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    console.error('Error loading Meta ads:', err);
+  }
+}
+
+// -------------------------------------------------------------
+// 5. CONTENT STUDIO
+// -------------------------------------------------------------
+async function loadContentAssets() {
+  try {
+    const search = document.getElementById('assetSearchInput')?.value || '';
+    const res = await fetch(`/api/social-marketing/content/assets?search=${encodeURIComponent(search)}`, { headers: getAuthHeaders() });
+    if (!res.ok) return;
+
+    const data = await res.json();
+    const grid = document.getElementById('contentAssetsGrid');
+    if (!grid) return;
+
+    if (!data.assets || data.assets.length === 0) {
+      grid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; padding: 2rem;">No assets uploaded yet.</p>`;
+      return;
+    }
+
+    grid.innerHTML = data.assets.map(a => `
+      <div class="asset-card">
+        <img src="${a.thumbnailUrl || a.url}" class="asset-thumb" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300'">
+        <div class="asset-info">
+          <div class="asset-title">${a.title}</div>
+          <span style="font-size: 0.7rem; color: var(--text-muted);">${a.category || 'General'}</span>
+        </div>
+      </div>
+    `).join('');
+  } catch (err) {
+    console.error('Error loading content assets:', err);
+  }
+}
+
+// -------------------------------------------------------------
+// 6. MARKETING CALENDAR & FESTIVAL PLANNER
+// -------------------------------------------------------------
+async function loadMarketingCalendar() {
+  try {
+    const [eventsRes, holidaysRes] = await Promise.all([
+      fetch('/api/social-marketing/calendar/events', { headers: getAuthHeaders() }),
+      fetch('/api/social-marketing/calendar/holidays', { headers: getAuthHeaders() })
+    ]);
+
+    if (eventsRes.ok) {
+      const data = await eventsRes.json();
+      renderCalendarDays(data.events || []);
+    }
+
+    if (holidaysRes.ok) {
+      const hData = await holidaysRes.json();
+      const select = document.getElementById('holidaySelectDropdown');
+      if (select) {
+        select.innerHTML = hData.holidays.map(h => `
+          <option value="${h._id}">🪔 ${h.name} (${h.category})</option>
         `).join('');
-    } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="4" style="color:#ef4444;">Error loading inbox</td></tr>`;
+      }
     }
+  } catch (err) {
+    console.error('Error loading calendar:', err);
+  }
 }
 
-async function loadWallet() {
-    const tbody = document.getElementById('walletTxBody');
-    try {
-        const res = await fetch(`${API_BASE}/wallet`, { headers: getAuthHeaders() });
-        const data = await res.json();
+function renderCalendarDays(events) {
+  const container = document.getElementById('calendarGridContainer');
+  if (!container) return;
 
-        if (!data.transactions || !data.transactions.length) {
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding:20px;">No wallet transactions recorded.</td></tr>`;
-            return;
-        }
+  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  let html = daysOfWeek.map(d => `<div class="calendar-day-header">${d}</div>`).join('');
 
-        tbody.innerHTML = data.transactions.map(tx => `
-            <tr>
-                <td>${new Date(tx.createdAt).toLocaleString()}</td>
-                <td><span class="badge ${tx.type === 'CREDIT' ? 'badge-success' : 'badge-danger'}">${tx.type}</span></td>
-                <td><b>${tx.type === 'CREDIT' ? '+' : '-'}₹${tx.amount.toFixed(2)}</b></td>
-                <td>₹${tx.balanceAfter.toFixed(2)}</td>
-                <td>${tx.description}</td>
-            </tr>
-        `).join('');
-    } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="5" style="color:#ef4444;">Error loading transactions</td></tr>`;
+  // Render 35 day slots for month
+  const now = new Date();
+  for (let i = 1; i <= 31; i++) {
+    const dayEvents = events.filter(e => {
+      const d = new Date(e.date);
+      return d.getDate() === i;
+    });
+
+    html += `
+      <div class="calendar-day ${i === now.getDate() ? 'today' : ''}">
+        <div class="day-number">${i}</div>
+        ${dayEvents.map(e => `
+          <span class="calendar-badge ${e.type === 'HOLIDAY' ? 'badge-holiday' : (e.type === 'REEL' || e.type === 'POST' ? 'badge-post' : (e.type === 'META_AD' ? 'badge-ad' : 'badge-wa'))}" title="${e.title}">
+            ${e.title}
+          </span>
+        `).join('')}
+      </div>
+    `;
+  }
+  container.innerHTML = html;
+}
+
+function openHolidayCampaignModal() {
+  openModal('holidayCampaignModal');
+}
+
+async function submitGenerateHolidayCampaign() {
+  const holidayId = document.getElementById('holidaySelectDropdown').value;
+  const totalBudget = document.getElementById('holidayCampaignBudget').value;
+
+  if (!holidayId) {
+    alert('Please select a holiday');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/social-marketing/calendar/generate-campaign', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ holidayId, totalBudget: Number(totalBudget) })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      alert(data.message || 'Omnichannel campaign generated successfully!');
+      closeModal('holidayCampaignModal');
+      loadMarketingCalendar();
+    } else {
+      alert(data.error || 'Failed to generate plan');
     }
+  } catch (err) {
+    alert(err.message);
+  }
 }
 
-// Modal Handlers
-function openModal(id) {
-    document.getElementById(id).style.display = 'flex';
-}
+// -------------------------------------------------------------
+// 7. CHARLIE AI MARKETING ASSISTANT
+// -------------------------------------------------------------
+async function generateAiMarketingCopy() {
+  const topic = document.getElementById('aiTopic').value;
+  const offerDetails = document.getElementById('aiOffer').value;
+  const tone = document.getElementById('aiTone').value;
+  const outputEl = document.getElementById('aiGeneratedOutput');
 
-function closeModal(id) {
-    document.getElementById(id).style.display = 'none';
-}
+  if (!topic) {
+    alert('Please enter a campaign topic');
+    return;
+  }
 
-function openImportModal() {
-    document.getElementById('importResultCard').style.display = 'none';
-    document.getElementById('selectedFileName').textContent = '';
-    selectedCsvFile = null;
-    openModal('importModal');
-}
+  outputEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating tailored copy with Charlie AI...';
 
-function handleCsvSelected(e) {
-    if (e.target.files && e.target.files[0]) {
-        selectedCsvFile = e.target.files[0];
-        document.getElementById('selectedFileName').textContent = `Selected: ${selectedCsvFile.name} (${(selectedCsvFile.size / 1024).toFixed(1)} KB)`;
+  try {
+    const res = await fetch('/api/social-marketing/ai/multi-channel', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ topic, offerDetails, tone })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      const v = data.variations;
+      outputEl.innerHTML = `
+        <div style="margin-bottom: 1.25rem;">
+          <strong style="color: #ec4899;"><i class="fa-brands fa-instagram"></i> Instagram Post / Reel:</strong>
+          <p style="margin-top: 0.35rem;">${v.instagramPost.caption}</p>
+        </div>
+        <div style="margin-bottom: 1.25rem;">
+          <strong style="color: #3b82f6;"><i class="fa-brands fa-facebook"></i> Facebook Page Post:</strong>
+          <p style="margin-top: 0.35rem;">${v.facebookPost.caption}</p>
+        </div>
+        <div style="margin-bottom: 1.25rem;">
+          <strong style="color: #25d366;"><i class="fa-brands fa-whatsapp"></i> WhatsApp VIP Broadcast:</strong>
+          <p style="margin-top: 0.35rem;">${v.whatsAppBroadcast.caption}</p>
+        </div>
+        <div>
+          <strong style="color: #f59e0b;"><i class="fa-solid fa-bullseye"></i> Meta Performance Ad Copy:</strong>
+          <p style="margin-top: 0.35rem;">${v.metaAdCopy.caption}</p>
+        </div>
+      `;
+    } else {
+      outputEl.innerText = data.error || 'Failed to generate AI copy';
     }
+  } catch (err) {
+    outputEl.innerText = err.message;
+  }
 }
 
-async function submitCsvImport() {
-    if (!selectedCsvFile) {
-        alert('Please choose a CSV file first');
-        return;
+// -------------------------------------------------------------
+// 8. APPROVALS QUEUE
+// -------------------------------------------------------------
+async function loadApprovals() {
+  try {
+    const res = await fetch('/api/social-marketing/approvals/pending', { headers: getAuthHeaders() });
+    if (!res.ok) return;
+
+    const data = await res.json();
+    const tbody = document.getElementById('approvalsTableBody');
+    const badge = document.getElementById('pendingApprovalsBadge');
+
+    if (badge) {
+      if (data.count > 0) {
+        badge.innerText = data.count;
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
     }
 
-    const btn = document.getElementById('btnUploadCsv');
-    btn.disabled = true;
-    btn.textContent = 'Processing Import...';
+    if (!tbody) return;
 
-    const formData = new FormData();
-    formData.append('file', selectedCsvFile);
-
-    try {
-        const res = await fetch(`${API_BASE}/contacts/import`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${currentToken}` },
-            body: formData
-        });
-        const data = await res.json();
-
-        if (res.ok && data.stats) {
-            document.getElementById('importResultCard').style.display = 'block';
-            document.getElementById('statTotal').textContent = data.stats.total;
-            document.getElementById('statValid').textContent = data.stats.valid;
-            document.getElementById('statImported').textContent = data.stats.imported;
-            document.getElementById('statDuplicate').textContent = data.stats.duplicate;
-            document.getElementById('statExisting').textContent = data.stats.existing;
-            document.getElementById('statInvalid').textContent = data.stats.invalid;
-            loadContacts();
-        } else {
-            alert('Import failed: ' + (data.message || 'Error'));
-        }
-    } catch (err) {
-        alert('Network error: ' + err.message);
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'Upload & Import';
+    if (!data.approvals || data.approvals.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">No pending approvals in queue.</td></tr>`;
+      return;
     }
+
+    tbody.innerHTML = data.approvals.map(a => `
+      <tr>
+        <td><strong>${a.itemTitle}</strong></td>
+        <td><span class="status-pill status-pending">${a.itemType}</span></td>
+        <td>${a.requestedBy?.name || 'Executive'} (${a.requestedBy?.role || 'User'})</td>
+        <td>${a.estimatedBudget ? `₹${a.estimatedBudget}` : 'N/A'}</td>
+        <td>${new Date(a.requestedAt).toLocaleDateString()}</td>
+        <td>
+          <button class="btn btn-primary btn-sm" onclick="approveSubmission('${a._id}')">Approve</button>
+          <button class="btn btn-danger btn-sm" onclick="rejectSubmission('${a._id}')">Reject</button>
+        </td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    console.error('Error loading approvals:', err);
+  }
 }
 
-function openMediaUploadModal() {
-    openModal('mediaModal');
+async function approveSubmission(id) {
+  try {
+    const res = await fetch(`/api/social-marketing/approvals/${id}/approve`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ notes: 'Approved by Manager' })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      alert(data.message || 'Approved successfully!');
+      loadApprovals();
+    } else {
+      alert(data.error || 'Failed to approve');
+    }
+  } catch (err) {
+    alert(err.message);
+  }
 }
 
-async function submitMediaUpload() {
-    const fileInput = document.getElementById('mediaFileInput');
-    if (!fileInput.files || !fileInput.files[0]) {
-        alert('Please choose a media file');
-        return;
-    }
+async function rejectSubmission(id) {
+  const reason = prompt('Enter reason for rejection:');
+  if (!reason) return;
 
-    const formData = new FormData();
-    formData.append('media', fileInput.files[0]);
-
-    try {
-        const res = await fetch(`${API_BASE}/media/upload`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${currentToken}` },
-            body: formData
-        });
-        const data = await res.json();
-        if (res.ok) {
-            alert('✅ Media uploaded successfully');
-            closeModal('mediaModal');
-            loadMedia();
-        } else {
-            alert('❌ Upload failed: ' + (data.message || 'Error'));
-        }
-    } catch (err) {
-        alert('Network error: ' + err.message);
+  try {
+    const res = await fetch(`/api/social-marketing/approvals/${id}/reject`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ reason })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      alert(data.message || 'Rejected');
+      loadApprovals();
+    } else {
+      alert(data.error || 'Failed to reject');
     }
+  } catch (err) {
+    alert(err.message);
+  }
 }
 
-function openRechargeModal() {
-    openModal('rechargeModal');
+// -------------------------------------------------------------
+// 9. META CONNECTION
+// -------------------------------------------------------------
+async function loadMetaSettings() {
+  try {
+    const res = await fetch('/api/social-marketing/meta/assets', { headers: getAuthHeaders() });
+    if (!res.ok) return;
+    const data = await res.json();
+    // Pre-populate connection UI if already connected
+  } catch (err) {
+    console.error('Error loading meta settings:', err);
+  }
 }
 
-async function submitWalletRecharge() {
-    const amount = document.getElementById('rechargeAmountInput').value;
-    const paymentMethod = document.getElementById('paymentMethodInput').value;
+async function connectMetaDirectToken() {
+  const token = document.getElementById('metaDirectTokenInput').value;
+  if (!token) {
+    alert('Please enter a Meta Access Token');
+    return;
+  }
 
-    try {
-        const res = await fetch(`${API_BASE}/wallet/recharge`, {
-            method: 'POST',
-            headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
-            body: JSON.stringify({ amount, paymentMethod })
-        });
-        const data = await res.json();
-        if (res.ok) {
-            alert('🎉 ' + data.message);
-            closeModal('rechargeModal');
-            loadDashboardKPIs();
-            loadWallet();
-        } else {
-            alert('Recharge failed: ' + (data.message || 'Error'));
-        }
-    } catch (err) {
-        alert('Network error: ' + err.message);
+  try {
+    const res = await fetch('/api/social-marketing/meta/connect', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ accessToken: token })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      alert('Meta Business Account connected successfully!');
+      switchTab('command-center');
+    } else {
+      alert(data.error || 'Failed to connect Meta account');
     }
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function startMetaOAuth() {
+  try {
+    const res = await fetch('/api/social-marketing/meta/auth-url', { headers: getAuthHeaders() });
+    const data = await res.json();
+    if (data.authUrl) {
+      window.location.href = data.authUrl;
+    }
+  } catch (err) {
+    alert(err.message);
+  }
 }

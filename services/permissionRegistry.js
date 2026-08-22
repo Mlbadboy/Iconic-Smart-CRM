@@ -117,7 +117,7 @@ const FEATURE_PERMISSION_MAP = {
     ]
   },
   marketing: {
-    name: 'Marketing & WhatsApp Campaigns',
+    name: 'Omnichannel Marketing Platform',
     category: 'Marketing',
     permissions: [
       { key: 'marketing.view', label: 'View Marketing Hub' },
@@ -125,16 +125,45 @@ const FEATURE_PERMISSION_MAP = {
       { key: 'marketing.contacts.import', label: 'Import Contacts CSV' },
       { key: 'marketing.templates.view', label: 'View WhatsApp Templates' },
       { key: 'marketing.templates.manage', label: 'Manage & Sync Templates' },
-      { key: 'marketing.campaign.view', label: 'View Campaigns' },
+      { key: 'marketing.campaign.view', label: 'View WhatsApp Campaigns' },
       { key: 'marketing.campaign.create', label: 'Create WhatsApp Campaigns' },
       { key: 'marketing.campaign.edit', label: 'Edit Campaigns' },
-      { key: 'marketing.campaign.approve', label: 'Approve Campaigns' },
+      { key: 'marketing.campaign.approve', label: 'Approve WhatsApp Campaigns' },
       { key: 'marketing.campaign.send', label: 'Launch/Send WhatsApp Campaigns' },
       { key: 'marketing.campaign.schedule', label: 'Schedule WhatsApp Campaigns' },
       { key: 'marketing.campaign.pause', label: 'Pause/Cancel Active Campaigns' },
-      { key: 'marketing.analytics.view', label: 'View Marketing Analytics' },
       { key: 'marketing.whatsapp.manage', label: 'Manage WhatsApp Business Account' },
-      // Legacy compatibility
+      // Social & Reels
+      { key: 'marketing.social.view', label: 'View Social Posts & Reels' },
+      { key: 'marketing.social.create', label: 'Create Social Posts & Reels' },
+      { key: 'marketing.social.schedule', label: 'Schedule Social Posts' },
+      { key: 'marketing.social.publish', label: 'Direct Publish Social Posts & Reels' },
+      { key: 'marketing.social.delete', label: 'Delete Social Posts' },
+      // Meta Ads
+      { key: 'marketing.ads.view', label: 'View Meta Ads & Insights' },
+      { key: 'marketing.ads.create', label: 'Create Meta Ad Campaigns & Boost Posts' },
+      { key: 'marketing.ads.edit', label: 'Edit Ad Sets & Budgets' },
+      { key: 'marketing.ads.publish', label: 'Launch Paid Meta Ads' },
+      { key: 'marketing.ads.analytics', label: 'View Meta Ads ROI Analytics' },
+      // Content Studio
+      { key: 'marketing.content.view', label: 'View Content Library' },
+      { key: 'marketing.content.upload', label: 'Upload Brand & Product Assets' },
+      { key: 'marketing.content.manage', label: 'Manage & Delete Content Assets' },
+      // Calendar & Holidays
+      { key: 'marketing.calendar.view', label: 'View Marketing Calendar' },
+      { key: 'marketing.calendar.manage', label: 'Create Campaign Plans & Milestones' },
+      { key: 'marketing.holidays.manage', label: 'Manage Holiday Master Engine' },
+      // Charlie AI
+      { key: 'marketing.ai.generate', label: 'Use Charlie AI Copy & Campaign Engine' },
+      // Approvals
+      { key: 'marketing.approval.request', label: 'Submit Posts & Ads for Approval' },
+      { key: 'marketing.approval.approve', label: 'Approve Pending Posts & Ad Budgets' },
+      { key: 'marketing.approval.reject', label: 'Reject Marketing Submissions' },
+      // Meta Connection
+      { key: 'marketing.meta.connect', label: 'Connect Meta Business Account' },
+      { key: 'marketing.meta.manage', label: 'Manage Meta Pages & Pixels' },
+      // Analytics & Legacy
+      { key: 'marketing.analytics.view', label: 'View Marketing Analytics' },
       { key: 'marketing.create', label: 'Create Campaign Requests' },
       { key: 'marketing.edit', label: 'Edit Campaign Content' },
       { key: 'marketing.launch', label: 'Launch Marketing Campaigns' },

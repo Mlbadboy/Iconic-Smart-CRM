@@ -165,6 +165,15 @@ initializeDatabase().then(async (connected) => {
   } catch (err) {
     logger.warn('WhatsApp queue worker notice:', err.message);
   }
+  try {
+    const { startMarketingScheduler } = require('./services/marketingSchedulerService');
+    const { seedDefaultHolidays } = require('./services/holidayEngineService');
+    startMarketingScheduler(15000);
+    seedDefaultHolidays();
+    logger.info('📱 Social marketing scheduler and Holiday Master initialized.');
+  } catch (err) {
+    logger.warn('Social marketing scheduler notice:', err.message);
+  }
 }).catch(err => {
   logger.error('Database initialization error:', err.message);
 });
@@ -219,7 +228,9 @@ app.use('/api/v1/serial-registry', require('./routes/serialRegistry'));
 app.use('/qerp/validatesno.asp', (req, res, next) => { req.url = '/validate'; require('./routes/externalSerialValidation')(req, res, next); });
 app.use('/api/bulk-import', require('./middleware/featureGate').requireFeature('bulk_import'), require('./routes/bulkImport'));
 app.use('/api/whatsapp', require('./routes/whatsapp'));
+app.use('/api/social-marketing', require('./routes/socialMarketing'));
 app.use('/api/super-admin/whatsapp', require('./routes/superAdminWhatsApp'));
+app.use('/api/super-admin/marketing', require('./routes/superAdminMarketing'));
 
 // Start WhatsApp background campaign queue worker
 const { setSocketIO, startQueueWorker } = require('./services/whatsAppQueueService');

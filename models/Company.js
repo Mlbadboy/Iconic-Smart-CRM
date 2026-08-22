@@ -68,16 +68,29 @@ const storageSchema = new mongoose.Schema({
 const marketingConfigSchema = new mongoose.Schema({
   enabled: { type: Boolean, default: true },
   whatsapp: { type: Boolean, default: true },
+  bulk_whatsapp: { type: Boolean, default: true },
   bulk_campaigns: { type: Boolean, default: true },
   media_campaigns: { type: Boolean, default: true },
+  social: { type: Boolean, default: true },
+  reels: { type: Boolean, default: true },
+  meta_ads: { type: Boolean, default: true },
+  content_studio: { type: Boolean, default: true },
+  calendar: { type: Boolean, default: true },
+  ai_marketing: { type: Boolean, default: true },
+  approval_workflow: { type: Boolean, default: true },
   analytics: { type: Boolean, default: true },
   template_management: { type: Boolean, default: true },
   monthly_message_limit: { type: Number, default: 50000 },
   daily_message_limit: { type: Number, default: 5000 },
+  monthly_post_limit: { type: Number, default: 500 },
+  monthly_ad_spend_limit: { type: Number, default: 100000 },
+  content_storage_mb: { type: Number, default: 5120 },
   rate_per_marketing_msg: { type: Number, default: 0.8631 },
   rate_per_utility_msg: { type: Number, default: 0.35 },
   rate_per_auth_msg: { type: Number, default: 0.35 },
-  platform_fee_markup: { type: Number, default: 0.15 }
+  platform_fee_markup: { type: Number, default: 0.15 },
+  subscription_tier: { type: String, enum: ['STARTER', 'GROWTH', 'ENTERPRISE'], default: 'GROWTH' },
+  billing_status: { type: String, enum: ['ACTIVE', 'PAST_DUE', 'TRIAL', 'SUSPENDED'], default: 'ACTIVE' }
 }, { _id: false });
 
 const featureEntitlementsSchema = new mongoose.Schema({

@@ -1,836 +1,799 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketing & WhatsApp Hub - Charlie's CRM</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <style>
-        :root {
-            --primary: #4f46e5;
-            --primary-light: #6366f1;
-            --whatsapp-green: #25D366;
-            --whatsapp-dark: #128C7E;
-            --bg-dark: #0f172a;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketing Command Center - Charlie's Smart CRM</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-hover: #334155;
+      --primary: #3b82f6;
+      --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      --accent-whatsapp: #25d366;
+      --accent-meta: #0081fb;
+      --accent-ig: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      --accent-ai: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #f8fafc;
-            color: var(--text-main);
-            margin: 0;
-            padding: 0;
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
 
-        .layout-container {
-            display: flex;
-            min-height: 100vh;
-        }
+    /* Top Navigation */
+    .top-nav {
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .brand { display: flex; align-items: center; gap: 0.75rem; font-weight: 700; font-size: 1.2rem; }
+    .brand i { color: #3b82f6; font-size: 1.4rem; }
+    .nav-actions { display: flex; align-items: center; gap: 1rem; }
 
-        /* Sidebar styling */
-        .sidebar {
-            width: 260px;
-            background: #1e1b4b;
-            color: #fff;
-            padding: 24px 16px;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-        }
+    /* Main Layout */
+    .main-container { display: flex; flex: 1; overflow: hidden; }
 
-        .sidebar-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 32px;
-            padding-left: 8px;
-        }
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 260px;
+      background: #111827;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      padding: 1rem 0;
+      flex-shrink: 0;
+    }
+    .nav-group-title {
+      padding: 0.75rem 1.25rem 0.25rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.75rem 1.25rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-left: 3px solid transparent;
+    }
+    .nav-item:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.03); }
+    .nav-item.active { color: #fff; background: rgba(59, 130, 246, 0.1); border-left-color: var(--primary); font-weight: 600; }
+    .nav-item i { font-size: 1.1rem; width: 20px; text-align: center; }
+    .badge-count {
+      margin-left: auto;
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--danger);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: 9999px;
+    }
 
-        .sidebar-nav {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            flex: 1;
-        }
+    /* Content Area */
+    .content-area { flex: 1; overflow-y: auto; padding: 1.75rem; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-        .nav-item a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 14px;
-            color: #cbd5e1;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
+    /* Header Cards & Metric Grids */
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem; }
+    .page-title { font-size: 1.6rem; font-weight: 700; }
+    .page-desc { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem; }
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 1.75rem; }
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .metric-title { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+    .metric-value { font-size: 1.75rem; font-weight: 700; }
+    .metric-subtitle { font-size: 0.75rem; color: var(--success); display: flex; align-items: center; gap: 0.25rem; }
 
-        .nav-item a:hover, .nav-item.active a {
-            background: rgba(99, 102, 241, 0.2);
-            color: #ffffff;
-        }
+    /* Buttons & Controls */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.2rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    .btn-primary { background: var(--primary-gradient); color: #fff; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); }
+    .btn-primary:hover { opacity: 0.95; transform: translateY(-1px); }
+    .btn-whatsapp { background: #25d366; color: #fff; }
+    .btn-meta { background: #0081fb; color: #fff; }
+    .btn-ai { background: var(--accent-ai); color: #fff; }
+    .btn-secondary { background: rgba(255, 255, 255, 0.08); color: var(--text-main); border: 1px solid var(--border-color); }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.12); }
+    .btn-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
+    .btn-sm { padding: 0.4rem 0.75rem; font-size: 0.8rem; }
 
-        .nav-item.active a {
-            background: #4f46e5;
-        }
+    /* Tables & Grids */
+    .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .card-title { font-size: 1.15rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { padding: 0.75rem 1rem; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border-color); font-weight: 600; }
+    td { padding: 0.9rem 1rem; font-size: 0.85rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+    tr:hover td { background: rgba(255, 255, 255, 0.02); }
 
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            padding: 32px 40px;
-            overflow-y: auto;
-        }
+    /* Status Badges */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .status-active, .status-published, .status-approved { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+    .status-scheduled, .status-pending { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+    .status-draft { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); }
+    .status-failed, .status-rejected { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
 
-        .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 28px;
-        }
+    /* Modal Styling */
+    .modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1.5rem;
+    }
+    .modal.active { display: flex; }
+    .modal-content {
+      background: #1e293b;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 750px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 1.75rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .modal-title { font-size: 1.25rem; font-weight: 700; }
+    .close-modal { font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
+    .close-modal:hover { color: #fff; }
 
-        .header-title h1 {
-            margin: 0 0 4px 0;
-            font-size: 1.75rem;
-            font-weight: 800;
-            color: #0f172a;
-        }
+    /* Forms & Inputs */
+    .form-group { margin-bottom: 1.2rem; }
+    .form-label { display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: #cbd5e1; }
+    .form-control {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.65rem 0.9rem;
+      color: #fff;
+      font-size: 0.9rem;
+    }
+    .form-control:focus { outline: none; border-color: var(--primary); }
+    textarea.form-control { min-height: 100px; resize: vertical; }
 
-        .header-title p {
-            margin: 0;
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
+    /* Live Preview Box */
+    .preview-phone {
+      width: 320px;
+      background: #000;
+      border: 6px solid #334155;
+      border-radius: 28px;
+      padding: 1rem;
+      margin: 0 auto;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      color: #fff;
+      font-size: 0.8rem;
+    }
 
-        .header-actions {
-            display: flex;
-            gap: 12px;
-        }
+    /* Content Asset Grid */
+    .asset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
+    .asset-card {
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .asset-card:hover { transform: translateY(-2px); border-color: var(--primary); }
+    .asset-thumb { width: 100%; height: 120px; object-fit: cover; background: #334155; }
+    .asset-info { padding: 0.6rem; }
+    .asset-title { font-size: 0.8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s;
-            text-decoration: none;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: #fff;
-        }
-
-        .btn-primary:hover {
-            background: #4338ca;
-            transform: translateY(-1px);
-        }
-
-        .btn-whatsapp {
-            background: var(--whatsapp-green);
-            color: #fff;
-        }
-
-        .btn-whatsapp:hover {
-            background: var(--whatsapp-dark);
-            transform: translateY(-1px);
-        }
-
-        .btn-outline {
-            background: #fff;
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-        }
-
-        .btn-outline:hover {
-            background: #f1f5f9;
-        }
-
-        /* KPI Banner */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 18px;
-            margin-bottom: 28px;
-        }
-
-        .kpi-card {
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .kpi-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-        }
-
-        .kpi-val {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #0f172a;
-            line-height: 1.2;
-        }
-
-        .kpi-lbl {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Tabs Navigation */
-        .tabs-nav {
-            display: flex;
-            gap: 8px;
-            border-bottom: 2px solid var(--border-color);
-            margin-bottom: 24px;
-            overflow-x: auto;
-        }
-
-        .tab-btn {
-            background: none;
-            border: none;
-            padding: 12px 18px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            margin-bottom: -2px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .tab-btn:hover {
-            color: var(--primary);
-        }
-
-        .tab-btn.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-
-        .tab-pane {
-            display: none;
-        }
-
-        .tab-pane.active {
-            display: block;
-        }
-
-        /* Card panels */
-        .panel-card {
-            background: #fff;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 24px;
-        }
-
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .panel-title {
-            font-size: 1.15rem;
-            font-weight: 800;
-            color: #0f172a;
-            margin: 0;
-        }
-
-        /* Data Tables */
-        .custom-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
-
-        .custom-table th {
-            background: #f8fafc;
-            color: var(--text-muted);
-            font-weight: 700;
-            text-align: left;
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .custom-table td {
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
-        }
-
-        .custom-table tr:hover td {
-            background: #f8fafc;
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .badge-success { background: #dcfce7; color: #15803d; }
-        .badge-warning { background: #fef3c7; color: #b45309; }
-        .badge-danger { background: #fee2e2; color: #b91c1c; }
-        .badge-info { background: #e0e7ff; color: #4338ca; }
-
-        /* Form Inputs */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 16px;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #334155;
-            margin-bottom: 6px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            box-sizing: border-box;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-        }
-
-        /* Template & Media Cards */
-        .grid-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 18px;
-        }
-
-        .item-card {
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 18px;
-            background: #fff;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .item-card:hover {
-            box-shadow: 0 6px 16px rgba(0,0,0,0.06);
-            transform: translateY(-2px);
-        }
-
-        /* Modal styling */
-        .modal-backdrop {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-
-        .modal-card {
-            background: #fff;
-            width: 100%;
-            max-width: 600px;
-            border-radius: 14px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        .modal-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-body {
-            padding: 24px;
-            max-height: 75vh;
-            overflow-y: auto;
-        }
-
-        .modal-footer {
-            padding: 16px 24px;
-            border-top: 1px solid var(--border-color);
-            background: #f8fafc;
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        /* Progress Bar */
-        .progress-bar-container {
-            width: 100%;
-            height: 10px;
-            background: #e2e8f0;
-            border-radius: 5px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4f46e5, #25D366);
-            border-radius: 5px;
-            transition: width 0.3s;
-        }
-    </style>
+    /* Calendar Grid */
+    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; }
+    .calendar-day-header { text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); padding: 0.5rem; }
+    .calendar-day {
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      min-height: 90px;
+      padding: 0.4rem;
+      font-size: 0.75rem;
+    }
+    .calendar-day.today { border-color: var(--primary); background: rgba(59, 130, 246, 0.05); }
+    .day-number { font-weight: 700; margin-bottom: 0.3rem; }
+    .calendar-badge {
+      display: block;
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .badge-holiday { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .badge-post { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+    .badge-ad { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+    .badge-wa { background: rgba(37, 211, 102, 0.2); color: #4ade80; }
+  </style>
 </head>
 <body>
-    <div class="layout-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div class="sidebar-brand">
-                <i class="fa-solid fa-bolt" style="color: #6366f1;"></i>
-                <span>Charlie CRM</span>
-            </div>
-            <ul class="sidebar-nav">
-                <li class="nav-item"><a href="/dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
-                <li class="nav-item active"><a href="/marketing.html"><i class="fa-brands fa-whatsapp"></i> WhatsApp Hub</a></li>
-                <li class="nav-item"><a href="/whatsapp-campaigns.html"><i class="fa-solid fa-paper-plane"></i> Campaign Builder</a></li>
-                <li class="nav-item"><a href="/bulk-import.html"><i class="fa-solid fa-file-import"></i> Bulk Import Center</a></li>
-                <li class="nav-item"><a href="/contacts.html"><i class="fa-solid fa-address-book"></i> Customers & Contacts</a></li>
-                <li class="nav-item"><a href="/roles.html"><i class="fa-solid fa-shield-halved"></i> Roles & RBAC</a></li>
-                <li class="nav-item"><a href="/api-access.html"><i class="fa-solid fa-key"></i> Partner API Access</a></li>
-            </ul>
-        </aside>
 
-        <!-- Main Content Area -->
-        <main class="main-content">
-            <!-- Header Section -->
-            <div class="header-section">
-                <div class="header-title">
-                    <h1>🚀 WhatsApp Marketing Command Center</h1>
-                    <p>Manage tenant WABA, contacts, approved templates, media library, and campaign delivery.</p>
-                </div>
-                <div class="header-actions">
-                    <button class="btn btn-outline" onclick="openRechargeModal()">
-                        <i class="fa-solid fa-wallet"></i> Recharge Wallet
-                    </button>
-                    <a href="/whatsapp-campaigns.html" class="btn btn-whatsapp">
-                        <i class="fa-solid fa-plus"></i> New WhatsApp Campaign
-                    </a>
-                </div>
-            </div>
-
-            <!-- KPI Banner -->
-            <div class="kpi-grid">
-                <div class="kpi-card">
-                    <div class="kpi-icon" style="background: #e0e7ff; color: #4338ca;">
-                        <i class="fa-solid fa-bullhorn"></i>
-                    </div>
-                    <div>
-                        <div class="kpi-val" id="kpiCampaigns">0</div>
-                        <div class="kpi-lbl">Campaigns</div>
-                    </div>
-                </div>
-
-                <div class="kpi-card">
-                    <div class="kpi-icon" style="background: #dcfce7; color: #15803d;">
-                        <i class="fa-solid fa-paper-plane"></i>
-                    </div>
-                    <div>
-                        <div class="kpi-val" id="kpiSent">0</div>
-                        <div class="kpi-lbl">Messages Sent</div>
-                    </div>
-                </div>
-
-                <div class="kpi-card">
-                    <div class="kpi-icon" style="background: #ecfdf5; color: #059669;">
-                        <i class="fa-solid fa-check-double"></i>
-                    </div>
-                    <div>
-                        <div class="kpi-val" id="kpiDeliveryRate">0%</div>
-                        <div class="kpi-lbl">Delivery Rate</div>
-                    </div>
-                </div>
-
-                <div class="kpi-card">
-                    <div class="kpi-icon" style="background: #fef3c7; color: #b45309;">
-                        <i class="fa-solid fa-envelope-open-text"></i>
-                    </div>
-                    <div>
-                        <div class="kpi-val" id="kpiReadRate">0%</div>
-                        <div class="kpi-lbl">Read Rate</div>
-                    </div>
-                </div>
-
-                <div class="kpi-card">
-                    <div class="kpi-icon" style="background: #f3e8ff; color: #7e22ce;">
-                        <i class="fa-solid fa-wallet"></i>
-                    </div>
-                    <div>
-                        <div class="kpi-val" id="kpiWallet">₹0.00</div>
-                        <div class="kpi-lbl">Wallet Balance</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Navigation Tabs -->
-            <div class="tabs-nav">
-                <button class="tab-btn active" onclick="switchTab('overview')"><i class="fa-solid fa-chart-line"></i> Overview & Campaigns</button>
-                <button class="tab-btn" onclick="switchTab('contacts')"><i class="fa-solid fa-users"></i> Contacts & Audiences</button>
-                <button class="tab-btn" onclick="switchTab('templates')"><i class="fa-solid fa-file-code"></i> Templates</button>
-                <button class="tab-btn" onclick="switchTab('media')"><i class="fa-solid fa-photo-film"></i> Media Library</button>
-                <button class="tab-btn" onclick="switchTab('waba')"><i class="fa-brands fa-whatsapp"></i> WABA Connection</button>
-                <button class="tab-btn" onclick="switchTab('inbox')"><i class="fa-solid fa-inbox"></i> Inbound Inbox</button>
-                <button class="tab-btn" onclick="switchTab('wallet')"><i class="fa-solid fa-receipt"></i> Wallet & Rate Card</button>
-            </div>
-
-            <!-- TAB 1: OVERVIEW & ACTIVE CAMPAIGNS -->
-            <div id="tab-overview" class="tab-pane active">
-                <div class="panel-card">
-                    <div class="panel-header">
-                        <h3 class="panel-title">Active & Recent WhatsApp Campaigns</h3>
-                        <a href="/whatsapp-campaigns.html" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Create Campaign</a>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="custom-table">
-                            <thead>
-                                <tr>
-                                    <th>Campaign Name</th>
-                                    <th>Template</th>
-                                    <th>Recipients</th>
-                                    <th>Progress</th>
-                                    <th>Status</th>
-                                    <th>Cost</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="campaignsTableBody">
-                                <tr><td colspan="7" style="text-align:center; color:#94a3b8; padding:30px;">Loading campaigns...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 2: CONTACTS & AUDIENCES -->
-            <div id="tab-contacts" class="tab-pane">
-                <div class="panel-card">
-                    <div class="panel-header">
-                        <h3 class="panel-title">Marketing Contacts Registry</h3>
-                        <div style="display:flex; gap:10px;">
-                            <button class="btn btn-primary" onclick="openImportModal()"><i class="fa-solid fa-file-csv"></i> Import Contacts CSV</button>
-                        </div>
-                    </div>
-                    <div style="display:flex; gap:12px; margin-bottom:16px;">
-                        <input type="text" id="contactSearch" class="form-control" placeholder="Search by name, mobile, email..." oninput="debounceLoadContacts()" style="max-width:320px;">
-                        <select id="contactTypeFilter" class="form-control" onchange="loadContacts()" style="max-width:180px;">
-                            <option value="">All Customer Types</option>
-                            <option value="CUSTOMER">Retail Customers</option>
-                            <option value="DEALER">Dealers</option>
-                            <option value="DISTRIBUTOR">Distributors</option>
-                        </select>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="custom-table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Normalized Phone</th>
-                                    <th>Email</th>
-                                    <th>City / State</th>
-                                    <th>Type</th>
-                                    <th>Opt-in Status</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="contactsTableBody">
-                                <tr><td colspan="7" style="text-align:center; color:#94a3b8; padding:30px;">Loading contacts...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 3: TEMPLATES -->
-            <div id="tab-templates" class="tab-pane">
-                <div class="panel-card">
-                    <div class="panel-header">
-                        <h3 class="panel-title">Meta WhatsApp Templates</h3>
-                        <button class="btn btn-outline" onclick="syncTemplatesFromMeta()"><i class="fa-solid fa-rotate"></i> Sync from Meta WABA</button>
-                    </div>
-                    <div class="grid-cards" id="templatesGrid">
-                        <!-- Populated by JS -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 4: MEDIA LIBRARY -->
-            <div id="tab-media" class="tab-pane">
-                <div class="panel-card">
-                    <div class="panel-header">
-                        <h3 class="panel-title">Campaign Media Library (Images, Videos, PDFs)</h3>
-                        <button class="btn btn-primary" onclick="openMediaUploadModal()"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Media</button>
-                    </div>
-                    <div class="grid-cards" id="mediaGrid">
-                        <!-- Populated by JS -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 5: WABA CONNECTION -->
-            <div id="tab-waba" class="tab-pane">
-                <div class="panel-card">
-                    <div class="panel-header">
-                        <h3 class="panel-title">Meta WhatsApp Business Account Configuration</h3>
-                        <span id="wabaStatusBadge" class="badge badge-warning">Checking status...</span>
-                    </div>
-                    <p style="color:var(--text-muted); font-size:0.9rem; margin-top:-10px; margin-bottom:20px;">
-                        Connect your company's official Meta Business Portfolio, WABA ID, and Phone Number ID to send verified branded WhatsApp messages.
-                    </p>
-                    <form id="wabaConfigForm" onsubmit="saveWabaConfig(event)">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label class="form-label">WhatsApp Business Account ID (WABA ID) *</label>
-                                <input type="text" id="wabaIdInput" class="form-control" placeholder="e.g. 109283746591029" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Phone Number ID *</label>
-                                <input type="text" id="phoneIdInput" class="form-control" placeholder="e.g. 293847561029384" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Display Phone Number (E.164)</label>
-                                <input type="text" id="displayPhoneInput" class="form-control" placeholder="+91 98765 43210">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Business Portfolio ID (Optional)</label>
-                                <input type="text" id="portfolioIdInput" class="form-control" placeholder="e.g. 5839201928374">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Meta System User Access Token * (Encrypted at rest with AES-256)</label>
-                            <input type="password" id="tokenInput" class="form-control" placeholder="EAABw..." required>
-                            <small style="color:var(--text-muted);">Never stored in plaintext or exposed to frontend client code.</small>
-                        </div>
-                        <div style="display:flex; gap:12px; margin-top:20px;">
-                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Save & Connect WABA</button>
-                            <button type="button" class="btn btn-outline" onclick="testWabaConnection()"><i class="fa-solid fa-plug"></i> Test Connection</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- TAB 6: INBOX -->
-            <div id="tab-inbox" class="tab-pane">
-                <div class="panel-card">
-                    <div class="panel-header">
-                        <h3 class="panel-title">Inbound Customer WhatsApp Replies</h3>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="custom-table">
-                            <thead>
-                                <tr>
-                                    <th>Customer Phone</th>
-                                    <th>Last Inbound Message</th>
-                                    <th>Received At</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="inboxTableBody">
-                                <tr><td colspan="4" style="text-align:center; color:#94a3b8; padding:30px;">Loading conversations...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 7: WALLET & USAGE -->
-            <div id="tab-wallet" class="tab-pane">
-                <div class="panel-card">
-                    <div class="panel-header">
-                        <h3 class="panel-title">WhatsApp Wallet & Messaging Rates</h3>
-                        <button class="btn btn-primary" onclick="openRechargeModal()"><i class="fa-solid fa-plus"></i> Recharge</button>
-                    </div>
-                    <div class="form-grid" style="margin-bottom:24px;">
-                        <div style="background:#f8fafc; padding:16px; border-radius:8px; border:1px solid var(--border-color);">
-                            <div style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">MARKETING MESSAGE RATE</div>
-                            <div style="font-size:1.4rem; font-weight:800; color:#0f172a; margin-top:4px;" id="rateMarketing">₹0.9926 / msg</div>
-                            <small style="color:var(--text-muted);">Meta Base Rate + 15% Platform Fee</small>
-                        </div>
-                        <div style="background:#f8fafc; padding:16px; border-radius:8px; border:1px solid var(--border-color);">
-                            <div style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">UTILITY MESSAGE RATE</div>
-                            <div style="font-size:1.4rem; font-weight:800; color:#0f172a; margin-top:4px;" id="rateUtility">₹0.4025 / msg</div>
-                            <small style="color:var(--text-muted);">Meta Base Rate + 15% Platform Fee</small>
-                        </div>
-                    </div>
-                    <h4 style="font-size:1rem; font-weight:800; margin-bottom:12px;">Recent Wallet Transactions</h4>
-                    <div class="table-responsive">
-                        <table class="custom-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Type</th>
-                                    <th>Amount</th>
-                                    <th>Balance After</th>
-                                    <th>Description</th>
-                                </tr>
-                            </thead>
-                            <tbody id="walletTxBody">
-                                <tr><td colspan="5" style="text-align:center; color:#94a3b8; padding:20px;">No transactions yet</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </main>
+  <!-- Top Header Navigation -->
+  <header class="top-nav">
+    <div class="brand">
+      <i class="fa-solid fa-bullhorn"></i>
+      <span>Charlie Marketing Command Center</span>
     </div>
+    <div class="nav-actions">
+      <button class="btn btn-secondary btn-sm" onclick="location.href='/dashboard.html'">
+        <i class="fa-solid fa-arrow-left"></i> Back to CRM
+      </button>
+      <button class="btn btn-ai btn-sm" onclick="switchTab('ai')">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Charlie AI Assistant
+      </button>
+      <div id="companyBadge" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">
+        <i class="fa-solid fa-building"></i> Loading...
+      </div>
+    </div>
+  </header>
 
-    <!-- MODAL: CSV CONTACTS IMPORT -->
-    <div id="importModal" class="modal-backdrop">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3 style="margin:0; font-weight:800;">📥 Import WhatsApp Contacts from CSV</h3>
-                <button onclick="closeModal('importModal')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p style="color:var(--text-muted); font-size:0.9rem; margin-top:0;">
-                    Upload a CSV file containing columns: <code>name</code>, <code>mobile</code>, <code>email</code>, <code>city</code>, <code>state</code>, <code>dealerCode</code>, <code>product</code>.
-                </p>
-                <div style="border: 2px dashed #cbd5e1; padding: 24px; text-align:center; border-radius:8px; margin-bottom:16px;">
-                    <i class="fa-solid fa-file-csv" style="font-size:2.5rem; color:#6366f1; margin-bottom:10px;"></i>
-                    <div>
-                        <input type="file" id="csvFileInput" accept=".csv" style="display:none;" onchange="handleCsvSelected(event)">
-                        <button type="button" class="btn btn-outline" onclick="document.getElementById('csvFileInput').click()">Choose CSV File</button>
-                    </div>
-                    <div id="selectedFileName" style="margin-top:10px; font-weight:700; font-size:0.85rem; color:#4338ca;"></div>
-                </div>
-                <div id="importResultCard" style="display:none; background:#f8fafc; padding:16px; border-radius:8px; border:1px solid var(--border-color);">
-                    <h4 style="margin:0 0 10px 0; font-size:0.95rem;">Import Summary</h4>
-                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; font-size:0.85rem;">
-                        <div>Total: <b id="statTotal">0</b></div>
-                        <div>Valid: <b id="statValid" style="color:#16a34a;">0</b></div>
-                        <div>Imported: <b id="statImported" style="color:#2563eb;">0</b></div>
-                        <div>Duplicates: <b id="statDuplicate" style="color:#d97706;">0</b></div>
-                        <div>Existing Updated: <b id="statExisting" style="color:#4f46e5;">0</b></div>
-                        <div>Invalid: <b id="statInvalid" style="color:#dc2626;">0</b></div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline" onclick="closeModal('importModal')">Close</button>
-                <button type="button" class="btn btn-primary" id="btnUploadCsv" onclick="submitCsvImport()"><i class="fa-solid fa-cloud-arrow-up"></i> Upload & Import</button>
-            </div>
+  <div class="main-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="nav-group-title">Overview</div>
+      <div class="nav-item active" onclick="switchTab('command-center')" id="nav-command-center">
+        <i class="fa-solid fa-gauge-high"></i> Command Center
+      </div>
+
+      <div class="nav-group-title">Channels</div>
+      <div class="nav-item" onclick="switchTab('whatsapp')" id="nav-whatsapp">
+        <i class="fa-brands fa-whatsapp" style="color: #25d366;"></i> WhatsApp Hub
+      </div>
+      <div class="nav-item" onclick="switchTab('social')" id="nav-social">
+        <i class="fa-solid fa-share-nodes" style="color: #60a5fa;"></i> Social & Reels
+      </div>
+      <div class="nav-item" onclick="switchTab('meta-ads')" id="nav-meta-ads">
+        <i class="fa-solid fa-rectangle-ad" style="color: #f59e0b;"></i> Meta Ads Manager
+      </div>
+
+      <div class="nav-group-title">Content & Strategy</div>
+      <div class="nav-item" onclick="switchTab('content-studio')" id="nav-content-studio">
+        <i class="fa-solid fa-photo-film" style="color: #ec4899;"></i> Content Studio
+      </div>
+      <div class="nav-item" onclick="switchTab('calendar')" id="nav-calendar">
+        <i class="fa-regular fa-calendar-days" style="color: #a855f7;"></i> Marketing Calendar
+      </div>
+      <div class="nav-item" onclick="switchTab('ai')" id="nav-ai">
+        <i class="fa-solid fa-wand-magic-sparkles" style="color: #8b5cf6;"></i> Charlie AI Copy
+      </div>
+
+      <div class="nav-group-title">Governance</div>
+      <div class="nav-item" onclick="switchTab('approvals')" id="nav-approvals">
+        <i class="fa-solid fa-shield-halved" style="color: #10b981;"></i> Approvals
+        <span class="badge-count" id="pendingApprovalsBadge" style="display: none;">0</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('meta-settings')" id="nav-meta-settings">
+        <i class="fa-brands fa-meta" style="color: #0081fb;"></i> Meta Connection
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="content-area">
+
+      <!-- ======================================================== -->
+      <!-- TAB 1: COMMAND CENTER (OVERVIEW) -->
+      <!-- ======================================================== -->
+      <section id="tab-command-center" class="tab-content active">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Marketing Command Center</h1>
+            <p class="page-desc">Omnichannel campaign performance, live reach, and customer acquisition engine.</p>
+          </div>
+          <div style="display: flex; gap: 0.75rem;">
+            <button class="btn btn-whatsapp" onclick="openNewCampaignModal()">
+              <i class="fa-brands fa-whatsapp"></i> New WhatsApp Broadcast
+            </button>
+            <button class="btn btn-primary" onclick="openNewPostModal()">
+              <i class="fa-solid fa-plus"></i> Create Post / Reel
+            </button>
+          </div>
         </div>
-    </div>
 
-    <!-- MODAL: MEDIA UPLOAD -->
-    <div id="mediaModal" class="modal-backdrop">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3 style="margin:0; font-weight:800;">📷 Upload Creative Media</h3>
-                <button onclick="closeModal('mediaModal')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p style="color:var(--text-muted); font-size:0.9rem;">
-                    Upload JPG/PNG images (max 5MB), MP4 videos (max 16MB), or PDF product catalogs to attach to WhatsApp templates.
-                </p>
-                <div class="form-group">
-                    <label class="form-label">Select File *</label>
-                    <input type="file" id="mediaFileInput" class="form-control" accept="image/*,video/mp4,application/pdf" required>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline" onclick="closeModal('mediaModal')">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="submitMediaUpload()"><i class="fa-solid fa-cloud-arrow-up"></i> Upload & Sync</button>
-            </div>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <span class="metric-title">Total Audience Reach</span>
+            <span class="metric-value" id="kpiTotalReach">142.5K</span>
+            <span class="metric-subtitle"><i class="fa-solid fa-arrow-trend-up"></i> +18.4% this month</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-title">WhatsApp Delivered</span>
+            <span class="metric-value" id="kpiWhatsAppDelivered">98.6%</span>
+            <span class="metric-subtitle"><i class="fa-solid fa-check-double"></i> 24,120 messages</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-title">Social Engagements</span>
+            <span class="metric-value" id="kpiSocialEngagements">12,480</span>
+            <span class="metric-subtitle"><i class="fa-solid fa-heart"></i> Likes, comments, shares</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-title">Meta Ads ROAS</span>
+            <span class="metric-value" id="kpiAdsRoas">4.2x</span>
+            <span class="metric-subtitle"><i class="fa-solid fa-indian-rupee-sign"></i> ₹1.85L Pipeline</span>
+          </div>
         </div>
-    </div>
 
-    <!-- MODAL: WALLET RECHARGE -->
-    <div id="rechargeModal" class="modal-backdrop">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3 style="margin:0; font-weight:800;">💳 Recharge WhatsApp Messaging Wallet</h3>
-                <button onclick="closeModal('rechargeModal')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">&times;</button>
+        <!-- Omnichannel Quick Actions & Calendar Preview -->
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+          <div class="card">
+            <div class="card-title">
+              <span><i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Active & Upcoming Campaigns</span>
+              <button class="btn btn-secondary btn-sm" onclick="switchTab('calendar')">View Calendar</button>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Recharge Amount (INR ₹) *</label>
-                    <input type="number" id="rechargeAmountInput" class="form-control" value="2000" min="500" step="500" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Payment Method</label>
-                    <select id="paymentMethodInput" class="form-control">
-                        <option value="UPI / Online Payment">Instant UPI / Net Banking</option>
-                        <option value="Corporate Credit Card">Corporate Card</option>
-                        <option value="Direct Invoiced Balance">Pre-paid Invoice</option>
-                    </select>
-                </div>
+            <div id="activeCampaignsList">
+              <p style="color: var(--text-muted); font-size: 0.9rem;">Loading omnichannel roadmaps...</p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline" onclick="closeModal('rechargeModal')">Cancel</button>
-                <button type="button" class="btn btn-whatsapp" onclick="submitWalletRecharge()"><i class="fa-solid fa-check"></i> Add Funds</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">
+              <span><i class="fa-brands fa-meta" style="color: #0081fb;"></i> Meta Asset Status</span>
             </div>
+            <div id="metaAssetStatusOverview" style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.85rem;">
+              <p style="color: var(--text-muted);">Checking Meta connection...</p>
+            </div>
+          </div>
         </div>
-    </div>
+      </section>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/marketing.js"></script>
+      <!-- ======================================================== -->
+      <!-- TAB 2: WHATSAPP HUB -->
+      <!-- ======================================================== -->
+      <section id="tab-whatsapp" class="tab-content">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">WhatsApp Marketing Engine</h1>
+            <p class="page-desc">Cloud API campaigns, CSV safety deduplication, templates, and pre-paid wallet.</p>
+          </div>
+          <div style="display: flex; gap: 0.75rem;">
+            <button class="btn btn-secondary" onclick="openCsvImportModal()">
+              <i class="fa-solid fa-file-csv"></i> Import Contacts CSV
+            </button>
+            <button class="btn btn-whatsapp" onclick="openNewCampaignModal()">
+              <i class="fa-solid fa-paper-plane"></i> Launch WhatsApp Campaign
+            </button>
+          </div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <span class="metric-title">Wallet Balance</span>
+            <span class="metric-value" id="waWalletBalance">₹0.00</span>
+            <span class="metric-subtitle"><a href="javascript:void(0)" onclick="openRechargeModal()" style="color: #3b82f6;">Recharge Wallet</a></span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-title">Opted-In Contacts</span>
+            <span class="metric-value" id="waContactsCount">0</span>
+            <span class="metric-subtitle">E.164 Verified (+91)</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-title">Approved Templates</span>
+            <span class="metric-value" id="waTemplatesCount">0</span>
+            <span class="metric-subtitle">Synced with Meta</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>Recent WhatsApp Broadcast Campaigns</span>
+            <button class="btn btn-secondary btn-sm" onclick="loadWhatsAppCampaigns()">Refresh</button>
+          </div>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Campaign Name</th>
+                  <th>Template</th>
+                  <th>Recipients</th>
+                  <th>Sent / Delivered / Read</th>
+                  <th>Cost</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="waCampaignsTableBody">
+                <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No WhatsApp campaigns launched yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- TAB 3: SOCIAL & REELS -->
+      <!-- ======================================================== -->
+      <section id="tab-social" class="tab-content">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Social Posts & Reels Studio</h1>
+            <p class="page-desc">Publish directly to Facebook & Instagram, schedule reels, and boost organic content.</p>
+          </div>
+          <button class="btn btn-primary" onclick="openNewPostModal()">
+            <i class="fa-solid fa-plus"></i> Create Post / Reel
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>All Published & Scheduled Content</span>
+            <div style="display: flex; gap: 0.5rem;">
+              <select class="form-control" style="width: auto; padding: 0.3rem 0.6rem; font-size: 0.8rem;" id="socialTypeFilter" onchange="loadSocialPosts()">
+                <option value="">All Formats</option>
+                <option value="POST">Posts</option>
+                <option value="REEL">Reels</option>
+                <option value="STORY">Stories</option>
+              </select>
+            </div>
+          </div>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Content</th>
+                  <th>Type</th>
+                  <th>Platforms</th>
+                  <th>Scheduled / Published</th>
+                  <th>Engagement</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="socialPostsTableBody">
+                <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Loading social content...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- TAB 4: META ADS MANAGER -->
+      <!-- ======================================================== -->
+      <section id="tab-meta-ads" class="tab-content">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Meta Ads Manager</h1>
+            <p class="page-desc">Objective-driven lead ads, boost high-performing posts, and monitor ROAS.</p>
+          </div>
+          <button class="btn btn-meta" onclick="openNewAdModal()">
+            <i class="fa-solid fa-bullseye"></i> Create Ad Campaign
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>Paid Meta Campaigns</span>
+            <button class="btn btn-secondary btn-sm" onclick="loadMetaAds()">Refresh</button>
+          </div>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Campaign Name</th>
+                  <th>Objective</th>
+                  <th>Budget</th>
+                  <th>Spend / Impressions / Clicks</th>
+                  <th>Leads</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="metaAdsTableBody">
+                <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No active paid campaigns found.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- TAB 5: CONTENT STUDIO -->
+      <!-- ======================================================== -->
+      <section id="tab-content-studio" class="tab-content">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Content Studio & Asset Library</h1>
+            <p class="page-desc">Centralized repository for product photos, reel clips, brand banners, and brochures.</p>
+          </div>
+          <button class="btn btn-primary" onclick="openUploadAssetModal()">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Upload Asset
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>Brand & Product Assets</span>
+            <input type="text" class="form-control" style="width: 240px; font-size: 0.85rem;" placeholder="Search by tag or product..." id="assetSearchInput" oninput="loadContentAssets()">
+          </div>
+          <div class="asset-grid" id="contentAssetsGrid">
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Loading asset library...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- TAB 6: MARKETING CALENDAR & HOLIDAY PLANNER -->
+      <!-- ======================================================== -->
+      <section id="tab-calendar" class="tab-content">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Marketing & Festival Calendar</h1>
+            <p class="page-desc">Holiday Master engine with 1-Click Automated Omnichannel Campaign Planner.</p>
+          </div>
+          <button class="btn btn-ai" onclick="openHolidayCampaignModal()">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> 1-Click Festival Plan
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="calendar-header">
+            <h3 id="currentCalendarMonth" style="font-weight: 700;">August 2026</h3>
+            <div style="display: flex; gap: 0.5rem;">
+              <span class="badge-holiday" style="padding: 0.2rem 0.5rem; border-radius: 4px;">🪔 Holiday Flag</span>
+              <span class="badge-wa" style="padding: 0.2rem 0.5rem; border-radius: 4px;">💬 WhatsApp</span>
+              <span class="badge-post" style="padding: 0.2rem 0.5rem; border-radius: 4px;">📱 Social / Reel</span>
+              <span class="badge-ad" style="padding: 0.2rem 0.5rem; border-radius: 4px;">🎯 Meta Ad</span>
+            </div>
+          </div>
+          <div class="calendar-grid" id="calendarGridContainer">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- TAB 7: CHARLIE AI ASSISTANT -->
+      <!-- ======================================================== -->
+      <section id="tab-ai" class="tab-content">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Charlie AI Marketing Assistant</h1>
+            <p class="page-desc">Generate festive copy, high-converting ad headlines, hashtags, and omnichannel variations.</p>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="card">
+            <h3 class="card-title">Prompt Engine</h3>
+            <div class="form-group">
+              <label class="form-label">Product / Campaign Topic</label>
+              <input type="text" class="form-control" id="aiTopic" placeholder="e.g. Smart RO Water Purifier Festive Dhamaka">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Offer / Discount Details</label>
+              <input type="text" class="form-control" id="aiOffer" placeholder="e.g. 25% Off + 10-Year Warranty + Free Gift">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tone & Style</label>
+              <select class="form-control" id="aiTone">
+                <option value="FESTIVE">✨ Festive & Auspicious</option>
+                <option value="PROMOTIONAL">🔥 High-Urgency Promotion</option>
+                <option value="PREMIUM">💎 Premium & Elegant</option>
+                <option value="URGENT">⏰ Final Call / Expiring Soon</option>
+                <option value="ENGAGING">💡 Educational & Engaging</option>
+              </select>
+            </div>
+            <button class="btn btn-ai" style="width: 100%; justify-content: center;" onclick="generateAiMarketingCopy()">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Omnichannel Copy
+            </button>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Generated Copy Variations</h3>
+            <div id="aiGeneratedOutput" style="font-size: 0.88rem; line-height: 1.5; color: #cbd5e1; white-space: pre-line; max-height: 400px; overflow-y: auto;">
+              Click "Generate Omnichannel Copy" to create tailored captions for Instagram, Facebook, WhatsApp, and Meta Ads.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- TAB 8: APPROVALS QUEUE -->
+      <!-- ======================================================== -->
+      <section id="tab-approvals" class="tab-content">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Maker-Checker Approvals Queue</h1>
+            <p class="page-desc">Review pending posts, reels, and paid advertising budgets before launch.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>Pending Submissions</span>
+            <button class="btn btn-secondary btn-sm" onclick="loadApprovals()">Refresh</button>
+          </div>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Item Title</th>
+                  <th>Type</th>
+                  <th>Requested By</th>
+                  <th>Budget</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="approvalsTableBody">
+                <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No pending approvals.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- TAB 9: META CONNECTION SETTINGS -->
+      <!-- ======================================================== -->
+      <section id="tab-meta-settings" class="tab-content">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Meta Business Account Connection</h1>
+            <p class="page-desc">Connect your Meta Business Portfolio to discover Facebook Pages, Instagram accounts, and Ad Accounts.</p>
+          </div>
+        </div>
+
+        <div class="card" style="max-width: 650px;">
+          <h3 class="card-title"><i class="fa-brands fa-meta" style="color: #0081fb;"></i> Connect with Meta Graph API</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+            Authenticate via Meta OAuth to grant Charlie CRM permission to publish organic posts, reels, and manage lead ads.
+          </p>
+
+          <div class="form-group">
+            <label class="form-label">User Access Token / System User Token</label>
+            <input type="password" class="form-control" id="metaDirectTokenInput" placeholder="EAAB..." autocomplete="off">
+            <small style="color: var(--text-muted); font-size: 0.75rem;">Tokens are encrypted using AES-256-GCM and never exposed in browser responses.</small>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; margin-top: 1.25rem;">
+            <button class="btn btn-meta" onclick="connectMetaDirectToken()">
+              <i class="fa-brands fa-meta"></i> Connect Meta Account
+            </button>
+            <button class="btn btn-secondary" onclick="startMetaOAuth()">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Connect with Facebook Login
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Create Post / Reel Modal -->
+  <div class="modal" id="createPostModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-pen-to-square"></i> Create Post / Reel</h3>
+        <span class="close-modal" onclick="closeModal('createPostModal')">&times;</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Post Format</label>
+        <select class="form-control" id="postTypeSelect">
+          <option value="POST">📱 Feed Post (Image / Multi-photo)</option>
+          <option value="REEL">🎬 Instagram & Facebook Reel (Video)</option>
+          <option value="STORY">⚡ Story (24h Ephemeral)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Platforms</label>
+        <div style="display: flex; gap: 1.5rem; font-size: 0.9rem;">
+          <label><input type="checkbox" id="postPlatformInstagram" checked> Instagram (@charlieappliances)</label>
+          <label><input type="checkbox" id="postPlatformFacebook" checked> Facebook Page</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Caption & Copy</label>
+        <textarea class="form-control" id="postCaptionInput" placeholder="Write caption or generate with AI..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Media Asset URL (Image or MP4 Video)</label>
+        <input type="text" class="form-control" id="postMediaUrlInput" placeholder="https://images.unsplash.com/...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Schedule Publication (Leave blank to publish now)</label>
+        <input type="datetime-local" class="form-control" id="postScheduleInput">
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+        <button class="btn btn-secondary" onclick="closeModal('createPostModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitCreatePost()">Submit / Schedule</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1-Click Festival Campaign Plan Modal -->
+  <div class="modal" id="holidayCampaignModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">🪔 1-Click Festival Campaign Planner</h3>
+        <span class="close-modal" onclick="closeModal('holidayCampaignModal')">&times;</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Select Festival / Holiday</label>
+        <select class="form-control" id="holidaySelectDropdown">
+          <option value="">Loading master holidays...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Total Multi-Channel Budget (₹)</label>
+        <input type="number" class="form-control" id="holidayCampaignBudget" value="15000">
+      </div>
+      <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 8px; padding: 1rem; margin-bottom: 1.25rem; font-size: 0.85rem;">
+        <strong>Automated Roadmap Generator:</strong>
+        <p style="color: var(--text-muted); margin-top: 0.25rem;">
+          Charlie will generate multi-stage milestones across Instagram Teaser $\rightarrow$ Reel Showcase $\rightarrow$ Meta Ads Launch $\rightarrow$ WhatsApp VIP Blast $\rightarrow$ Last Day Reminder.
+        </p>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button class="btn btn-secondary" onclick="closeModal('holidayCampaignModal')">Cancel</button>
+        <button class="btn btn-ai" onclick="submitGenerateHolidayCampaign()">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Full Campaign Plan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/marketing.js"></script>
 </body>
 </html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Admin - Omnichannel Marketing Governance</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --bg-card: #131b2e;
+      --primary: #3b82f6;
+      --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding: 2rem; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .title { font-size: 1.75rem; font-weight: 800; }
+    .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: none; text-decoration: none; }
+    .btn-primary { background: var(--primary-gradient); color: #fff; }
+    .btn-secondary { background: rgba(255, 255, 255, 0.08); color: var(--text-main); border: 1px solid var(--border-color); }
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-bottom: 2rem; }
+    .metric-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem; }
+    .metric-label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+    .metric-num { font-size: 1.75rem; font-weight: 800; margin-top: 0.25rem; }
+    .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { padding: 0.75rem 1rem; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border-color); font-weight: 600; }
+    td { padding: 0.85rem 1rem; font-size: 0.85rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+    .status-pill { padding: 0.2rem 0.5rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 700; }
+    .status-active { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+    .status-disabled { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+    .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 1000; }
+    .modal.active { display: flex; }
+    .modal-content { background: #1a2234; border: 1px solid var(--border-color); border-radius: 16px; width: 100%; max-width: 680px; padding: 1.75rem; max-height: 90vh; overflow-y: auto; }
+    .form-group { margin-bottom: 1rem; }
+    .form-label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem; color: #cbd5e1; }
+    .form-control { width: 100%; background: #0b111e; border: 1px solid var(--border-color); border-radius: 8px; padding: 0.6rem 0.8rem; color: #fff; font-size: 0.85rem; }
+    .toggle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+    .toggle-item { background: #0b111e; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div>
+      <h1 class="title"><i class="fa-solid fa-crown" style="color: #fbbf24;"></i> Omnichannel Marketing Governance</h1>
+      <p class="subtitle">Platform-level commercial provisioning, quotas, and multi-tenant feature switches.</p>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <button class="btn btn-secondary" onclick="location.href='/tenant-control.html'"><i class="fa-solid fa-arrow-left"></i> Tenant Control</button>
+      <button class="btn btn-primary" onclick="loadOverview()"><i class="fa-solid fa-rotate"></i> Refresh Overview</button>
+    </div>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-label">Marketing Active Tenants</div>
+      <div class="metric-num" id="metricActiveTenants">0</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Connected WABA Accounts</div>
+      <div class="metric-num" id="metricWABACount" style="color: #25d366;">0</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Connected Meta Accounts</div>
+      <div class="metric-num" id="metricMetaCount" style="color: #60a5fa;">0</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Social Posts & Reels</div>
+      <div class="metric-num" id="metricSocialPosts">0</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Paid Meta Campaigns</div>
+      <div class="metric-num" id="metricMetaAds" style="color: #f59e0b;">0</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1.25rem;">Tenant Commercial Sub-Feature Entitlements</h3>
+    <div style="overflow-x: auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Company</th>
+            <th>Master Switch</th>
+            <th>WhatsApp</th>
+            <th>Social / Reels</th>
+            <th>Meta Ads</th>
+            <th>Content Studio</th>
+            <th>Calendar & AI</th>
+            <th>Monthly Limit</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="tenantsTableBody">
+          <tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 2rem;">Loading tenant entitlements...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Edit Tenant Commercial Config Modal -->
+  <div class="modal" id="editConfigModal">
+    <div class="modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h3 id="modalTenantTitle" style="font-size: 1.2rem; font-weight: 700;">Edit Commercial Entitlements</h3>
+        <span style="font-size: 1.5rem; cursor: pointer; color: var(--text-muted);" onclick="closeEditModal()">&times;</span>
+      </div>
+
+      <input type="hidden" id="editCompanyId">
+
+      <div class="form-group">
+        <label class="form-label">Marketing Master Toggle</label>
+        <select class="form-control" id="editMasterSwitch">
+          <option value="true">ENABLED (Commercial Access Granted)</option>
+          <option value="false">DISABLED (Commercially Locked)</option>
+        </select>
+      </div>
+
+      <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #94a3b8;">Commercial Sub-Features:</h4>
+      <div class="toggle-grid">
+        <div class="toggle-item">
+          <span>WhatsApp Cloud API</span>
+          <input type="checkbox" id="subWhatsApp">
+        </div>
+        <div class="toggle-item">
+          <span>Bulk WhatsApp Campaigns</span>
+          <input type="checkbox" id="subBulkWa">
+        </div>
+        <div class="toggle-item">
+          <span>Facebook / IG Social Posts</span>
+          <input type="checkbox" id="subSocial">
+        </div>
+        <div class="toggle-item">
+          <span>Reels Creation Studio</span>
+          <input type="checkbox" id="subReels">
+        </div>
+        <div class="toggle-item">
+          <span>Meta Paid Ads & Boost Post</span>
+          <input type="checkbox" id="subMetaAds">
+        </div>
+        <div class="toggle-item">
+          <span>Content Studio & Library</span>
+          <input type="checkbox" id="subContent">
+        </div>
+        <div class="toggle-item">
+          <span>Holiday Calendar & Planner</span>
+          <input type="checkbox" id="subCalendar">
+        </div>
+        <div class="toggle-item">
+          <span>Charlie AI Copy Assistant</span>
+          <input type="checkbox" id="subAi">
+        </div>
+        <div class="toggle-item" style="grid-column: 1/-1;">
+          <span>Maker-Checker Approval Workflow</span>
+          <input type="checkbox" id="subApprovals">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+        <div class="form-group">
+          <label class="form-label">Monthly WhatsApp Message Quota</label>
+          <input type="number" class="form-control" id="editMonthlyMsgLimit" value="50000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Monthly Ad Spend Limit (₹)</label>
+          <input type="number" class="form-control" id="editMonthlyAdLimit" value="100000">
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.25rem;">
+        <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitSaveTenantConfig()">Save Commercial Entitlements</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/super-admin-marketing.js"></script>
+</body>
+</html>

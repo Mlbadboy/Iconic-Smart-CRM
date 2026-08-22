@@ -111,6 +111,10 @@ async function main() {
     console.log('🧪 Running multi-tenant WhatsApp Marketing Platform tests...');
     await runCommand('node', ['scratch/run-whatsapp-suite.js'], process.env);
 
+    // 19. Run Omnichannel Social + Meta Ads + Content Studio + Holiday Calendar Tests
+    console.log('🧪 Running Omnichannel Marketing Command Center tests...');
+    await runCommand('node', ['scratch/test-omnichannel-marketing-suite.js'], process.env);
+
     console.log('🎉 All test suites passed successfully!');
     
     // Clean up
