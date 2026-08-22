@@ -57,7 +57,23 @@ const requireFeature = (featureKey) => {
 
       // 2. Check Feature Entitlement
       if (featureKey && company.features) {
-        const isEnabled = company.features[featureKey] !== false;
+        let isEnabled = true;
+
+        if (featureKey.startsWith('marketing.')) {
+          // Check parent marketing flag first
+          if (company.features.marketing === false) {
+            isEnabled = false;
+          } else {
+            const subKey = featureKey.split('.')[1];
+            const cfg = company.features.marketing_config || {};
+            if (cfg[subKey] === false) {
+              isEnabled = false;
+            }
+          }
+        } else {
+          isEnabled = company.features[featureKey] !== false;
+        }
+
         if (!isEnabled) {
           logger.warn(`🚫 Feature gate blocked: '${featureKey}' is disabled for company '${company._id}'`);
           return res.status(403).json({

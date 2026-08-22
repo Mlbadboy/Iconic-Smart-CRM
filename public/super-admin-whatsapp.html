@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin WhatsApp Platform Console - Charlie's CRM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #0b0f19;
+            color: #f1f5f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sa-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        .sa-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 20px;
+        }
+
+        .sa-card {
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .kpi-val {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #38bdf8;
+            margin-top: 4px;
+        }
+
+        .kpi-lbl {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .custom-table th {
+            background: #1e293b;
+            color: #94a3b8;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+
+        .custom-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #1f2937;
+            color: #e2e8f0;
+        }
+
+        .badge {
+            display: inline-flex;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .badge-success { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .badge-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary { background: #4f46e5; color: #fff; }
+        .btn-outline { background: transparent; border: 1px solid #374151; color: #e5e7eb; }
+        .btn-outline:hover { background: #1f2937; }
+
+        .modal-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-card {
+            background: #111827;
+            border: 1px solid #374151;
+            width: 100%;
+            max-width: 550px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .modal-header { padding: 18px 24px; border-bottom: 1px solid #1f2937; display: flex; justify-content: space-between; align-items: center; }
+        .modal-body { padding: 24px; }
+        .modal-footer { padding: 16px 24px; border-top: 1px solid #1f2937; background: #0f172a; display: flex; justify-content: flex-end; gap: 10px; }
+
+        .form-group { margin-bottom: 14px; }
+        .form-label { display: block; font-size: 0.8rem; font-weight: 700; color: #94a3b8; margin-bottom: 4px; }
+        .form-control { width: 100%; padding: 10px 12px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: #fff; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+    <div class="sa-container">
+        <div class="sa-header">
+            <div>
+                <a href="/tenant-control.html" style="color:#818cf8; text-decoration:none; font-weight:700; font-size:0.85rem;"><i class="fa-solid fa-arrow-left"></i> Super Admin Tenant Control</a>
+                <h1 style="margin:6px 0 0 0; font-size:1.6rem; color:#fff;">🛡️ Super Admin WhatsApp Platform Governance</h1>
+            </div>
+            <div>
+                <button class="btn btn-outline" onclick="loadSuperAdminData()"><i class="fa-solid fa-rotate"></i> Refresh Matrix</button>
+            </div>
+        </div>
+
+        <!-- Platform KPIs -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-lbl">Connected Enterprise WABAs</div>
+                <div class="kpi-val" id="saKpiWabas">0</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-lbl">Platform Volume Today</div>
+                <div class="kpi-val" id="saKpiToday">0 msgs</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-lbl">Platform Volume (Month)</div>
+                <div class="kpi-val" id="saKpiMonth">0 msgs</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-lbl">Delivery Success Rate</div>
+                <div class="kpi-val" id="saKpiDelivery">0%</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-lbl">Est. Platform Fee Revenue</div>
+                <div class="kpi-val" id="saKpiRevenue">₹0.00</div>
+            </div>
+        </div>
+
+        <!-- Tenants Matrix -->
+        <div class="sa-card">
+            <h3 style="margin:0 0 16px 0; font-size:1.15rem; color:#fff;">🏢 Enterprise Tenants WhatsApp Entitlement Matrix</h3>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Company Name</th>
+                            <th>Plan</th>
+                            <th>Marketing Entitled</th>
+                            <th>WhatsApp WABA</th>
+                            <th>Daily Limit</th>
+                            <th>Month Sent</th>
+                            <th>Wallet</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="saTenantsBody">
+                        <tr><td colspan="8" style="text-align:center; color:#64748b; padding:30px;">Loading tenants matrix...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: TENANT CONFIG -->
+    <div id="tenantConfigModal" class="modal-backdrop">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 style="margin:0; color:#fff;" id="configModalTitle">Configure Tenant WhatsApp</h3>
+                <button onclick="closeModal('tenantConfigModal')" style="background:none; border:none; color:#94a3b8; font-size:1.2rem; cursor:pointer;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="configCompanyId">
+                <div class="form-group">
+                    <label class="form-label">Master Marketing Feature Entitlement</label>
+                    <select id="cfgMarketingEnabled" class="form-control">
+                        <option value="true">ENABLED (Full Access)</option>
+                        <option value="false">DISABLED (Blocked)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">WhatsApp Sub-Feature</label>
+                    <select id="cfgWhatsappEnabled" class="form-control">
+                        <option value="true">ENABLED</option>
+                        <option value="false">DISABLED</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Daily Message Limit</label>
+                    <input type="number" id="cfgDailyLimit" class="form-control" value="5000">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Monthly Message Limit</label>
+                    <input type="number" id="cfgMonthlyLimit" class="form-control" value="50000">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Platform Fee Markup (0.15 = 15%)</label>
+                    <input type="number" id="cfgMarkup" class="form-control" step="0.01" value="0.15">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeModal('tenantConfigModal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveTenantConfig()"><i class="fa-solid fa-save"></i> Save Configuration</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/super-admin-whatsapp.js"></script>
+</body>
+</html>

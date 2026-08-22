@@ -107,6 +107,10 @@ async function main() {
     console.log('🧪 Running tenant-scoped Bulk CSV Import Center tests...');
     await runCommand('node', ['scratch/test-bulk-import.js'], process.env);
 
+    // 18. Run Enterprise Multi-Tenant WhatsApp Marketing Platform Tests
+    console.log('🧪 Running multi-tenant WhatsApp Marketing Platform tests...');
+    await runCommand('node', ['scratch/run-whatsapp-suite.js'], process.env);
+
     console.log('🎉 All test suites passed successfully!');
     
     // Clean up

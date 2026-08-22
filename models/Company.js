@@ -65,6 +65,21 @@ const storageSchema = new mongoose.Schema({
   storageCriticalThreshold: { type: Number, default: 95 }  // 95%
 }, { _id: false });
 
+const marketingConfigSchema = new mongoose.Schema({
+  enabled: { type: Boolean, default: true },
+  whatsapp: { type: Boolean, default: true },
+  bulk_campaigns: { type: Boolean, default: true },
+  media_campaigns: { type: Boolean, default: true },
+  analytics: { type: Boolean, default: true },
+  template_management: { type: Boolean, default: true },
+  monthly_message_limit: { type: Number, default: 50000 },
+  daily_message_limit: { type: Number, default: 5000 },
+  rate_per_marketing_msg: { type: Number, default: 0.8631 },
+  rate_per_utility_msg: { type: Number, default: 0.35 },
+  rate_per_auth_msg: { type: Number, default: 0.35 },
+  platform_fee_markup: { type: Number, default: 0.15 }
+}, { _id: false });
+
 const featureEntitlementsSchema = new mongoose.Schema({
   dashboard: { type: Boolean, default: true },
   sales: { type: Boolean, default: true },
@@ -78,6 +93,7 @@ const featureEntitlementsSchema = new mongoose.Schema({
   service: { type: Boolean, default: true },
   warranty: { type: Boolean, default: true },
   marketing: { type: Boolean, default: true },
+  marketing_config: { type: marketingConfigSchema, default: () => ({}) },
   finance: { type: Boolean, default: true },
   field_force: { type: Boolean, default: true },
   logistics: { type: Boolean, default: true },

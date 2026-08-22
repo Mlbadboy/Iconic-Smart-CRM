@@ -117,15 +117,28 @@ const FEATURE_PERMISSION_MAP = {
     ]
   },
   marketing: {
-    name: 'Marketing & Campaigns',
+    name: 'Marketing & WhatsApp Campaigns',
     category: 'Marketing',
     permissions: [
-      { key: 'marketing.view', label: 'View Marketing Assets' },
+      { key: 'marketing.view', label: 'View Marketing Hub' },
+      { key: 'marketing.contacts.view', label: 'View Marketing Contacts' },
+      { key: 'marketing.contacts.import', label: 'Import Contacts CSV' },
+      { key: 'marketing.templates.view', label: 'View WhatsApp Templates' },
+      { key: 'marketing.templates.manage', label: 'Manage & Sync Templates' },
+      { key: 'marketing.campaign.view', label: 'View Campaigns' },
+      { key: 'marketing.campaign.create', label: 'Create WhatsApp Campaigns' },
+      { key: 'marketing.campaign.edit', label: 'Edit Campaigns' },
+      { key: 'marketing.campaign.approve', label: 'Approve Campaigns' },
+      { key: 'marketing.campaign.send', label: 'Launch/Send WhatsApp Campaigns' },
+      { key: 'marketing.campaign.schedule', label: 'Schedule WhatsApp Campaigns' },
+      { key: 'marketing.campaign.pause', label: 'Pause/Cancel Active Campaigns' },
+      { key: 'marketing.analytics.view', label: 'View Marketing Analytics' },
+      { key: 'marketing.whatsapp.manage', label: 'Manage WhatsApp Business Account' },
+      // Legacy compatibility
       { key: 'marketing.create', label: 'Create Campaign Requests' },
       { key: 'marketing.edit', label: 'Edit Campaign Content' },
       { key: 'marketing.launch', label: 'Launch Marketing Campaigns' },
-      { key: 'marketing.upload', label: 'Upload Marketing Creatives' },
-      { key: 'marketing.assign_manager', label: 'Assign Festival Managers' }
+      { key: 'marketing.upload', label: 'Upload Marketing Creatives' }
     ]
   },
   finance: {

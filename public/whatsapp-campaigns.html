@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Campaign Builder - Charlie's CRM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+        }
+
+        .builder-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .builder-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .builder-card {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .step-bubble {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.9rem;
+            z-index: 2;
+        }
+
+        .step-bubble.active {
+            background: #25D366;
+            color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(37, 211, 102, 0.2);
+        }
+
+        .step-bubble.done {
+            background: #4f46e5;
+            color: #ffffff;
+        }
+
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-desc {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-whatsapp { background: #25D366; color: #fff; }
+        .btn-whatsapp:hover { background: #128C7E; }
+        .btn-primary { background: #4f46e5; color: #fff; }
+        .btn-primary:hover { background: #4338ca; }
+        .btn-outline { background: #fff; border: 1px solid #cbd5e1; color: #334155; }
+        .btn-outline:hover { background: #f1f5f9; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 0.85rem; font-weight: 700; color: #334155; margin-bottom: 6px; }
+        .form-control { width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 0.95rem; box-sizing: border-box; }
+        .form-control:focus { outline: none; border-color: #25D366; box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.15); }
+
+        /* WhatsApp Chat Bubble Preview */
+        .wa-preview-box {
+            background: #E5DDD5;
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 380px;
+            margin: 20px auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .wa-bubble {
+            background: #ffffff;
+            border-radius: 8px 8px 8px 0;
+            padding: 12px 14px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+            font-size: 0.9rem;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .wa-bubble-header {
+            font-weight: 700;
+            color: #075e54;
+            margin-bottom: 6px;
+        }
+
+        .wa-bubble-footer {
+            font-size: 0.75rem;
+            color: #667781;
+            margin-top: 8px;
+        }
+
+        .wa-btn {
+            background: #ffffff;
+            border: 1px solid #e9edef;
+            color: #00a884;
+            padding: 8px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-top: 6px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .step-section { display: none; }
+        .step-section.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="builder-container">
+        <div class="builder-header">
+            <div>
+                <a href="/marketing.html" style="color:#6366f1; text-decoration:none; font-weight:700; font-size:0.85rem;"><i class="fa-solid fa-arrow-left"></i> Back to Marketing Hub</a>
+                <h1 style="margin:4px 0 0 0; font-size:1.6rem; color:#0f172a;">WhatsApp Campaign Builder</h1>
+            </div>
+            <span class="btn btn-outline" id="walletBadge">Wallet: ₹0.00</span>
+        </div>
+
+        <div class="builder-card">
+            <!-- STEP 1: CAMPAIGN INFO -->
+            <div id="step-1" class="step-section active">
+                <div class="step-title"><i class="fa-solid fa-tag" style="color:#25D366;"></i> 1. Campaign Name & Setup</div>
+                <div class="step-desc">Give your marketing broadcast a clear identifying name.</div>
+
+                <div class="form-group">
+                    <label class="form-label">Campaign Name *</label>
+                    <input type="text" id="campaignName" class="form-control" placeholder="e.g. Diwali Festive Offer 2026" required>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end;">
+                    <button class="btn btn-whatsapp" onclick="goToStep(2)">Next: Choose Audience <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- STEP 2: AUDIENCE & CONTACTS -->
+            <div id="step-2" class="step-section">
+                <div class="step-title"><i class="fa-solid fa-users" style="color:#25D366;"></i> 2. Select Target Audience</div>
+                <div class="step-desc">Select an audience segment or upload a fresh CSV with Mobile, Name, and Email.</div>
+
+                <div class="form-group">
+                    <label class="form-label">Audience Source</label>
+                    <select id="audienceType" class="form-control" onchange="toggleAudienceType()">
+                        <option value="SAVED_SEGMENT">Use Existing Verified Contacts</option>
+                        <option value="CSV_UPLOAD">Upload Fresh CSV Contact List</option>
+                    </select>
+                </div>
+
+                <div id="csvUploadBox" style="display:none; border:2px dashed #cbd5e1; padding:20px; text-align:center; border-radius:8px; margin-bottom:20px;">
+                    <input type="file" id="campaignCsvFile" accept=".csv" onchange="handleCampaignCsv(event)">
+                    <p style="color:#64748b; font-size:0.85rem; margin-top:8px;">Columns expected: <code>name</code>, <code>mobile</code>, <code>email</code>, <code>product</code>, <code>dealerCode</code></p>
+                </div>
+
+                <div id="audienceSegmentBox" class="form-group">
+                    <label class="form-label">Filter Criteria</label>
+                    <select id="segmentFilter" class="form-control">
+                        <option value="">All Opted-in Contacts</option>
+                        <option value="CUSTOMER">Retail Customers Only</option>
+                        <option value="DEALER">Authorized Dealers Only</option>
+                    </select>
+                </div>
+
+                <div style="display:flex; justify-content:space-between;">
+                    <button class="btn btn-outline" onclick="goToStep(1)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                    <button class="btn btn-whatsapp" onclick="goToStep(3)">Next: Choose Template <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- STEP 3: TEMPLATE SELECTION -->
+            <div id="step-3" class="step-section">
+                <div class="step-title"><i class="fa-solid fa-file-code" style="color:#25D366;"></i> 3. Select Approved Meta Template</div>
+                <div class="step-desc">Only Meta-approved templates can be used for outbound broadcasts.</div>
+
+                <div class="form-group">
+                    <label class="form-label">Approved Template *</label>
+                    <select id="templateSelect" class="form-control" onchange="handleTemplateSelected()">
+                        <option value="">Select an approved template...</option>
+                    </select>
+                </div>
+
+                <div id="templateDetailCard" style="display:none; background:#f8fafc; padding:16px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:20px;">
+                    <div id="templateBodyPreview" style="font-size:0.9rem; color:#1e293b;"></div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between;">
+                    <button class="btn btn-outline" onclick="goToStep(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                    <button class="btn btn-whatsapp" onclick="goToStep(4)">Next: Map Variables <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- STEP 4: VARIABLE MAPPING & MEDIA -->
+            <div id="step-4" class="step-section">
+                <div class="step-title"><i class="fa-solid fa-sliders" style="color:#25D366;"></i> 4. Personalize Variables & Media</div>
+                <div class="step-desc">Map template tags like {{1}} to customer fields (name, mobile, product, etc.).</div>
+
+                <div id="variableMappingContainer">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <div class="form-group" id="mediaSelectGroup" style="display:none; margin-top:20px;">
+                    <label class="form-label">Header Media Attachment</label>
+                    <select id="campaignMediaSelect" class="form-control">
+                        <option value="">None (Text only)</option>
+                    </select>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:24px;">
+                    <button class="btn btn-outline" onclick="goToStep(3)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                    <button class="btn btn-whatsapp" onclick="goToStep(5)">Next: Preview & Test <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- STEP 5: PREVIEW & TEST SEND -->
+            <div id="step-5" class="step-section">
+                <div class="step-title"><i class="fa-solid fa-eye" style="color:#25D366;"></i> 5. Live WhatsApp Preview & Test Message</div>
+                <div class="step-desc">See how the personalized message will look on customer devices.</div>
+
+                <div class="wa-preview-box">
+                    <div class="wa-bubble">
+                        <div class="wa-bubble-header" id="previewHeader"></div>
+                        <div id="previewBodyText">Hello Rahul, enjoy exclusive discounts...</div>
+                        <div class="wa-bubble-footer" id="previewFooter">Charlie CRM • Reply STOP to unsubscribe</div>
+                    </div>
+                </div>
+
+                <div style="background:#f8fafc; padding:18px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:20px;">
+                    <h4 style="margin:0 0 10px 0; font-size:0.95rem;">📲 Dispatch Test WhatsApp Message</h4>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="testPhoneInput" class="form-control" placeholder="+919876543210" style="max-width:260px;">
+                        <button class="btn btn-outline" onclick="sendTestMessage()"><i class="fa-solid fa-paper-plane"></i> Send Test</button>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between;">
+                    <button class="btn btn-outline" onclick="goToStep(4)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                    <button class="btn btn-whatsapp" onclick="goToStep(6)">Next: Cost & Launch <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- STEP 6: COST & LAUNCH -->
+            <div id="step-6" class="step-section">
+                <div class="step-title"><i class="fa-solid fa-rocket" style="color:#25D366;"></i> 6. Cost Estimation & Launch</div>
+                <div class="step-desc">Review estimated recipients and messaging budget before launching into the queue.</div>
+
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:24px;">
+                    <div style="background:#f8fafc; padding:18px; border-radius:8px; border:1px solid #e2e8f0;">
+                        <div style="font-size:0.8rem; color:#64748b; font-weight:700;">ESTIMATED RECIPIENTS</div>
+                        <div style="font-size:1.6rem; font-weight:800; color:#0f172a;" id="summaryRecipients">0</div>
+                    </div>
+                    <div style="background:#f8fafc; padding:18px; border-radius:8px; border:1px solid #e2e8f0;">
+                        <div style="font-size:0.8rem; color:#64748b; font-weight:700;">UNIT RATE / MSG</div>
+                        <div style="font-size:1.6rem; font-weight:800; color:#0f172a;" id="summaryUnitRate">₹0.99</div>
+                    </div>
+                    <div style="background:#ecfdf5; padding:18px; border-radius:8px; border:1px solid #a7f3d0;">
+                        <div style="font-size:0.8rem; color:#065f46; font-weight:700;">TOTAL ESTIMATED COST</div>
+                        <div style="font-size:1.6rem; font-weight:800; color:#059669;" id="summaryTotalCost">₹0.00</div>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between;">
+                    <button class="btn btn-outline" onclick="goToStep(5)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                    <button class="btn btn-whatsapp" id="btnLaunch" onclick="launchCampaignFinal()"><i class="fa-solid fa-paper-plane"></i> Launch Campaign Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/whatsapp-campaigns.js"></script>
+</body>
+</html>

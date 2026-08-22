@@ -212,6 +212,13 @@ app.use('/api/v1/serial-validation', require('./routes/externalSerialValidation'
 app.use('/api/v1/serial-registry', require('./routes/serialRegistry'));
 app.use('/qerp/validatesno.asp', (req, res, next) => { req.url = '/validate'; require('./routes/externalSerialValidation')(req, res, next); });
 app.use('/api/bulk-import', require('./middleware/featureGate').requireFeature('bulk_import'), require('./routes/bulkImport'));
+app.use('/api/whatsapp', require('./routes/whatsapp'));
+app.use('/api/super-admin/whatsapp', require('./routes/superAdminWhatsApp'));
+
+// Start WhatsApp background campaign queue worker
+const { setSocketIO, startQueueWorker } = require('./services/whatsAppQueueService');
+setSocketIO(io);
+startQueueWorker(1500);
 
 // Health check endpoint for Railway
 app.get('/api/health', (req, res) => {
