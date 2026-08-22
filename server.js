@@ -42,7 +42,18 @@ const io = new Server(server, {
       try {
         const url = new URL(origin);
         const host = url.hostname.toLowerCase();
-        if (host.endsWith('.charlieai.in') || host.endsWith('.charlieai.com') || host.endsWith('.localhost') || host === 'localhost' || host === '127.0.0.1') {
+        if (
+          host.endsWith('.charlieai.in') || 
+          host === 'charlieai.in' ||
+          host.endsWith('.charlieai.com') || 
+          host === 'charlieai.com' ||
+          host.endsWith('.railway.app') || 
+          host.endsWith('.up.railway.app') ||
+          host.endsWith('.charliescrm.com') || 
+          host.endsWith('.localhost') || 
+          host === 'localhost' || 
+          host === '127.0.0.1'
+        ) {
           return callback(null, true);
         }
       } catch (e) {}
@@ -80,18 +91,26 @@ io.on('connection', (socket) => {
 });
 
 // CORS Configuration for platform and tenant subdomains
+const envOrigins = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map(o => o.trim())
+  .filter(Boolean);
+
 const allowedOrigins = [
+  ...envOrigins,
   'http://localhost:7000',
   'http://localhost:3000',
   'http://localhost:5173',
   'https://www.charlieai.in',
   'https://charlieai.in',
+  'https://crm.charlieai.in',
   'https://app.charlieai.in',
   'http://charlieai.in',
   'http://www.charlieai.in',
   'https://www.charlieai.com',
   'https://charlieai.com',
-  'https://app.charlieai.com'
+  'https://charlieaicrm.up.railway.app',
+  'https://iconicsmartcrm.up.railway.app'
 ];
 
 app.use(cors({
@@ -103,11 +122,22 @@ app.use(cors({
       return callback(null, true);
     }
 
-    // Support *.charlieai.in, *.charlieai.com or *.localhost tenant subdomains
+    // Support *.charlieai.in, *.railway.app or *.localhost tenant subdomains
     try {
       const url = new URL(origin);
       const host = url.hostname.toLowerCase();
-      if (host.endsWith('.charlieai.in') || host.endsWith('.charlieai.com') || host.endsWith('.charliescrm.com') || host.endsWith('.localhost') || host === 'localhost' || host === '127.0.0.1') {
+      if (
+        host.endsWith('.charlieai.in') || 
+        host === 'charlieai.in' ||
+        host.endsWith('.charlieai.com') || 
+        host === 'charlieai.com' ||
+        host.endsWith('.railway.app') || 
+        host.endsWith('.up.railway.app') ||
+        host.endsWith('.charliescrm.com') || 
+        host.endsWith('.localhost') || 
+        host === 'localhost' || 
+        host === '127.0.0.1'
+      ) {
         return callback(null, true);
       }
     } catch (e) {}
