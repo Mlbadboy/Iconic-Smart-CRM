@@ -18,7 +18,7 @@
   "name": "charlies-crm",
   "version": "1.0.0",
   "description": "Charlie's CRM - Multi-Company Smart CRM Platform",
-  "main": "index.js",
+  "main": "server.js",
   "dependencies": {
     "abbrev": "^1.1.1",
     "acorn": "^8.15.0",

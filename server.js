@@ -1,4 +1,5 @@
 const express = require('express');
+console.log('🚀 Charlie Smart CRM server starting up...');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
