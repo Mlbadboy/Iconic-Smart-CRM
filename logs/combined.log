@@ -5514,3 +5514,8 @@
 {"level":"info","message":"✅ Seeded 9 master marketing holidays & campaign blueprints.","service":"iconic-crm","timestamp":"2026-08-23 01:58:05"}
 {"level":"info","message":"📝 [Marketing Audit] CAMPAIGN_PLAN_GENERATED on CALENDAR by System (6a8a0654f716a710044189fb)","service":"iconic-crm","timestamp":"2026-08-23 01:58:05"}
 {"level":"info","message":"👑 Super Admin updated marketing commercial entitlements for company: Beta Electronics Corp (6a8a0654f716a710044189ff)","service":"iconic-crm","timestamp":"2026-08-23 01:58:05"}
+{"level":"info","message":"🔒 Preflight PF-20260822-72895 locked and confirmed by user 6a8a0700b946b04920dc14ed","service":"iconic-crm","timestamp":"2026-08-23 02:00:56"}
+{"level":"info","message":"📊 [Attribution] IMPRESSION on WHATSAPP for \"Diwali Warranty Renewal Campaign\" (Revenue: ₹0, Cost: ₹42000)","service":"iconic-crm","timestamp":"2026-08-23 02:00:56"}
+{"level":"info","message":"📊 [Attribution] LEAD_CAPTURED on WHATSAPP for \"Diwali Warranty Renewal Campaign\" (Revenue: ₹0, Cost: ₹0)","service":"iconic-crm","timestamp":"2026-08-23 02:00:56"}
+{"level":"info","message":"📊 [Attribution] OPPORTUNITY_CREATED on WHATSAPP for \"Diwali Warranty Renewal Campaign\" (Revenue: ₹0, Cost: ₹0)","service":"iconic-crm","timestamp":"2026-08-23 02:00:56"}
+{"level":"info","message":"📊 [Attribution] SERVICE_BOOKED on WHATSAPP for \"Diwali Warranty Renewal Campaign\" (Revenue: ₹382000, Cost: ₹0)","service":"iconic-crm","timestamp":"2026-08-23 02:00:56"}

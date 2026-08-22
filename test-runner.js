@@ -119,6 +119,10 @@ async function main() {
     console.log('🧪 Running Campaign Preflight & Closed-Loop CRM Attribution tests...');
     await runCommand('node', ['scratch/test-preflight-closed-loop-suite.js'], process.env);
 
+    // 21. Run Enterprise Preflight Boundary, 11-State Machine & Closed-Loop ROI Suite
+    console.log('🧪 Running Enterprise Preflight Boundary & Closed-Loop Attribution tests...');
+    await runCommand('node', ['scratch/test-enterprise-attribution-suite.js'], process.env);
+
     console.log('🎉 All test suites passed successfully!');
     
     // Clean up

@@ -1082,4 +1082,53 @@ router.get('/diagnostics/health', requirePermission('marketing.view'), async (re
   }
 });
 
+// =========================================================================
+// 12. CLOSED-LOOP ATTRIBUTION & INBOUND LEAD INGESTION
+// =========================================================================
+
+const {
+  recordAttributionEvent,
+  ingestInboundMarketingLead,
+  getClosedLoopCampaignAnalytics
+} = require('../services/marketingAttributionService');
+
+/**
+ * Ingest Inbound Lead from Campaign / Webhook
+ */
+router.post('/leads/ingest', requirePermission('marketing.campaign.create'), async (req, res) => {
+  try {
+    const result = await ingestInboundMarketingLead(req.companyId, req.body);
+    res.status(201).json({ success: true, ...result });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+/**
+ * Record Attribution Event (Order Placed, Service Booked, Revenue Conversion)
+ */
+router.post('/attribution/event', requirePermission('marketing.campaign.create'), async (req, res) => {
+  try {
+    const event = await recordAttributionEvent({
+      companyId: req.companyId,
+      ...req.body
+    });
+    res.status(201).json({ success: true, event });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+/**
+ * Get Multi-Channel Campaign ROI & Funnel
+ */
+router.get('/campaigns/:id/analytics', requirePermission('marketing.view'), async (req, res) => {
+  try {
+    const analytics = await getClosedLoopCampaignAnalytics(req.companyId, req.params.id);
+    res.json({ success: true, analytics });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

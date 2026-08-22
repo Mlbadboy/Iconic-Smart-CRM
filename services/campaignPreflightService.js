@@ -1,20 +1,22 @@
+const crypto = require('crypto');
 const Company = require('../models/Company');
 const WhatsAppAccount = require('../models/WhatsAppAccount');
 const WhatsAppWallet = require('../models/WhatsAppWallet');
 const WhatsAppTemplate = require('../models/WhatsAppTemplate');
 const WhatsAppContact = require('../models/WhatsAppContact');
+const PreflightSnapshot = require('../models/PreflightSnapshot');
 const { normalizePhone } = require('./whatsAppContactService');
 const logger = require('./logger');
 
 /**
- * Analyzes WhatsApp Campaign Preflight before any message or credit is committed
+ * Analyzes WhatsApp Campaign Preflight and generates an immutable PreflightSnapshot
  */
-async function analyzeWhatsAppCampaignPreflight(companyId, inputData) {
+async function analyzeWhatsAppCampaignPreflight(companyId, inputData, userId = null) {
   const {
     contacts = [],
     templateName,
-    mediaUrl = null,
-    audienceType = 'CSV_UPLOAD'
+    campaignName = 'WhatsApp Bulk Campaign',
+    mediaUrl = null
   } = inputData;
 
   const [company, wabaAccount, walletDoc, template] = await Promise.all([
@@ -95,19 +97,52 @@ async function analyzeWhatsAppCampaignPreflight(companyId, inputData) {
   const estimatedMessages = validNumbers;
   const estimatedCost = Math.round(estimatedMessages * ratePerMsg * 100) / 100;
   const isWalletSufficient = walletBalance >= estimatedCost;
+  const remainingBalance = isWalletSufficient ? Math.round((walletBalance - estimatedCost) * 100) / 100 : walletBalance;
   const balanceDeficit = isWalletSufficient ? 0 : Math.round((estimatedCost - walletBalance) * 100) / 100;
 
-  return {
-    preflightPassed: validNumbers > 0 && isWalletSufficient,
+  // Generate SHA-256 Hash of Audience List
+  const csvHash = crypto.createHash('sha256').update(JSON.stringify(validRecipients)).digest('hex').substring(0, 16);
+
+  // Generate unique human-readable Preflight ID
+  const todayStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  const randomSuffix = Math.floor(10000 + Math.random() * 90000);
+  const preflightId = `PF-${todayStr}-${randomSuffix}`;
+
+  // Persist Immutable Preflight Snapshot
+  const snapshot = await PreflightSnapshot.create({
+    companyId,
+    preflightId,
+    campaignType: 'WHATSAPP_BULK',
+    campaignName,
+    templateName: template?.name || templateName || 'Default Template',
+    csvHash,
     summary: {
       totalRecords,
-      validNumbers,
-      invalidNumbers,
-      duplicateCount,
-      missingNameCount,
+      validRecipientsCount: validNumbers,
+      invalidCount: invalidNumbers,
+      duplicatesCount: duplicateCount,
+      missingNamesCount: missingNameCount,
       optedOutCount,
       estimatedMessages
     },
+    financials: {
+      ratePerMessage: ratePerMsg,
+      estimatedCost,
+      walletBalanceSnapshot: walletBalance,
+      remainingBalanceAfterSend: remainingBalance,
+      isWalletSufficient
+    },
+    validRecipients,
+    invalidRows,
+    status: 'GENERATED'
+  });
+
+  return {
+    preflightId: snapshot.preflightId,
+    snapshotId: snapshot._id,
+    preflightPassed: validNumbers > 0 && isWalletSufficient,
+    csvHash,
+    summary: snapshot.summary,
     template: template ? {
       name: template.name,
       category: template.category,
@@ -119,15 +154,32 @@ async function analyzeWhatsAppCampaignPreflight(companyId, inputData) {
       hasMediaHeader: !!mediaUrl
     },
     financials: {
-      ratePerMessage: ratePerMsg,
-      estimatedCost,
-      walletBalance,
-      isWalletSufficient,
+      ...snapshot.financials,
       balanceDeficit
     },
     validRecipients,
     invalidRows
   };
+}
+
+/**
+ * Confirms and locks preflight transaction boundary
+ */
+async function confirmAndLockPreflight(companyId, preflightId, userId) {
+  const snapshot = await PreflightSnapshot.findOne({ companyId, preflightId });
+  if (!snapshot) throw new Error('Preflight snapshot not found');
+
+  if (snapshot.status === 'EXPIRED') {
+    throw new Error('Preflight snapshot has expired. Please run preflight audit again.');
+  }
+
+  snapshot.status = 'CONFIRMED';
+  snapshot.confirmedBy = userId;
+  snapshot.confirmedAt = new Date();
+  await snapshot.save();
+
+  logger.info(`🔒 Preflight ${preflightId} locked and confirmed by user ${userId}`);
+  return snapshot;
 }
 
 /**
@@ -151,7 +203,6 @@ async function analyzeMetaAdPreflight(companyId, adConfig) {
 
   const isBudgetWithinLimit = totalCampaignBudget <= monthlyAdLimit;
 
-  // Predict reach & benchmark metrics based on budget & targeting
   const estimatedDailyReachMin = Math.round(budgetAmount * 3.5);
   const estimatedDailyReachMax = Math.round(budgetAmount * 8.2);
   const estimatedClicksMin = Math.round(budgetAmount * 0.12);
@@ -167,7 +218,12 @@ async function analyzeMetaAdPreflight(companyId, adConfig) {
     warnings.push(`Campaign budget (₹${totalCampaignBudget}) exceeds tenant monthly limit (₹${monthlyAdLimit}). Super Admin approval required.`);
   }
 
+  const todayStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  const randomSuffix = Math.floor(10000 + Math.random() * 90000);
+  const preflightId = `PF-META-${todayStr}-${randomSuffix}`;
+
   return {
+    preflightId,
     preflightPassed: isBudgetWithinLimit && budgetAmount > 0,
     campaignName: name,
     objective,
@@ -189,5 +245,6 @@ async function analyzeMetaAdPreflight(companyId, adConfig) {
 
 module.exports = {
   analyzeWhatsAppCampaignPreflight,
+  confirmAndLockPreflight,
   analyzeMetaAdPreflight
 };

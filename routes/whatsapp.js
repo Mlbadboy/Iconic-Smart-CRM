@@ -539,16 +539,56 @@ router.get('/campaigns/:id', requirePermission('marketing.campaign.view'), async
  */
 router.post('/campaigns/preflight', requirePermission('marketing.campaign.create'), async (req, res) => {
   try {
-    const { contacts = [], templateName, mediaUrl } = req.body;
+    const { contacts = [], templateName, campaignName, mediaUrl } = req.body;
     const { analyzeWhatsAppCampaignPreflight } = require('../services/campaignPreflightService');
     const preflight = await analyzeWhatsAppCampaignPreflight(req.companyId, {
       contacts,
       templateName,
+      campaignName,
       mediaUrl
-    });
+    }, req.user.id);
     res.json({ success: true, preflight });
   } catch (err) {
     res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * Confirm and Lock Preflight Snapshot
+ */
+router.post('/campaigns/confirm-preflight', requirePermission('marketing.campaign.create'), async (req, res) => {
+  try {
+    const { preflightId } = req.body;
+    if (!preflightId) return res.status(400).json({ error: 'preflightId is required' });
+
+    const { confirmAndLockPreflight } = require('../services/campaignPreflightService');
+    const snapshot = await confirmAndLockPreflight(req.companyId, preflightId, req.user.id);
+
+    res.json({
+      success: true,
+      message: `Preflight ${preflightId} locked and approved!`,
+      snapshot: {
+        preflightId: snapshot.preflightId,
+        validCount: snapshot.summary.validRecipientsCount,
+        estimatedCost: snapshot.financials.estimatedCost,
+        status: snapshot.status
+      }
+    });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * Closed-Loop Campaign Analytics & ROI
+ */
+router.get('/campaigns/:id/analytics', requirePermission('marketing.campaign.view'), async (req, res) => {
+  try {
+    const { getClosedLoopCampaignAnalytics } = require('../services/marketingAttributionService');
+    const analytics = await getClosedLoopCampaignAnalytics(req.companyId, req.params.id);
+    res.json({ success: true, analytics });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

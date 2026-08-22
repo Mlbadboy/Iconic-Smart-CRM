@@ -89,9 +89,35 @@ const whatsAppCampaignSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['DRAFT', 'SCHEDULED', 'QUEUED', 'PROCESSING', 'PAUSED', 'COMPLETED', 'CANCELLED', 'FAILED'],
+    enum: [
+      'DRAFT',
+      'PREFLIGHT_RUNNING',
+      'PREFLIGHT_PASSED',
+      'PREFLIGHT_FAILED',
+      'AWAITING_APPROVAL',
+      'APPROVED',
+      'REJECTED',
+      'SCHEDULED',
+      'QUEUED',
+      'PROCESSING',
+      'PARTIALLY_SENT',
+      'PAUSED',
+      'COMPLETED',
+      'CANCELLED',
+      'FAILED'
+    ],
     default: 'DRAFT',
     index: true
+  },
+  preflightId: {
+    type: String,
+    default: null,
+    index: true
+  },
+  preflightSnapshotId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'PreflightSnapshot',
+    default: null
   },
   pauseReason: {
     type: String,
