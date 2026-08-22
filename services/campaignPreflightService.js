@@ -142,7 +142,18 @@ async function analyzeWhatsAppCampaignPreflight(companyId, inputData, userId = n
     snapshotId: snapshot._id,
     preflightPassed: validNumbers > 0 && isWalletSufficient,
     csvHash,
-    summary: snapshot.summary,
+    summary: {
+      totalRecords: snapshot.summary.totalRecords,
+      validRecipientsCount: snapshot.summary.validRecipientsCount,
+      validNumbers: snapshot.summary.validRecipientsCount,
+      invalidCount: snapshot.summary.invalidCount,
+      invalidNumbers: snapshot.summary.invalidCount,
+      duplicatesCount: snapshot.summary.duplicatesCount,
+      duplicateCount: snapshot.summary.duplicatesCount,
+      missingNamesCount: snapshot.summary.missingNamesCount,
+      optedOutCount: snapshot.summary.optedOutCount,
+      estimatedMessages: snapshot.summary.estimatedMessages
+    },
     template: template ? {
       name: template.name,
       category: template.category,

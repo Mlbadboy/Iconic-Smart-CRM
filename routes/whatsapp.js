@@ -95,7 +95,7 @@ router.use((req, res, next) => {
   req.companyId = req.companyId || req.user?.companyId || req.query?.companyId || req.headers['x-company-id'];
   next();
 });
-router.use(requireFeature('marketing'));
+router.use(requireFeature('marketing.whatsapp'));
 
 // =========================================================================
 // 2. WHATSAPP ACCOUNT MANAGEMENT

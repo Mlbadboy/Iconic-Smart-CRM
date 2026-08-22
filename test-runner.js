@@ -123,6 +123,14 @@ async function main() {
     console.log('🧪 Running Enterprise Preflight Boundary & Closed-Loop Attribution tests...');
     await runCommand('node', ['scratch/test-enterprise-attribution-suite.js'], process.env);
 
+    // 22. Run Auth Session Stability & 403 Feature Gate Resilience Tests
+    console.log('🧪 Running Auth Session Stability & 403 Resilience tests...');
+    await runCommand('node', ['scratch/test-auth-session-stability.js'], process.env);
+
+    // 23. Run Production Marketing Acceptance & Hardening Matrix
+    console.log('🧪 Running Production Marketing Acceptance Matrix tests...');
+    await runCommand('node', ['scratch/test-production-marketing-acceptance.js'], process.env);
+
     console.log('🎉 All test suites passed successfully!');
     
     // Clean up

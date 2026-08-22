@@ -19,8 +19,7 @@ const walletTransactionSchema = new mongoose.Schema({
     required: true
   },
   campaignId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'WhatsAppCampaign',
+    type: mongoose.Schema.Types.Mixed,
     default: null
   },
   referenceId: {

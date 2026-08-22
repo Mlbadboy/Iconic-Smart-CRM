@@ -205,4 +205,33 @@ router.get('/entitlements/debug', auth, async (req, res) => {
   }
 });
 
+/**
+ * GET /api/tenant/me
+ * Returns the current authenticated user's company profile and feature entitlements
+ */
+router.get('/me', auth, async (req, res) => {
+  try {
+    const companyId = req.user?.companyId;
+    if (!companyId) {
+      return res.json({
+        success: true,
+        isSuperAdmin: true,
+        user: req.user,
+        company: { name: "Charlie's Platform Admin", features: { marketing: true } }
+      });
+    }
+
+    const company = await Company.findById(companyId).lean();
+    if (!company) return res.status(404).json({ error: 'Company not found' });
+
+    res.json({
+      success: true,
+      company,
+      user: req.user
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
