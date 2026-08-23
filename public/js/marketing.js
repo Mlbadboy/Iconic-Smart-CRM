@@ -6,7 +6,7 @@ let currentPreflightResult = null;
 let currentPreflightPayload = null;
 
 function getToken() {
-  return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
+  return localStorage.getItem('authToken') || localStorage.getItem('token') || sessionStorage.getItem('authToken') || sessionStorage.getItem('token');
 }
 
 function getAuthHeaders() {
