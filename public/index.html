@@ -3,305 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charlie's CRM - API Test</title>
+    <meta http-equiv="refresh" content="0; url=/login.html">
+    <title>Charlie's CRM</title>
+    <script>
+        // Smart Router: If user has active session, route to dashboard, otherwise login
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token') || sessionStorage.getItem('authToken') || sessionStorage.getItem('token');
+        if (token) {
+            window.location.replace('/dashboard.html');
+        } else {
+            window.location.replace('/login.html');
+        }
+    </script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            background: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
         }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
+        .loading-box {
+            text-align: center;
         }
-        
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-bottom: 20px;
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #6366f1;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
         }
-        
-        h1 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-        
-        .input-group {
-            margin-bottom: 15px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #333;
-        }
-        
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1em;
-        }
-        
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-        }
-        
-        .result {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        
-        .success {
-            background: #d4edda;
-            color: #155724;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-        
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-        
-        .info {
-            background: #d1ecf1;
-            color: #0c5460;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-        
-        pre {
-            background: #2d2d2d;
-            color: #f8f8f2;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        .endpoint {
-            background: #e9ecef;
-            padding: 8px 12px;
-            border-radius: 5px;
-            margin: 5px 0;
-            cursor: pointer;
-        }
-        
-        .endpoint:hover {
-            background: #dee2e6;
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <h1>🚀 Charlie's CRM - API Tester</h1>
-            <p style="color: #666; margin-bottom: 20px;">Test your CRM API endpoints</p>
-            
-            <div id="statusBar"></div>
-            
-            <!-- Health Check -->
-            <div style="margin-bottom: 20px;">
-                <button onclick="testHealth()">🏥 Test API Health</button>
-            </div>
-            
-            <!-- Login Form -->
-            <div id="loginForm">
-                <h3 style="margin-bottom: 15px;">Login</h3>
-                <div class="input-group">
-                    <label>Email</label>
-                    <input type="email" id="email" value="admin@charlieai.com">
-                </div>
-                <div class="input-group">
-                    <label>Password</label>
-                    <input type="password" id="password" value="admin123">
-                </div>
-                <button onclick="login()">🔐 Login</button>
-            </div>
-            
-            <!-- API Controls (hidden until logged in) -->
-            <div id="apiControls" class="hidden">
-                <h3 style="margin: 20px 0 10px 0;">Test Endpoints</h3>
-                <div class="endpoint" onclick="testLeads()">📋 GET /api/leads</div>
-                <div class="endpoint" onclick="testOrders()">📦 GET /api/orders</div>
-                <div class="endpoint" onclick="testServices()">🎫 GET /api/services</div>
-                <div class="endpoint" onclick="testContacts()">👥 GET /api/contacts</div>
-                <div class="endpoint" onclick="testOpportunities()">💼 GET /api/opportunities</div>
-                <button onclick="logout()" style="margin-top: 15px; background: #dc3545;">Logout</button>
-            </div>
-            
-            <div id="result" class="result" style="display: none;"></div>
-        </div>
+    <div class="loading-box">
+        <div class="spinner"></div>
+        <p style="font-weight: 600;">Opening Charlie's CRM...</p>
     </div>
-
-    <script>
-        const API_URL = 'http://localhost:7000/api';
-        let token = '';
-        
-        function showResult(message, type = 'info') {
-            const resultDiv = document.getElementById('result');
-            resultDiv.style.display = 'block';
-            
-            let html = '';
-            if (type === 'success') {
-                html = `<div class="success">${message}</div>`;
-            } else if (type === 'error') {
-                html = `<div class="error">${message}</div>`;
-            } else {
-                html = `<div class="info">${message}</div>`;
-            }
-            
-            resultDiv.innerHTML = html + resultDiv.innerHTML;
-        }
-        
-        function showJson(data, label) {
-            const resultDiv = document.getElementById('result');
-            resultDiv.style.display = 'block';
-            resultDiv.innerHTML = `<strong>${label}</strong><pre>${JSON.stringify(data, null, 2)}</pre>` + resultDiv.innerHTML;
-        }
-        
-        async function makeRequest(endpoint, method = 'GET', body = null) {
-            try {
-                showResult(`🔄 ${method} ${endpoint}`, 'info');
-                
-                const options = {
-                    method,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                };
-                
-                if (token) {
-                    options.headers['Authorization'] = `Bearer ${token}`;
-                }
-                
-                if (body) {
-                    options.body = JSON.stringify(body);
-                }
-                
-                const response = await fetch(`${API_URL}${endpoint}`, options);
-                const data = await response.json();
-                
-                if (response.ok) {
-                    showResult(`✅ Success (${response.status})`, 'success');
-                    showJson(data, `Response from ${endpoint}`);
-                    return data;
-                } else {
-                    showResult(`❌ Error (${response.status}): ${data.message || 'Unknown error'}`, 'error');
-                    showJson(data, 'Error Details');
-                    return null;
-                }
-            } catch (error) {
-                showResult(`❌ Network Error: ${error.message}`, 'error');
-                console.error('Request failed:', error);
-                return null;
-            }
-        }
-        
-        async function testHealth() {
-            const data = await makeRequest('/health', 'GET');
-            if (data && data.status === 'OK') {
-                document.getElementById('statusBar').innerHTML = '<div class="success">✅ API is running and healthy!</div>';
-            }
-        }
-        
-        async function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            const data = await makeRequest('/auth/login', 'POST', { email, password });
-            
-            if (data && data.token) {
-                token = data.token;
-                showResult(`✅ Logged in as ${data.user.name} (${data.user.role})`, 'success');
-                document.getElementById('loginForm').classList.add('hidden');
-                document.getElementById('apiControls').classList.remove('hidden');
-                document.getElementById('statusBar').innerHTML = `<div class="success">✅ Logged in as: ${data.user.name}</div>`;
-            }
-        }
-        
-        function logout() {
-            token = '';
-            document.getElementById('loginForm').classList.remove('hidden');
-            document.getElementById('apiControls').classList.add('hidden');
-            document.getElementById('statusBar').innerHTML = '';
-            showResult('👋 Logged out', 'info');
-        }
-        
-        async function testLeads() {
-            const data = await makeRequest('/leads', 'GET');
-            if (data) {
-                showResult(`📊 Found ${data.length} leads`, 'success');
-            }
-        }
-        
-        async function testOrders() {
-            const data = await makeRequest('/orders', 'GET');
-            if (data) {
-                showResult(`📊 Found ${data.length} orders`, 'success');
-            }
-        }
-        
-        async function testServices() {
-            const data = await makeRequest('/services', 'GET');
-            if (data) {
-                showResult(`📊 Found ${data.length} services`, 'success');
-            }
-        }
-        
-        async function testContacts() {
-            const data = await makeRequest('/contacts', 'GET');
-            if (data) {
-                showResult(`📊 Found ${data.length} contacts`, 'success');
-            }
-        }
-        
-        async function testOpportunities() {
-            const data = await makeRequest('/opportunities', 'GET');
-            if (data) {
-                showResult(`📊 Found ${data.length} opportunities`, 'success');
-            }
-        }
-        
-        // Auto-test on load
-        window.onload = function() {
-            testHealth();
-        };
-    </script>
 </body>
 </html>

@@ -1750,19 +1750,33 @@
                 await fetchAnnouncements();
 
                 // Hide loading screen
-                document.getElementById('loadingOverlay').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                }, 300);
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => { overlay.style.display = 'none'; }, 300);
+                }
 
                 dashboardInitialized = true;
             } catch (err) {
-                console.error(err);
-                showToast('Failed to populate Command Center.', 'error');
+                console.error('Dashboard initialization notice:', err);
             } finally {
                 window.__CHARLIE_DASHBOARD_INITIALIZING = false;
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) {
+                    overlay.style.opacity = '0';
+                    overlay.style.display = 'none';
+                }
             }
         }
+
+        // Safety fallback timer: Ensure loading overlay is dismissed within 1.5s
+        setTimeout(() => {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay && overlay.style.display !== 'none') {
+                overlay.style.opacity = '0';
+                overlay.style.display = 'none';
+            }
+        }, 1500);
 
         // Helper escape HTML
         function escapeHtml(str) {

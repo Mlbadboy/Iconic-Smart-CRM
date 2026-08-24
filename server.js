@@ -93,6 +93,11 @@ app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
 app.use('/api', getRateLimiter);
 
+// Root route - redirect to login
+app.get('/', (req, res) => {
+  res.redirect('/login.html');
+});
+
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -178,11 +183,7 @@ initializeDatabase().then(async (connected) => {
   logger.error('Database initialization error:', err.message);
 });
 
-// Root route - redirect to login (BEFORE API routes)
-app.get('/', (req, res) => {
-  logger.debug('🏠 Root route accessed, redirecting to login');
-  res.redirect('/login.html');
-});
+
 
 // API Routes
 app.use('/api/tenant', require('./routes/tenant'));
