@@ -17,7 +17,9 @@ docker-compose.dev.yml
 test-*.js
 *.test.js
 *.spec.js
-coverage/
+client/
+react-ready-files/
+flutter_app/
 .nyc_output/
 .DS_Store
 Thumbs.db
