@@ -14,6 +14,18 @@ dotenv.config({ override: false });
 
 const app = express();
 app.set('trust proxy', 1);
+
+// Instant Health check routes for Railway, Docker & Cloud probes (BEFORE rate limiters & security middleware)
+app.get(['/api/health', '/health', '/ping'], (req, res) => {
+  res.status(200).json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'production',
+    version: '1.0.0'
+  });
+});
+
 const server = http.createServer(app);
 
 // Initialize Socket.IO for real-time notifications
@@ -231,17 +243,6 @@ app.use('/api/super-admin/marketing', require('./routes/superAdminMarketing'));
 const { setSocketIO, startQueueWorker } = require('./services/whatsAppQueueService');
 setSocketIO(io);
 
-// Health check endpoint for Railway
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    environment: process.env.NODE_ENV || 'development',
-    version: '1.0.0'
-  });
-});
-
 // Catch all - must be last middleware
 app.use((req, res) => {
   // If it's an API route that wasn't found, return 404 JSON
@@ -249,13 +250,7 @@ app.use((req, res) => {
     return res.status(404).json({ error: 'API endpoint not found' });
   }
   
-  // SPA routing fallback for React client if it exists
-  const distIndex = path.join(__dirname, 'client', 'dist', 'index.html');
-  if (fs.existsSync(distIndex) && !req.path.includes('.')) {
-    return res.sendFile(distIndex);
-  }
-  
-  // If it's not a file request, redirect to login
+  // If it's not a static file request, redirect to login
   if (!req.path.includes('.')) {
     res.redirect('/login.html');
   } else {
@@ -273,19 +268,13 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 7000;
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   const isProduction = process.env.NODE_ENV === 'production';
-  const baseUrl = isProduction 
-    ? `https://www.iconicsmart.co.in`
-    : `http://localhost:${PORT}`;
-  
-  logger.info(`\n🚀 Server running on port ${PORT}`);
-  logger.info(`📱 Access the CRM at: ${baseUrl}`);
-  logger.info(`🔐 Login page: ${baseUrl}/login.html`);
-  logger.info(`🔌 Socket.IO ready for real-time notifications`);
+  logger.info(`\n🚀 Charlie Smart CRM server running on port ${PORT} (0.0.0.0)`);
+  logger.info(`📱 Healthcheck active at /api/health`);
   if (isProduction) {
-    logger.info(`🌐 Production mode: iconicsmart.co.in`);
+    logger.info(`🌐 Production mode active`);
   } else {
-    logger.info(`🔧 Development mode: localhost:${PORT}\n`);
+    logger.info(`🔧 Development mode: http://localhost:${PORT}`);
   }
 });
