@@ -119,15 +119,23 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // MongoDB connection with resilient local in-memory fallback
 async function initializeDatabase() {
   const configuredUri = process.env.MONGO_URI || process.env.MONGODB_URI;
+  const isProduction = process.env.NODE_ENV === 'production' || process.env.RAILWAY_ENVIRONMENT;
+
   if (configuredUri && !configuredUri.includes('localhost:27017') && !configuredUri.includes('127.0.0.1:27017')) {
     try {
-      logger.info('🔌 Attempting configured MongoDB connection...');
-      await mongoose.connect(configuredUri, { serverSelectionTimeoutMS: 3000 });
+      logger.info('🔌 Connecting to configured production MongoDB...');
+      await mongoose.connect(configuredUri, { serverSelectionTimeoutMS: 10000 });
       logger.info('✅ MongoDB connected successfully!');
       return true;
     } catch (err) {
-      logger.warn('⚠️ Configured MongoDB connection failed:', err.message);
+      logger.error('❌ Configured MongoDB connection failed:', err.message);
+      if (isProduction) return false;
     }
+  }
+
+  if (isProduction) {
+    logger.warn('⚠️ In production mode without local fallback.');
+    return false;
   }
 
   // Attempt local MongoDB daemon
@@ -137,10 +145,10 @@ async function initializeDatabase() {
     logger.info('✅ Connected to local MongoDB daemon!');
     return true;
   } catch (err) {
-    logger.info('ℹ️ Local MongoDB daemon not found, launching in-memory database...');
+    logger.info('ℹ️ Local MongoDB daemon not found, launching in-memory database for testing...');
   }
 
-  // Fallback to MongoMemoryServer
+  // Fallback to MongoMemoryServer (DEVELOPMENT / TEST ONLY)
   try {
     const { MongoMemoryServer } = require('mongodb-memory-server');
     const mongod = await MongoMemoryServer.create();
@@ -150,7 +158,7 @@ async function initializeDatabase() {
     logger.info('✅ In-Memory MongoDB initialized and connected successfully!');
     return true;
   } catch (err) {
-    logger.error('❌ Failed to initialize database:', err.message);
+    logger.error('❌ Failed to initialize in-memory database:', err.message);
     return false;
   }
 }
