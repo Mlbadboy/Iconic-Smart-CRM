@@ -48,31 +48,19 @@ const logger = winston.createLogger({
       maxsize: 5242880, // 5MB
       maxFiles: 5,
     }),
+    new winston.transports.Console({
+      format: consoleFormat
+    })
   ],
   // Handle exceptions
   exceptionHandlers: [
-    new winston.transports.File({
-      filename: path.join(logsDir, 'exceptions.log'),
-      maxsize: 5242880,
-      maxFiles: 5,
-    })
+    new winston.transports.Console({ format: consoleFormat })
   ],
   // Handle promise rejections
   rejectionHandlers: [
-    new winston.transports.File({
-      filename: path.join(logsDir, 'rejections.log'),
-      maxsize: 5242880,
-      maxFiles: 5,
-    })
+    new winston.transports.Console({ format: consoleFormat })
   ]
 });
-
-// Add console transport in development
-if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: consoleFormat
-  }));
-}
 
 // Helper methods for common log types
 logger.info = (message, ...args) => {
