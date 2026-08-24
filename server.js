@@ -101,12 +101,6 @@ app.get('/', (req, res) => {
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve React build if it exists
-const fs = require('fs');
-if (fs.existsSync(path.join(__dirname, 'client', 'dist'))) {
-  app.use(express.static(path.join(__dirname, 'client', 'dist')));
-}
-
 // Serve uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
