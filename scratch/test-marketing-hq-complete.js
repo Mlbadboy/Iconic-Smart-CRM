@@ -37,7 +37,13 @@ async function runTests() {
         await mongoose.connect(process.env.MONGO_URI);
       } else {
         const { MongoMemoryServer } = require('mongodb-memory-server');
-        mongoServer = await MongoMemoryServer.create();
+        const os = require('os');
+        const path = require('path');
+        const fs = require('fs');
+        const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'mkt-test-'));
+        mongoServer = await MongoMemoryServer.create({
+          instance: { dbPath: tempDir }
+        });
         await mongoose.connect(mongoServer.getUri());
       }
     }

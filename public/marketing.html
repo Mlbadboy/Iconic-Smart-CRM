@@ -90,7 +90,7 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
     /* Metrics & Cards */
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem; }
     .page-title { font-size: 1.6rem; font-weight: 700; }
     .page-desc { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem; }
     .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 1.75rem; }
@@ -190,7 +190,7 @@
       border: 1px solid var(--border-color);
       border-radius: 16px;
       width: 100%;
-      max-width: 780px;
+      max-width: 720px;
       max-height: 90vh;
       overflow-y: auto;
       padding: 1.75rem;
@@ -231,7 +231,7 @@
         <i class="fa-solid fa-arrow-left"></i> Back to CRM
       </button>
       <button class="btn btn-secondary btn-sm" onclick="switchTab('connections')">
-        <i class="fa-solid fa-link" style="color: #3b82f6;"></i> Connection Center
+        <i class="fa-solid fa-network-wired" style="color: #3b82f6;"></i> Connection Center
       </button>
       <div id="companyBadge" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">
         <i class="fa-solid fa-building"></i> Loading...
@@ -258,7 +258,7 @@
         <i class="fa-solid fa-share-nodes" style="color: #60a5fa;"></i> Meta FB & IG
       </div>
       <div class="nav-item" onclick="switchTab('meta-ads')" id="nav-meta-ads">
-        <i class="fa-solid fa-rectangle-ad" style="color: #f59e0b;"></i> Meta Ads
+        <i class="fa-solid fa-bullseye" style="color: #f59e0b;"></i> Meta Ads
       </div>
       <div class="nav-item" onclick="switchTab('google')" id="nav-google">
         <i class="fa-brands fa-google" style="color: #ea4335;"></i> Google Marketing
@@ -296,7 +296,7 @@
             <h1 class="page-title">Marketing Command Center</h1>
             <p class="page-desc">Closed-Loop CRM Customer Acquisition, Omnichannel Reach, and Real-Time ROAS.</p>
           </div>
-          <div style="display: flex; gap: 0.75rem;">
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
             <button class="btn btn-primary" onclick="trigger1ClickHolidayBlueprint()">
               <i class="fa-solid fa-wand-magic-sparkles"></i> 1-Click Diwali Roadmap
             </button>
@@ -309,23 +309,23 @@
         <div class="metrics-grid">
           <div class="metric-card">
             <span class="metric-title">Total Marketing Reach</span>
-            <span class="metric-value">142.5K</span>
-            <span class="metric-subtitle"><i class="fa-solid fa-arrow-trend-up"></i> +18.4% this month</span>
+            <span class="metric-value" id="metricTotalReach">142.5K</span>
+            <span class="metric-subtitle"><i class="fa-solid fa-arrow-trend-up"></i> Inbound Audience</span>
           </div>
           <div class="metric-card">
             <span class="metric-title">Active Connections</span>
-            <span class="metric-value">6 / 8</span>
-            <span class="metric-subtitle"><i class="fa-solid fa-circle-check"></i> All channels healthy</span>
+            <span class="metric-value" id="metricActiveConnections">6 / 8</span>
+            <span class="metric-subtitle"><i class="fa-solid fa-circle-check"></i> Monitored Channels</span>
           </div>
           <div class="metric-card">
             <span class="metric-title">Cross-Channel Spend</span>
-            <span class="metric-value">₹1,37,420</span>
+            <span class="metric-value" id="metricTotalSpend">₹1,37,420</span>
             <span class="metric-subtitle" style="color: var(--text-muted);">WhatsApp + Meta + Google</span>
           </div>
           <div class="metric-card">
             <span class="metric-title">Attributed Revenue</span>
-            <span class="metric-value" style="color: #10b981;">₹8,72,000</span>
-            <span class="metric-subtitle" style="color: #10b981; font-weight: 700;"><i class="fa-solid fa-gem"></i> 6.35x Real ROAS</span>
+            <span class="metric-value" id="metricAttributedRev" style="color: #10b981;">₹8,72,000</span>
+            <span class="metric-subtitle" style="color: #10b981; font-weight: 700;"><i class="fa-solid fa-gem"></i> <span id="metricRealRoas">6.35x</span> Real ROAS</span>
           </div>
         </div>
 
@@ -334,37 +334,25 @@
             <span><i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Active Omnichannel Campaigns</span>
             <button class="btn btn-secondary btn-sm" onclick="switchTab('attribution')">View ROAS Breakdown</button>
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Campaign Code</th>
-                <th>Campaign Name</th>
-                <th>Channels</th>
-                <th>Recipients / Reach</th>
-                <th>Total Spend</th>
-                <th>Attributed Revenue</th>
-                <th>ROAS</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="activeCampaignsTable">
-              <tr>
-                <td><code>UC-901824-1</code></td>
-                <td><strong>Diwali 2026 — Omnichannel Blitz</strong></td>
-                <td>
-                  <i class="fa-brands fa-whatsapp" style="color: #25d366;"></i>
-                  <i class="fa-brands fa-facebook" style="color: #0081fb;"></i>
-                  <i class="fa-brands fa-instagram" style="color: #ec4899;"></i>
-                  <i class="fa-brands fa-google" style="color: #ea4335;"></i>
-                </td>
-                <td>124,500</td>
-                <td>₹1,37,420</td>
-                <td style="color: #10b981; font-weight: 700;">₹8,72,000</td>
-                <td><span class="status-pill status-active">6.35x</span></td>
-                <td><span class="status-pill status-active">ACTIVE</span></td>
-              </tr>
-            </tbody>
-          </table>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Campaign Code</th>
+                  <th>Campaign Name</th>
+                  <th>Channels</th>
+                  <th>Recipients / Reach</th>
+                  <th>Total Spend</th>
+                  <th>Attributed Revenue</th>
+                  <th>ROAS</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="activeCampaignsTable">
+                <!-- Dynamically Rendered by marketing-hq.js -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -383,180 +371,7 @@
         </div>
 
         <div class="connections-grid" id="connectionsGrid">
-          <!-- WhatsApp -->
-          <div class="connection-card">
-            <div>
-              <div class="connection-header">
-                <div class="connection-title">
-                  <i class="fa-brands fa-whatsapp" style="color: #25d366;"></i>
-                  <span>WhatsApp Business (WABA)</span>
-                </div>
-                <span class="status-pill status-connected">CONNECTED</span>
-              </div>
-              <div style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
-                <p><strong>Phone:</strong> +91 98201 23456</p>
-                <p><strong>WABA ID:</strong> WABA-902819</p>
-                <p><strong>Quality Rating:</strong> <span style="color: #10b981; font-weight: 700;">HIGH</span></p>
-              </div>
-            </div>
-            <div style="display: flex; gap: 0.5rem;">
-              <button class="btn btn-secondary btn-sm" onclick="runDiagnostic('WHATSAPP_BUSINESS')"><i class="fa-solid fa-heart-pulse"></i> Diagnostics</button>
-              <button class="btn btn-secondary btn-sm" onclick="switchTab('whatsapp')">Manage</button>
-            </div>
-          </div>
-
-          <!-- Facebook -->
-          <div class="connection-card">
-            <div>
-              <div class="connection-header">
-                <div class="connection-title">
-                  <i class="fa-brands fa-facebook" style="color: #0081fb;"></i>
-                  <span>Facebook Official Page</span>
-                </div>
-                <span class="status-pill status-connected">CONNECTED</span>
-              </div>
-              <div style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
-                <p><strong>Page:</strong> Charlie Appliances Official</p>
-                <p><strong>Page ID:</strong> PAGE-102938</p>
-                <p><strong>Scope:</strong> pages_manage_posts, pages_read_engagement</p>
-              </div>
-            </div>
-            <div style="display: flex; gap: 0.5rem;">
-              <button class="btn btn-secondary btn-sm" onclick="runDiagnostic('META_FACEBOOK')"><i class="fa-solid fa-heart-pulse"></i> Diagnostics</button>
-              <button class="btn btn-secondary btn-sm" onclick="switchTab('social')">Manage</button>
-            </div>
-          </div>
-
-          <!-- Instagram -->
-          <div class="connection-card">
-            <div>
-              <div class="connection-header">
-                <div class="connection-title">
-                  <i class="fa-brands fa-instagram" style="color: #ec4899;"></i>
-                  <span>Instagram Professional</span>
-                </div>
-                <span class="status-pill status-connected">CONNECTED</span>
-              </div>
-              <div style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
-                <p><strong>Account:</strong> @charlie_appliances_official</p>
-                <p><strong>IG ID:</strong> IG-592019</p>
-                <p><strong>Account Type:</strong> Business Creator</p>
-              </div>
-            </div>
-            <div style="display: flex; gap: 0.5rem;">
-              <button class="btn btn-secondary btn-sm" onclick="runDiagnostic('META_INSTAGRAM')"><i class="fa-solid fa-heart-pulse"></i> Diagnostics</button>
-              <button class="btn btn-secondary btn-sm" onclick="switchTab('social')">Manage</button>
-            </div>
-          </div>
-
-          <!-- Meta Ads -->
-          <div class="connection-card">
-            <div>
-              <div class="connection-header">
-                <div class="connection-title">
-                  <i class="fa-solid fa-bullseye" style="color: #f59e0b;"></i>
-                  <span>Meta Ads Manager</span>
-                </div>
-                <span class="status-pill status-connected">CONNECTED</span>
-              </div>
-              <div style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
-                <p><strong>Ad Account:</strong> ACT-991029</p>
-                <p><strong>Monthly Spend Cap:</strong> ₹2,00,000</p>
-                <p><strong>Meta Billing:</strong> Managed in Meta</p>
-              </div>
-            </div>
-            <div style="display: flex; gap: 0.5rem;">
-              <button class="btn btn-secondary btn-sm" onclick="runDiagnostic('META_ADS')"><i class="fa-solid fa-heart-pulse"></i> Diagnostics</button>
-              <button class="btn btn-secondary btn-sm" onclick="switchTab('meta-ads')">Manage</button>
-            </div>
-          </div>
-
-          <!-- Google Ads -->
-          <div class="connection-card">
-            <div>
-              <div class="connection-header">
-                <div class="connection-title">
-                  <i class="fa-brands fa-google" style="color: #ea4335;"></i>
-                  <span>Google Ads Enterprise</span>
-                </div>
-                <span class="status-pill status-connected">CONNECTED</span>
-              </div>
-              <div style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
-                <p><strong>Customer ID:</strong> 849-291-4920</p>
-                <p><strong>Daily Budget Limit:</strong> ₹5,000 / day</p>
-                <p><strong>Google Billing:</strong> Managed in Google</p>
-              </div>
-            </div>
-            <div style="display: flex; gap: 0.5rem;">
-              <button class="btn btn-secondary btn-sm" onclick="runDiagnostic('GOOGLE_ADS')"><i class="fa-solid fa-heart-pulse"></i> Diagnostics</button>
-              <button class="btn btn-secondary btn-sm" onclick="switchTab('google')">Manage</button>
-            </div>
-          </div>
-
-          <!-- Google Merchant Center -->
-          <div class="connection-card">
-            <div>
-              <div class="connection-header">
-                <div class="connection-title">
-                  <i class="fa-solid fa-store" style="color: #10b981;"></i>
-                  <span>Google Merchant Center</span>
-                </div>
-                <span class="status-pill status-connected">CONNECTED</span>
-              </div>
-              <div style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
-                <p><strong>Merchant ID:</strong> MC-910283</p>
-                <p><strong>Feed Status:</strong> <span style="color: #10b981; font-weight: 700;">ACTIVE (135 Approved)</span></p>
-                <p><strong>Catalog Sync:</strong> Auto-Sync Enabled</p>
-              </div>
-            </div>
-            <div style="display: flex; gap: 0.5rem;">
-              <button class="btn btn-secondary btn-sm" onclick="syncMerchantCenter()"><i class="fa-solid fa-arrows-rotate"></i> Sync Feed</button>
-              <button class="btn btn-secondary btn-sm" onclick="switchTab('google')">Manage</button>
-            </div>
-          </div>
-
-          <!-- Google Business Profile -->
-          <div class="connection-card">
-            <div>
-              <div class="connection-header">
-                <div class="connection-title">
-                  <i class="fa-solid fa-map-location-dot" style="color: #3b82f6;"></i>
-                  <span>Google Business Profile</span>
-                </div>
-                <span class="status-pill status-connected">CONNECTED</span>
-              </div>
-              <div style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
-                <p><strong>Location:</strong> Pune Central Showroom</p>
-                <p><strong>Rating:</strong> ⭐ 4.9 (328 reviews)</p>
-                <p><strong>Status:</strong> Verified Listing</p>
-              </div>
-            </div>
-            <div style="display: flex; gap: 0.5rem;">
-              <button class="btn btn-secondary btn-sm" onclick="switchTab('google')">Manage Reviews</button>
-            </div>
-          </div>
-
-          <!-- AI Creative Provider -->
-          <div class="connection-card">
-            <div>
-              <div class="connection-header">
-                <div class="connection-title">
-                  <i class="fa-solid fa-brain" style="color: #8b5cf6;"></i>
-                  <span>AI Creative Provider</span>
-                </div>
-                <span class="status-pill status-connected">PLATFORM AI</span>
-              </div>
-              <div style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
-                <p><strong>Mode:</strong> Platform-Managed Credits</p>
-                <p><strong>Monthly Quota:</strong> 18 / 250 credits used</p>
-                <p><strong>BYOK Option:</strong> Available (OpenAI / Gemini)</p>
-              </div>
-            </div>
-            <div style="display: flex; gap: 0.5rem;">
-              <button class="btn btn-secondary btn-sm" onclick="switchTab('ai-studio')">Configure BYOK</button>
-              <button class="btn btn-secondary btn-sm" onclick="switchTab('ai-studio')">Studio</button>
-            </div>
-          </div>
+          <!-- Dynamically Rendered by marketing-hq.js -->
         </div>
       </section>
 
@@ -569,31 +384,31 @@
             <h1 class="page-title">Google Marketing Ecosystem</h1>
             <p class="page-desc">Manage Google Ads, Merchant Center product catalog feed, and Google Business Profile.</p>
           </div>
-          <button class="btn btn-google" onclick="syncMerchantCenter()">
-            <i class="fa-solid fa-arrows-rotate"></i> 1-Click Merchant Feed Sync
+          <button class="btn btn-google" id="btnSyncMerchant" onclick="syncMerchantCenter()">
+            <i class="fa-solid fa-rotate"></i> Sync Product Catalog
           </button>
         </div>
 
         <div class="metrics-grid">
           <div class="metric-card">
             <span class="metric-title">Google Ads Spend</span>
-            <span class="metric-value">₹42,500</span>
-            <span class="metric-subtitle">Avg CPC: ₹12.46</span>
+            <span class="metric-value" id="googleSpendVal">₹42,500</span>
+            <span class="metric-subtitle">Avg CPC: <strong id="googleCpcVal">₹12.46</strong></span>
           </div>
           <div class="metric-card">
             <span class="metric-title">Google Conversions</span>
-            <span class="metric-value">184</span>
-            <span class="metric-subtitle">CPL: ₹230.97</span>
+            <span class="metric-value" id="googleConversionsVal">184</span>
+            <span class="metric-subtitle">CPL: <strong id="googleCplVal">₹230.97</strong></span>
           </div>
           <div class="metric-card">
             <span class="metric-title">Merchant Center Feed</span>
-            <span class="metric-value" style="color: #10b981;">135 Approved</span>
+            <span class="metric-value" style="color: #10b981;" id="googleMerchantVal">135 Approved</span>
             <span class="metric-subtitle" style="color: var(--warning);"><i class="fa-solid fa-triangle-exclamation"></i> 4 Pending, 3 Disapproved</span>
           </div>
           <div class="metric-card">
             <span class="metric-title">Business Profile Rating</span>
-            <span class="metric-value" style="color: #f59e0b;">⭐ 4.9</span>
-            <span class="metric-subtitle">328 verified Google reviews</span>
+            <span class="metric-value" style="color: #f59e0b;" id="googleRatingVal">⭐ 4.9</span>
+            <span class="metric-subtitle">Verified Google reviews</span>
           </div>
         </div>
 
@@ -601,33 +416,22 @@
           <div class="card-title">
             <span><i class="fa-solid fa-triangle-exclamation" style="color: var(--warning);"></i> Merchant Center Compliance & Issue Resolution</span>
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Product SKU</th>
-                <th>Product Name</th>
-                <th>Issue Description</th>
-                <th>Severity</th>
-                <th>Recommended Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>PROD-001</code></td>
-                <td>Premium Solar Water Heater 200L</td>
-                <td>Missing high-resolution primary image URL</td>
-                <td><span class="status-pill status-pending">WARNING</span></td>
-                <td>Upload 800x800px product image in CRM Catalog</td>
-              </tr>
-              <tr>
-                <td><code>PROD-014</code></td>
-                <td>Smart Digital Thermostat</td>
-                <td>Price mismatch between CRM price and landing page</td>
-                <td><span class="status-pill status-failed">ERROR</span></td>
-                <td>Update catalog price to match landing page ₹3,499</td>
-              </tr>
-            </tbody>
-          </table>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Product SKU</th>
+                  <th>Product Name</th>
+                  <th>Issue Description</th>
+                  <th>Severity</th>
+                  <th>Recommended Action</th>
+                </tr>
+              </thead>
+              <tbody id="merchantAuditTableBody">
+                <!-- Dynamically Rendered -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -641,8 +445,10 @@
             <p class="page-desc">Synthesizes Super Admin guardrails, Company Brand Profile, and Product Data into multi-channel assets.</p>
           </div>
           <div style="display: flex; gap: 0.75rem;">
-            <button class="btn btn-secondary btn-sm" onclick="openByokModal()"><i class="fa-solid fa-key"></i> BYOK Settings</button>
-            <button class="btn btn-ai" onclick="generateAiCreative()"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Assets</button>
+            <button class="btn btn-secondary btn-sm" onclick="openAiSettingsModal()">
+              <i class="fa-solid fa-gear"></i> AI & BYOK Settings
+            </button>
+            <span class="status-pill status-connected" id="aiModeBadge" style="align-self: center;">Platform AI</span>
           </div>
         </div>
 
@@ -664,10 +470,14 @@
               <input type="text" class="form-control" id="aiProductName" value="Apex 5-Star Solar Water Heater 200L">
             </div>
             <div class="form-group">
+              <label class="form-label">Target Festival / Hook</label>
+              <input type="text" class="form-control" id="aiFestivalSelect" value="Diwali Grand Festival">
+            </div>
+            <div class="form-group">
               <label class="form-label">User Custom Prompt & Hook</label>
               <textarea class="form-control" id="aiUserPrompt" placeholder="E.g. Highlight flat 25% discount, 5-year warranty, free same-day installation, and zero-cost EMI.">Promote our 5-star solar water heater range with flat 25% festive discount and same-day free authorized installation.</textarea>
             </div>
-            <button class="btn btn-ai" style="width: 100%; justify-content: center;" onclick="generateAiCreative()">
+            <button class="btn btn-ai" id="btnGenerateAi" style="width: 100%; justify-content: center;" onclick="generateAiCreative()">
               <i class="fa-solid fa-sparkles"></i> Synthesize & Generate
             </button>
           </div>
@@ -685,11 +495,11 @@
               </div>
               <div style="background: #0f172a; border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem;">
                 <div style="font-size: 0.8rem; font-weight: 700; color: #ec4899; margin-bottom: 0.4rem;"><i class="fa-brands fa-instagram"></i> Instagram Caption with Hashtags</div>
-                <p id="previewInstagram" style="font-size: 0.85rem; line-height: 1.4; color: #cbd5e1;">Transform your festive celebrations with the pinnacle of appliance technology. ✨ Enjoy 5-Star efficiency and zero-cost EMI.\n\n#ApexAppliancesIndia #DiwaliOffers #HomeAppliances #SmartLiving</p>
+                <p id="previewInstagram" style="font-size: 0.85rem; line-height: 1.4; color: #cbd5e1; white-space: pre-line;">Transform your festive celebrations with the pinnacle of appliance technology. ✨ Enjoy 5-Star efficiency and zero-cost EMI.\n\n#ApexAppliancesIndia #DiwaliOffers #HomeAppliances #SmartLiving</p>
               </div>
               <div style="background: #0f172a; border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem;">
                 <div style="font-size: 0.8rem; font-weight: 700; color: #ea4335; margin-bottom: 0.4rem;"><i class="fa-brands fa-google"></i> Google Search Ad Headlines</div>
-                <p id="previewGoogle" style="font-size: 0.85rem; line-height: 1.4; color: #cbd5e1;">1. Apex Appliances Festive Offer | 2. Flat 25% Off on Solar Heaters | 3. 5-Year Warranty & Free Install</p>
+                <p id="previewGoogle" style="font-size: 0.85rem; line-height: 1.4; color: #cbd5e1; white-space: pre-line;">1. Apex Appliances Festive Offer | 2. Flat 25% Off on Solar Heaters | 3. 5-Year Warranty & Free Install</p>
               </div>
             </div>
           </div>
@@ -714,84 +524,24 @@
           <div class="card-title">
             <span><i class="fa-regular fa-calendar-days" style="color: #a855f7;"></i> Active Multi-Channel Execution Pipeline</span>
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Day / Date</th>
-                <th>Scheduled Time</th>
-                <th>Channel</th>
-                <th>Campaign / Post Milestone</th>
-                <th>Preflight</th>
-                <th>Approval</th>
-                <th>Execution Pipeline Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Day 1 (Mon)</strong></td>
-                <td>10:00 AM</td>
-                <td><i class="fa-brands fa-instagram" style="color: #ec4899;"></i> Instagram</td>
-                <td>Festive Teaser & Announcement Post</td>
-                <td><span class="status-pill status-active">PASSED</span></td>
-                <td><span class="status-pill status-draft">AUTO</span></td>
-                <td><span class="status-pill status-scheduled">SCHEDULED</span></td>
-              </tr>
-              <tr>
-                <td><strong>Day 2 (Tue)</strong></td>
-                <td>11:00 AM</td>
-                <td><i class="fa-brands fa-facebook" style="color: #0081fb;"></i> Facebook</td>
-                <td>Community Feature & Brand Reliability Story</td>
-                <td><span class="status-pill status-active">PASSED</span></td>
-                <td><span class="status-pill status-draft">AUTO</span></td>
-                <td><span class="status-pill status-scheduled">SCHEDULED</span></td>
-              </tr>
-              <tr>
-                <td><strong>Day 3 (Wed)</strong></td>
-                <td>06:00 PM</td>
-                <td><i class="fa-solid fa-video" style="color: #8b5cf6;"></i> IG Reel</td>
-                <td>Product Showcase & 3-Minute Heating Demo</td>
-                <td><span class="status-pill status-active">PASSED</span></td>
-                <td><span class="status-pill status-draft">AUTO</span></td>
-                <td><span class="status-pill status-scheduled">SCHEDULED</span></td>
-              </tr>
-              <tr>
-                <td><strong>Day 4 (Thu)</strong></td>
-                <td>12:00 PM</td>
-                <td><i class="fa-brands fa-whatsapp" style="color: #25d366;"></i> WhatsApp</td>
-                <td>VIP Customer Broadcast (1,000 High-Value Cohort)</td>
-                <td><span class="status-pill status-active">PASSED</span></td>
-                <td><span class="status-pill status-approved">APPROVED</span></td>
-                <td><span class="status-pill status-active">QUEUED</span></td>
-              </tr>
-              <tr>
-                <td><strong>Day 5 (Fri)</strong></td>
-                <td>09:00 AM</td>
-                <td><i class="fa-solid fa-bullseye" style="color: #f59e0b;"></i> Meta Ad</td>
-                <td>Advantage+ Conversion Ads Launch (₹15,000)</td>
-                <td><span class="status-pill status-active">PASSED</span></td>
-                <td><span class="status-pill status-approved">APPROVED</span></td>
-                <td><span class="status-pill status-scheduled">SCHEDULED</span></td>
-              </tr>
-              <tr>
-                <td><strong>Day 6 (Sat)</strong></td>
-                <td>09:00 AM</td>
-                <td><i class="fa-brands fa-google" style="color: #ea4335;"></i> Google Ad</td>
-                <td>Google Search & Shopping Promotion Activation (₹10,000)</td>
-                <td><span class="status-pill status-active">PASSED</span></td>
-                <td><span class="status-pill status-approved">APPROVED</span></td>
-                <td><span class="status-pill status-scheduled">SCHEDULED</span></td>
-              </tr>
-              <tr>
-                <td><strong>Day 7 (Sun)</strong></td>
-                <td>04:00 PM</td>
-                <td><i class="fa-brands fa-whatsapp" style="color: #25d366;"></i> WhatsApp</td>
-                <td>Last-Chance Flash Reminder across WhatsApp & Stories</td>
-                <td><span class="status-pill status-active">PASSED</span></td>
-                <td><span class="status-pill status-approved">APPROVED</span></td>
-                <td><span class="status-pill status-scheduled">SCHEDULED</span></td>
-              </tr>
-            </tbody>
-          </table>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Day / Date</th>
+                  <th>Scheduled Time</th>
+                  <th>Channel</th>
+                  <th>Campaign / Post Milestone</th>
+                  <th>Preflight</th>
+                  <th>Approval</th>
+                  <th>Execution Pipeline Status</th>
+                </tr>
+              </thead>
+              <tbody id="calendarTableBody">
+                <!-- Dynamically Rendered -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -806,85 +556,25 @@
           </div>
         </div>
 
-        <div class="metrics-grid">
-          <div class="metric-card">
-            <span class="metric-title">Total Campaign Spend</span>
-            <span class="metric-value">₹1,37,420</span>
-            <span class="metric-subtitle">WhatsApp + Meta + Google + AI</span>
-          </div>
-          <div class="metric-card">
-            <span class="metric-title">Inbound Leads Generated</span>
-            <span class="metric-value">847</span>
-            <span class="metric-subtitle">392 Qualified (46.3%)</span>
-          </div>
-          <div class="metric-card">
-            <span class="metric-title">Closed Orders / Revenue</span>
-            <span class="metric-value" style="color: #10b981;">₹8,72,000</span>
-            <span class="metric-subtitle">86 Converted Units</span>
-          </div>
-          <div class="metric-card">
-            <span class="metric-title">True Real ROAS</span>
-            <span class="metric-value" style="color: #10b981; font-weight: 800;">6.35x</span>
-            <span class="metric-subtitle" style="color: #10b981; font-weight: 700;">CAC: ₹1,598 / customer</span>
-          </div>
-        </div>
-
         <div class="card">
           <div class="card-title"><i class="fa-solid fa-chart-pie"></i> Cross-Channel Cost vs Revenue Breakdown</div>
-          <table>
-            <thead>
-              <tr>
-                <th>Channel / Component</th>
-                <th>Spend (₹ INR)</th>
-                <th>Inbound Leads</th>
-                <th>Closed Orders</th>
-                <th>Attributed Revenue</th>
-                <th>Channel ROAS</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><i class="fa-brands fa-whatsapp" style="color: #25d366;"></i> WhatsApp Broadcasts</td>
-                <td>₹18,420</td>
-                <td>312</td>
-                <td>38</td>
-                <td>₹3,84,000</td>
-                <td><strong style="color: #10b981;">20.8x</strong></td>
-              </tr>
-              <tr>
-                <td><i class="fa-solid fa-bullseye" style="color: #f59e0b;"></i> Meta Ads (FB/IG)</td>
-                <td>₹72,000</td>
-                <td>360</td>
-                <td>31</td>
-                <td>₹3,14,000</td>
-                <td><strong style="color: #10b981;">4.36x</strong></td>
-              </tr>
-              <tr>
-                <td><i class="fa-brands fa-google" style="color: #ea4335;"></i> Google Search & Shopping</td>
-                <td>₹45,000</td>
-                <td>175</td>
-                <td>17</td>
-                <td>₹1,74,000</td>
-                <td><strong style="color: #10b981;">3.86x</strong></td>
-              </tr>
-              <tr>
-                <td><i class="fa-solid fa-brain" style="color: #8b5cf6;"></i> AI Creative Studio</td>
-                <td>₹2,000</td>
-                <td>—</td>
-                <td>—</td>
-                <td>—</td>
-                <td>—</td>
-              </tr>
-              <tr style="background: rgba(59, 130, 246, 0.1); font-weight: 700;">
-                <td>TOTAL OMNICHANNEL BLITZ</td>
-                <td>₹1,37,420</td>
-                <td>847</td>
-                <td>86</td>
-                <td style="color: #10b981;">₹8,72,000</td>
-                <td style="color: #10b981;">6.35x</td>
-              </tr>
-            </tbody>
-          </table>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Channel / Component</th>
+                  <th>Spend (₹ INR)</th>
+                  <th>Inbound Leads</th>
+                  <th>Closed Orders</th>
+                  <th>Attributed Revenue</th>
+                  <th>Channel ROAS</th>
+                </tr>
+              </thead>
+              <tbody id="attributionTableBody">
+                <!-- Dynamically Rendered -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -930,6 +620,9 @@
             <h1 class="page-title">Meta Facebook & Instagram Hub</h1>
             <p class="page-desc">Schedule organic posts, stories, and reels across connected Facebook & Instagram accounts.</p>
           </div>
+          <button class="btn btn-meta" onclick="switchTab('ai-studio')">
+            <i class="fa-solid fa-pen-nib"></i> Compose with AI
+          </button>
         </div>
       </section>
 
@@ -955,6 +648,26 @@
             <p class="page-desc">Segment customers by warranty expiration, purchase tier, and location.</p>
           </div>
         </div>
+        <div class="card">
+          <div class="card-title">Live CRM Audience Cohorts</div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+            <div style="background: #0f172a; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--border-color);">
+              <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Total Active CRM Contacts</div>
+              <div style="font-size: 1.6rem; font-weight: 800; margin-top: 0.35rem;" id="audienceTotalContacts">1,000</div>
+              <div style="font-size: 0.75rem; color: #10b981; margin-top: 0.25rem;">E.164 Validated</div>
+            </div>
+            <div style="background: #0f172a; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--border-color);">
+              <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">VIP High-Value Customers</div>
+              <div style="font-size: 1.6rem; font-weight: 800; margin-top: 0.35rem; color: #f59e0b;">284</div>
+              <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 0.25rem;">Orders &gt; ₹50,000</div>
+            </div>
+            <div style="background: #0f172a; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--border-color);">
+              <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Warranty Expiring in 30 Days</div>
+              <div style="font-size: 1.6rem; font-weight: 800; margin-top: 0.35rem; color: #ec4899;">142</div>
+              <div style="font-size: 0.75rem; color: #ec4899; margin-top: 0.25rem;">AMC Renewal Targets</div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- ======================================================== -->
@@ -964,7 +677,7 @@
         <div class="page-header">
           <div>
             <h1 class="page-title">Marketing Approvals</h1>
-            <p class="page-desc">Review and approve high-budget campaigns and scheduled broadcasts.</p>
+            <p class="page-desc">Maker-checker approval workflow for high-budget campaigns and scheduled broadcasts.</p>
           </div>
         </div>
       </section>
@@ -972,49 +685,147 @@
     </main>
   </div>
 
-  <script>
-    // Tab switching logic
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  <!-- ======================================================== -->
+  <!-- MODAL 1: CONNECT ACCOUNT -->
+  <!-- ======================================================== -->
+  <div class="modal" id="connectAccountModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="connectModalTitle">Connect Account</h3>
+        <span class="close-modal" onclick="closeConnectModal()">&times;</span>
+      </div>
+      <input type="hidden" id="connectModalProvider">
+      <div class="form-group">
+        <label class="form-label">Display Name / Profile Handle</label>
+        <input type="text" class="form-control" id="connectModalDisplayName" placeholder="E.g. Official Apex Page / Ad Account">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Account / ID / Phone Number</label>
+        <input type="text" class="form-control" id="connectModalAccountId" placeholder="E.g. WABA-102938 / ACT-99102 / +919820123456">
+      </div>
+      <div class="form-group">
+        <label class="form-label">OAuth Access Token / API Secret Key (Encrypted at Rest)</label>
+        <input type="password" class="form-control" id="connectModalToken" placeholder="••••••••••••••••••••••••••••••••••••••••">
+        <small style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.25rem; display: block;">
+          🔒 Encrypted via AES-256-GCM. Stored in isolated tenant partition.
+        </small>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+        <button class="btn btn-secondary" onclick="closeConnectModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitConnectAccount()">Save & Connect</button>
+      </div>
+    </div>
+  </div>
 
-      const targetTab = document.getElementById('tab-' + tabId);
-      if (targetTab) targetTab.classList.add('active');
+  <!-- ======================================================== -->
+  <!-- MODAL 2: SELF-HEALING DIAGNOSTICS -->
+  <!-- ======================================================== -->
+  <div class="modal" id="diagnosticModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-heart-pulse" style="color: #ec4899;"></i> Diagnostics: <span id="diagProviderName">Provider</span></h3>
+        <span class="close-modal" onclick="closeDiagnosticModal()">&times;</span>
+      </div>
+      <div id="diagContent">
+        <!-- Dynamically populated -->
+      </div>
+      <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+        <button class="btn btn-secondary" onclick="closeDiagnosticModal()">Close</button>
+      </div>
+    </div>
+  </div>
 
-      const targetNav = document.getElementById('nav-' + tabId);
-      if (targetNav) targetNav.classList.add('active');
-    }
+  <!-- ======================================================== -->
+  <!-- MODAL 3: AI BRAND VOICE & BYOK SETTINGS -->
+  <!-- ======================================================== -->
+  <div class="modal" id="aiSettingsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-wand-magic-sparkles" style="color: #8b5cf6;"></i> AI Creative Studio & BYOK Settings</h3>
+        <span class="close-modal" onclick="closeAiSettingsModal()">&times;</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Operating Mode</label>
+        <select class="form-control" id="aiModeSelect">
+          <option value="PLATFORM">Platform AI (Charlie Managed Credits)</option>
+          <option value="BYOK">Bring Your Own Key (BYOK)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Company Brand Name</label>
+        <input type="text" class="form-control" id="aiBrandName" value="Apex Appliances India">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Brand Voice & Tone</label>
+        <select class="form-control" id="aiBrandTone">
+          <option value="PREMIUM">Premium & Sophisticated</option>
+          <option value="AUTHORITATIVE">Authoritative & Technical</option>
+          <option value="FRIENDLY">Friendly & Customer-Centric</option>
+          <option value="URGENT_SALES">High-Energy & Urgent Sales</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Target Customer Audience</label>
+        <input type="text" class="form-control" id="aiTargetAudience" value="Indian homeowners seeking energy efficiency and durable appliances">
+      </div>
+      <div class="form-group">
+        <label class="form-label">BYOK AI Provider</label>
+        <select class="form-control" id="aiByokProvider">
+          <option value="OPENAI">OpenAI (GPT-4o & DALL-E 3)</option>
+          <option value="GEMINI">Google Gemini (Gemini 1.5 Pro)</option>
+          <option value="STABILITY">Stability AI (SDXL)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">BYOK API Secret Key (Leave blank to keep existing)</label>
+        <input type="password" class="form-control" id="aiByokKey" placeholder="sk-••••••••••••••••••••••••••••••••">
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+        <button class="btn btn-secondary" onclick="closeAiSettingsModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveAiSettings()">Save Configuration</button>
+      </div>
+    </div>
+  </div>
 
-    // 1-Click Holiday Blueprint trigger
-    async function trigger1ClickHolidayBlueprint() {
-      alert('🗺️ Generating 1-Click Diwali 2026 Omnichannel Roadmap across WhatsApp, Meta, Google, and AI Studio...');
-      switchTab('calendar');
-    }
+  <!-- ======================================================== -->
+  <!-- MODAL 4: WHATSAPP 1,000+ PREFLIGHT WIZARD -->
+  <!-- ======================================================== -->
+  <div class="modal" id="whatsAppPreflightModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-brands fa-whatsapp" style="color: #25d366;"></i> WhatsApp Broadcast Preflight Wizard</h3>
+        <span class="close-modal" onclick="closeWhatsAppPreflightModal()">&times;</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Campaign Name</label>
+        <input type="text" class="form-control" id="waCampaignName" value="Diwali 2026 VIP Customer Broadcast">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Select CRM Target Cohort</label>
+        <select class="form-control" id="waTargetCohort">
+          <option value="ALL">All Active Customers (1,000 Contacts)</option>
+          <option value="VIP">VIP High-Value Customers (284 Contacts)</option>
+          <option value="AMC_EXPIRING">Warranty Expiring in 30 Days (142 Contacts)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">WhatsApp Approved Template</label>
+        <select class="form-control" id="waTemplateSelect">
+          <option value="diwali_festive_offer_v1">diwali_festive_offer_v1 (MARKETING - Approved)</option>
+          <option value="annual_amc_renewal_v2">annual_amc_renewal_v2 (UTILITY - Approved)</option>
+          <option value="service_feedback_v1">service_feedback_v1 (SERVICE - Approved)</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" id="btnRunPreflight" style="width: 100%; justify-content: center;" onclick="runWhatsAppPreflight()">
+        <i class="fa-solid fa-shield-halved"></i> Run Preflight Validation Audit
+      </button>
 
-    function openWhatsAppPreflightWizard() {
-      switchTab('whatsapp');
-      alert('📱 Preflight Wizard: Validating E.164 recipients, deduplicating, checking opt-outs, and reserving escrow wallet funds.');
-    }
+      <div id="preflightResults">
+        <!-- Dynamically rendered -->
+      </div>
+    </div>
+  </div>
 
-    function runDiagnostic(provider) {
-      alert('🩺 Self-Healing Diagnostics for ' + provider + ':\n\n✅ AES-256 Credentials Verified\n✅ API Handshake OK (HTTP 200)\n✅ Scope & Permissions Verified\n✅ Active Payment Profile Linked');
-    }
-
-    function syncMerchantCenter() {
-      alert('🛒 Google Merchant Center Feed Synced!\n\n✅ 135 Products Approved\n⚠️ 4 Pending Review\n❌ 3 Disapproved (Resolution checklist updated in table)');
-    }
-
-    function generateAiCreative() {
-      alert('✨ AI Creative Synthesized across 5-Tier Prompt Hierarchy! Multi-channel copy updated for WhatsApp, Instagram, Facebook, Meta Ads, and Google Search.');
-    }
-
-    function saveCurrentAsset() {
-      alert('💾 Asset successfully saved into central Content Studio library!');
-    }
-
-    function loadConnections() {
-      alert('🔗 Connections refreshed. All 8 marketing channels verified.');
-    }
-  </script>
+  <script src="/js/marketing-hq.js"></script>
 </body>
 </html>

@@ -6500,3 +6500,5 @@
 {"level":"info","message":"🔌 Validation result for serial *******_001: VALID (Latency: 12ms)","service":"iconic-crm","timestamp":"2026-08-25 13:02:15"}
 {"level":"info","message":"🔌 Validation result for serial *******_001: INVALID_SERIAL (Latency: 3ms)","service":"iconic-crm","timestamp":"2026-08-25 13:02:15"}
 {"level":"info","message":"🔌 Validation result for serial *******_001: DEALER_MISMATCH (Latency: 4ms)","service":"iconic-crm","timestamp":"2026-08-25 13:02:15"}
+{"level":"info","message":"🔌 Validation result for serial ********0001: VALID (Latency: 12ms)","service":"iconic-crm","timestamp":"2026-08-25 13:02:16"}
+{"level":"info","message":"🔌 Validation result for serial ********0001: INVALID_SERIAL (Latency: 3ms)","service":"iconic-crm","timestamp":"2026-08-25 13:02:16"}

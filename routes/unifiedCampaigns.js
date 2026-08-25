@@ -16,6 +16,16 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+// Company-wide attribution and ROAS overview
+router.get('/attribution-overview', auth, async (req, res) => {
+  try {
+    const overview = await omnichannelAttributionEngine.calculateCompanyAttributionOverview(req.user.companyId);
+    res.json({ success: true, ...overview });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 // Create new unified campaign
 router.post('/', auth, async (req, res) => {
   try {
