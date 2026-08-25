@@ -34,9 +34,10 @@ router.post('/config', auth, async (req, res) => {
 router.post('/generate', auth, async (req, res) => {
   try {
     const { prompt, objective, productName, productCategory, targetFestival } = req.body;
+    const userId = req.user.id || req.user._id;
     const creative = await aiCreativeStudioService.generateCreative(
       req.user.companyId,
-      req.user._id,
+      userId,
       { prompt, objective, productName, productCategory, targetFestival }
     );
     res.json({ success: true, creative });
@@ -49,9 +50,10 @@ router.post('/generate', auth, async (req, res) => {
 router.post('/save-asset', auth, async (req, res) => {
   try {
     const { title, channel, assetType, contentUrl, copyText, metadata } = req.body;
+    const userId = req.user.id || req.user._id;
     const asset = await aiCreativeStudioService.saveAsAsset(
       req.user.companyId,
-      req.user._id,
+      userId,
       { title, channel, assetType, contentUrl, copyText, metadata }
     );
     res.json({ success: true, asset });

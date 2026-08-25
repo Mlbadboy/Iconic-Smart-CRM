@@ -125,12 +125,18 @@ async function generateCreative(companyId, userId, { prompt, objective = 'FESTIV
  * Save generated creative into central Content Library as an asset.
  */
 async function saveAsAsset(companyId, userId, { title, channel, assetType, contentUrl, copyText, metadata = {} }) {
+  let uId = userId;
+  if (!uId) {
+    const User = require('../models/User');
+    const u = await User.findOne({ companyId });
+    uId = u?._id;
+  }
   const asset = await ContentAsset.create({
     companyId,
     title: title || 'AI Generated Creative Asset',
     assetType: 'PRODUCT_CREATIVE',
     url: contentUrl || 'https://assets.charlieai.in/creatives/generated-banner.png',
-    uploadedBy: userId,
+    uploadedBy: uId,
     productName: metadata.productName || 'Smart Solar Water Heater',
     campaignTag: metadata.campaignTag || 'FESTIVE_2026'
   });

@@ -17,7 +17,7 @@ router.get('/account', auth, async (req, res) => {
 router.post('/merchant/sync', auth, async (req, res) => {
   try {
     const merchant = await googleMarketingService.syncMerchantFeed(req.user.companyId);
-    res.json({ success: true, merchantCenter: merchant });
+    res.json({ success: true, merchantCenter: merchant, ...merchant.toObject ? merchant.toObject() : merchant });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
