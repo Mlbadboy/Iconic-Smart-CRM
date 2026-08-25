@@ -43,10 +43,14 @@ function assert(condition, message) {
 async function runSaaSE2ETests() {
   console.log('🚀 Starting Charlie\'s CRM SaaS Multi-Tenant & White-Label E2E Suite...\n');
 
-  mongod = await MongoMemoryServer.create();
-  const uri = mongod.getUri();
-  await mongoose.connect(uri);
-  console.log('✅ In-Memory Test Database ready.\n');
+  if (process.env.MONGO_URI) {
+    await mongoose.connect(process.env.MONGO_URI);
+  } else {
+    mongod = await MongoMemoryServer.create();
+    const uri = mongod.getUri();
+    await mongoose.connect(uri);
+  }
+  console.log('✅ Test Database connected.\n');
 
   try {
     // ----------------------------------------------------
@@ -304,8 +308,10 @@ async function runSaaSE2ETests() {
   } catch (err) {
     console.error('Test execution aborted on failure:', err);
   } finally {
-    await mongoose.disconnect();
-    await mongod.stop();
+    if (mongod) {
+      await mongoose.disconnect();
+      await mongod.stop();
+    }
   }
 }
 

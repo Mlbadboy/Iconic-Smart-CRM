@@ -131,6 +131,10 @@ async function main() {
     console.log('🧪 Running Production Marketing Acceptance Matrix tests...');
     await runCommand('node', ['scratch/test-production-marketing-acceptance.js'], process.env);
 
+    // 24. Run Marketing Operating System (Marketing HQ) Unified Suite
+    console.log('🧪 Running Marketing HQ Unified Suite...');
+    await runCommand('node', ['scratch/test-marketing-hq-complete.js'], process.env);
+
     console.log('🎉 All test suites passed successfully!');
     
     // Clean up

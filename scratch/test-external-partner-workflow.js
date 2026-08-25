@@ -50,9 +50,13 @@ function assert(condition, message) {
 async function runPartnerWorkflowSimulation() {
   console.log('🚀 Starting External Partner (Salesforce / Postman) E2E Simulation...\n');
 
-  mongod = await MongoMemoryServer.create();
-  const uri = mongod.getUri();
-  await mongoose.connect(uri);
+  if (process.env.MONGO_URI) {
+    await mongoose.connect(process.env.MONGO_URI);
+  } else {
+    mongod = await MongoMemoryServer.create();
+    const uri = mongod.getUri();
+    await mongoose.connect(uri);
+  }
 
   // Setup standalone test Express server with the exact routing architecture
   const app = express();
@@ -251,8 +255,10 @@ async function runPartnerWorkflowSimulation() {
     console.error('Partner simulation test aborted on failure:', err);
   } finally {
     if (server) server.close();
-    await mongoose.disconnect();
-    await mongod.stop();
+    if (mongod) {
+      await mongoose.disconnect();
+      await mongod.stop();
+    }
   }
 }
 

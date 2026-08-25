@@ -244,6 +244,10 @@ app.use('/qerp/validatesno.asp', (req, res, next) => { req.url = '/validate'; re
 app.use('/api/bulk-import', require('./middleware/featureGate').requireFeature('bulk_import'), require('./routes/bulkImport'));
 app.use('/api/whatsapp', require('./routes/whatsapp'));
 app.use('/api/social-marketing', require('./routes/socialMarketing'));
+app.use('/api/marketing/connections', require('./routes/marketingConnections'));
+app.use('/api/marketing/google', require('./routes/googleMarketing'));
+app.use('/api/marketing/ai-creative', require('./routes/aiCreativeStudio'));
+app.use('/api/marketing/unified-campaigns', require('./routes/unifiedCampaigns'));
 app.use('/api/super-admin/whatsapp', require('./routes/superAdminWhatsApp'));
 app.use('/api/super-admin/marketing', require('./routes/superAdminMarketing'));
 

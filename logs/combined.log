@@ -6080,3 +6080,423 @@
 {"level":"info","message":"📊 [Attribution] IMPRESSION on WHATSAPP for \"Diwali State Machine Test\" (Revenue: ₹0, Cost: ₹42000)","service":"iconic-crm","timestamp":"2026-08-23 13:26:49"}
 {"level":"info","message":"📊 [Attribution] LEAD_CAPTURED on WHATSAPP for \"Diwali State Machine Test\" (Revenue: ₹0, Cost: ₹0)","service":"iconic-crm","timestamp":"2026-08-23 13:26:49"}
 {"level":"info","message":"📊 [Attribution] SERVICE_BOOKED on WHATSAPP for \"Diwali State Machine Test\" (Revenue: ₹382000, Cost: ₹0)","service":"iconic-crm","timestamp":"2026-08-23 13:26:49"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-24 15:43:01"}
+{"level":"info","message":"\n🚀 Server running on port 7001","service":"iconic-crm","timestamp":"2026-08-24 15:43:08"}
+{"level":"info","message":"📱 Access the CRM at: https://www.iconicsmart.co.in","service":"iconic-crm","timestamp":"2026-08-24 15:43:08"}
+{"level":"info","message":"🔐 Login page: https://www.iconicsmart.co.in/login.html","service":"iconic-crm","timestamp":"2026-08-24 15:43:08"}
+{"level":"info","message":"🔌 Socket.IO ready for real-time notifications","service":"iconic-crm","timestamp":"2026-08-24 15:43:08"}
+{"level":"info","message":"🌐 Production mode: iconicsmart.co.in","service":"iconic-crm","timestamp":"2026-08-24 15:43:08"}
+{"level":"info","message":"ℹ️ Local MongoDB daemon not found, launching in-memory database...","service":"iconic-crm","timestamp":"2026-08-24 15:43:08"}
+{"level":"info","message":"✅ In-Memory MongoDB initialized and connected successfully!","service":"iconic-crm","timestamp":"2026-08-24 15:43:12"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-24 15:51:15"}
+{"level":"info","message":"\n🚀 Charlie Smart CRM server running on port 7000 (0.0.0.0)","service":"iconic-crm","timestamp":"2026-08-24 15:51:16"}
+{"level":"info","message":"📱 Healthcheck active at /api/health","service":"iconic-crm","timestamp":"2026-08-24 15:51:16"}
+{"level":"info","message":"🔧 Development mode: http://localhost:7000","service":"iconic-crm","timestamp":"2026-08-24 15:51:16"}
+{"level":"info","message":"ℹ️ Local MongoDB daemon not found, launching in-memory database...","service":"iconic-crm","timestamp":"2026-08-24 15:51:16"}
+{"0":"M","1":"o","10":"e","11":"r","12":"n","13":"a","14":"l","15":" ","16":"e","17":"r","18":"r","19":"o","2":"n","20":"r","21":" ","22":"(","23":"f","24":"a","25":"s","26":"s","27":"e","28":"r","29":"t","3":"g","30":"(","31":")","32":" ","33":"f","34":"a","35":"i","36":"l","37":"u","38":"r","39":"e","4":"o","40":"\\","41":"n","42":"\\","43":"n","44":"\"","45":"}","46":")","5":"d","6":" ","7":"i","8":"n","9":"t","level":"error","message":"❌ Failed to initialize database:","service":"iconic-crm","timestamp":"2026-08-24 15:51:16"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-24 15:55:33"}
+{"level":"info","message":"\n🚀 Charlie Smart CRM server running on port 7002 (0.0.0.0)","service":"iconic-crm","timestamp":"2026-08-24 15:55:34"}
+{"level":"info","message":"📱 Healthcheck active at /api/health","service":"iconic-crm","timestamp":"2026-08-24 15:55:34"}
+{"level":"info","message":"🔧 Development mode: http://localhost:7002","service":"iconic-crm","timestamp":"2026-08-24 15:55:34"}
+{"level":"info","message":"ℹ️ Local MongoDB daemon not found, launching in-memory database...","service":"iconic-crm","timestamp":"2026-08-24 15:55:34"}
+{"level":"info","message":"Test log to stdout","service":"iconic-crm","timestamp":"2026-08-24 16:02:22"}
+{"level":"info","message":"🔌 Connecting to configured production MongoDB...","service":"iconic-crm","timestamp":"2026-08-25 12:57:07"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-25 12:57:09"}
+{"level":"info","message":"\n🚀 Charlie Smart CRM server running on port 7001 (0.0.0.0)","service":"iconic-crm","timestamp":"2026-08-25 12:57:19"}
+{"level":"info","message":"📱 Healthcheck active at /api/health","service":"iconic-crm","timestamp":"2026-08-25 12:57:19"}
+{"level":"info","message":"🔧 Development mode: http://localhost:7001","service":"iconic-crm","timestamp":"2026-08-25 12:57:19"}
+{"0":"S","1":"e","10":"e","11":"c","12":"t","13":"i","14":"o","15":"n","16":" ","17":"t","18":"i","19":"m","2":"r","20":"e","21":"d","22":" ","23":"o","24":"u","25":"t","26":" ","27":"a","28":"f","29":"t","3":"v","30":"e","31":"r","32":" ","33":"1","34":"0","35":"0","36":"0","37":"0","38":" ","39":"m","4":"e","40":"s","5":"r","6":" ","7":"s","8":"e","9":"l","level":"error","message":"❌ Configured MongoDB connection failed:","service":"iconic-crm","timestamp":"2026-08-25 12:57:19"}
+{"level":"info","message":"✅ Connected to local MongoDB daemon!","service":"iconic-crm","timestamp":"2026-08-25 12:57:19"}
+{"0":"t","1":"e","2":"s","3":"t","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2026-08-25 12:57:19"}
+{"level":"info","message":"Creating default primary company: Charlie's Primary (CHARLIES_PRIMARY)...","service":"iconic-crm","timestamp":"2026-08-25 12:57:20"}
+{"level":"info","message":"Default Company created with ID: 6a8d43d8790ee2bf6bda9890","service":"iconic-crm","timestamp":"2026-08-25 12:57:20"}
+{"level":"info","message":"Migrated 11 Users records to Company: Charlie's Primary","service":"iconic-crm","timestamp":"2026-08-25 12:57:20"}
+{"level":"info","message":"Migrated 5 Orders records to Company: Charlie's Primary","service":"iconic-crm","timestamp":"2026-08-25 12:57:20"}
+{"level":"info","message":"Migrated 5 Leads records to Company: Charlie's Primary","service":"iconic-crm","timestamp":"2026-08-25 12:57:20"}
+{"level":"info","message":"Migrated 5 Contacts records to Company: Charlie's Primary","service":"iconic-crm","timestamp":"2026-08-25 12:57:20"}
+{"level":"info","message":"Created default demo product: 2552 / UTIXK","service":"iconic-crm","timestamp":"2026-08-25 12:57:20"}
+{"level":"info","message":"Created default demo serial: IXHFJDGHH (UTIXK / 55262)","service":"iconic-crm","timestamp":"2026-08-25 12:57:20"}
+{"level":"info","message":"Multi-Tenant migration completed successfully!","service":"iconic-crm","timestamp":"2026-08-25 12:57:20"}
+{"level":"info","message":"⚡ WhatsApp persistent message queue worker started.","service":"iconic-crm","timestamp":"2026-08-25 12:57:20"}
+{"level":"info","message":"📱 WhatsApp campaign queue worker started.","service":"iconic-crm","timestamp":"2026-08-25 12:57:20"}
+{"level":"info","message":"⏰ Social Marketing Scheduler initialized (polling every 15s)","service":"iconic-crm","timestamp":"2026-08-25 12:57:20"}
+{"level":"info","message":"📱 Social marketing scheduler and Holiday Master initialized.","service":"iconic-crm","timestamp":"2026-08-25 12:57:20"}
+{"level":"info","message":"✅ Seeded 9 master marketing holidays & campaign blueprints.","service":"iconic-crm","timestamp":"2026-08-25 12:57:20"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"info","message":"⏰ SLA Timer created for service-request 507f1f77bcf86cd799439099 (response). Target: 2026-08-25T08:27:23.301Z","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"info","message":"⏰ SLA Timer completed for service-request 507f1f77bcf86cd799439099 (response)","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"info","message":"⏰ SLA Timer created for service-request 507f1f77bcf86cd799439098 (resolution). Target: 2026-08-25T11:27:23.378Z","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"warn","message":"🚨 Escalation recorded: service-request 507f1f77bcf86cd799439098 escalated to service-manager","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"info","message":"🚨 Escalation 6a8d43db1b9f490e3e0e88e2 resolved by admin@charlieai.com","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"info","message":"📝 Approval request created for order ORD-999 by user 6a8d43db1b9f490e3e0e88e7","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"error","message":"Error approving request: Segregation of duties: Requesters cannot approve their own requests","service":"iconic-crm","stack":"Error: Segregation of duties: Requesters cannot approve their own requests\n    at Object.approveRequest (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\services\\approvalService.js:33:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\test-crm-audit-regression.js:220:9\n    at async waitForActual (node:assert:565:5)\n    at async ok.rejects (node:assert:686:25)\n    at async main (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\test-crm-audit-regression.js:218:5)","timestamp":"2026-08-25 12:57:23"}
+{"level":"info","message":"📝 Approval request 6a8d43db1b9f490e3e0e88e8 approved by 6a8d43db1b9f490e3e0e88eb","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"info","message":"📋 Task \"Follow up client\" created for user 6a8d43db1b9f490e3e0e88e7","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"info","message":"📋 Task \"Follow up client\" completed","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"info","message":"🔌 Validation result for serial *****_SNO: VALID (Latency: 6ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"info","message":"🔌 Validation result for serial *******_SNO: INVALID_SERIAL (Latency: 1ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"info","message":"🔌 Validation result for serial ********_SNO: MODEL_SERIAL_MISMATCH (Latency: 1ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"info","message":"🔌 Validation result for serial *******_SNO: ALREADY_VALIDATED (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"info","message":"🔌 Validation result for serial *******_MAT: INVALID_MATERIAL_CODE (Latency: 1ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"info","message":"🔌 Validation result for serial ***************_SNO: DEALER_MISMATCH (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"info","message":"🔌 Validation result for serial *******_SNO: UNKNOWN_RESPONSE (Latency: 1ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"info","message":"🔌 Validation result for serial *******_SNO: SERVICE_UNAVAILABLE (Latency: 1ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"info","message":"🔌 Validation result for serial *********_SNO: SERVICE_UNAVAILABLE (Latency: 5ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:23"}
+{"level":"info","message":"📊 /stats requested","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: canViewAll = true","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: filter = {}","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: counting orders...","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: totalOrders = 5","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: calculating revenue...","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: totalRevenue = 2459.78","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: getting unique retailers...","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: retailerCount = 1","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: counting active services...","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: activeServices = 1","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: getting recent orders...","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: recentOrders count = 5","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: aggregating sales by day...","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: salesByDay count = 1","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: aggregating status distribution...","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: statusDistribution count = 1","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: counting previous week orders...","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: prevWeekOrders = 0","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: aggregating previous week revenue...","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: prevWeekRevenue = 0","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: getting previous week retailers...","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: prevWeekRetailers count = 0","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: counting previous week services...","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: prevWeekServices = 0","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"📊 /stats: sending response","service":"iconic-crm","timestamp":"2026-08-25 12:57:26"}
+{"level":"info","message":"✅ Order Created: ORD000006","service":"iconic-crm","timestamp":"2026-08-25 12:57:27"}
+{"level":"info","message":"   Retailer: Direct","service":"iconic-crm","timestamp":"2026-08-25 12:57:27"}
+{"level":"info","message":"   Items: 1","service":"iconic-crm","timestamp":"2026-08-25 12:57:27"}
+{"level":"info","message":"   Total: ₹236.00 (incl. 18% GST)","service":"iconic-crm","timestamp":"2026-08-25 12:57:27"}
+{"level":"info","message":"📧 Email (not sent - service not configured):","service":"iconic-crm","timestamp":"2026-08-25 12:57:28"}
+{"level":"info","message":"   Sender: Charlie's CRM","service":"iconic-crm","timestamp":"2026-08-25 12:57:28"}
+{"level":"info","message":"   To: test-service@example.com","service":"iconic-crm","timestamp":"2026-08-25 12:57:28"}
+{"level":"info","message":"   Subject: New Service Request - SR000002","service":"iconic-crm","timestamp":"2026-08-25 12:57:28"}
+{"level":"warn","message":"⚠️ Service request email not sent: Email service not configured","service":"iconic-crm","timestamp":"2026-08-25 12:57:28"}
+{"level":"info","message":"🔌 Validation result for serial *******_001: VALID (Latency: 8ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:34"}
+{"level":"info","message":"🔌 Validation result for serial *******_001: INVALID_SERIAL (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:34"}
+{"level":"info","message":"🔌 Validation result for serial *******_001: DEALER_MISMATCH (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:34"}
+{"level":"info","message":"🔌 Validation result for serial ********0001: VALID (Latency: 7ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:35"}
+{"level":"info","message":"🔌 Validation result for serial ********0001: INVALID_SERIAL (Latency: 1ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:35"}
+{"level":"info","message":"🔌 Validation result for serial ********_001: VALID (Latency: 12ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:37"}
+{"level":"info","message":"🔌 Validation result for serial ********_001: INVALID_SERIAL (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:37"}
+{"level":"info","message":"🔌 Validation result for serial **********8877: VALID (Latency: 12ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:38"}
+{"level":"info","message":"🔌 Validation result for serial **********8877: DEALER_MISMATCH (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:38"}
+{"level":"info","message":"🔌 Validation result for serial ********1001: VALID (Latency: 6ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:40"}
+{"level":"info","message":"🔌 Validation result for serial ********1001: ALREADY_VALIDATED (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:40"}
+{"level":"info","message":"🔌 Validation result for serial ********1001: ALREADY_VALIDATED (Latency: 14ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:40"}
+{"level":"info","message":"🔌 Validation result for serial ********1002: DEALER_MISMATCH (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:40"}
+{"level":"info","message":"🔌 Validation result for serial ********9999: INVALID_SERIAL (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:40"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-25 12:57:43"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'service' is disabled for company '6a8d43f0a86c4c59a65f5f3d'","service":"iconic-crm","timestamp":"2026-08-25 12:57:44"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-25 12:57:45"}
+{"level":"info","message":"📊 /stats requested","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: canViewAll = true","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: filter = {}","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: counting orders...","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: totalOrders = 0","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: calculating revenue...","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: totalRevenue = 0","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: getting unique retailers...","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: retailerCount = 0","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: counting active services...","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: activeServices = 0","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: getting recent orders...","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: recentOrders count = 0","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: aggregating sales by day...","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: salesByDay count = 0","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: aggregating status distribution...","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: statusDistribution count = 0","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: counting previous week orders...","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: prevWeekOrders = 0","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: aggregating previous week revenue...","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: prevWeekRevenue = 0","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: getting previous week retailers...","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: prevWeekRetailers count = 0","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: counting previous week services...","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: prevWeekServices = 0","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"info","message":"📊 /stats: sending response","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'dashboard' is disabled for company '6a8d43f204cf026cff906166'","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'sales' is disabled for company '6a8d43f204cf026cff906166'","service":"iconic-crm","timestamp":"2026-08-25 12:57:46"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'orders' is disabled for company '6a8d43f204cf026cff906166'","service":"iconic-crm","timestamp":"2026-08-25 12:57:47"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'products' is disabled for company '6a8d43f204cf026cff906166'","service":"iconic-crm","timestamp":"2026-08-25 12:57:47"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'inventory' is disabled for company '6a8d43f204cf026cff906166'","service":"iconic-crm","timestamp":"2026-08-25 12:57:47"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'distribution' is disabled for company '6a8d43f204cf026cff906166'","service":"iconic-crm","timestamp":"2026-08-25 12:57:47"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'serial_validation' is disabled for company '6a8d43f204cf026cff906166'","service":"iconic-crm","timestamp":"2026-08-25 12:57:47"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'service' is disabled for company '6a8d43f204cf026cff906166'","service":"iconic-crm","timestamp":"2026-08-25 12:57:47"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'marketing' is disabled for company '6a8d43f204cf026cff906166'","service":"iconic-crm","timestamp":"2026-08-25 12:57:47"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'field_force' is disabled for company '6a8d43f204cf026cff906166'","service":"iconic-crm","timestamp":"2026-08-25 12:57:47"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'logistics' is disabled for company '6a8d43f204cf026cff906166'","service":"iconic-crm","timestamp":"2026-08-25 12:57:47"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'reports' is disabled for company '6a8d43f204cf026cff906166'","service":"iconic-crm","timestamp":"2026-08-25 12:57:47"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'api_access' is disabled for company '6a8d43f204cf026cff906166'","service":"iconic-crm","timestamp":"2026-08-25 12:57:47"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-25 12:57:50"}
+{"level":"info","message":"📧 Email (not sent - service not configured):","service":"iconic-crm","timestamp":"2026-08-25 12:57:51"}
+{"level":"info","message":"   Sender: Charlie's CRM","service":"iconic-crm","timestamp":"2026-08-25 12:57:51"}
+{"level":"info","message":"   To: hub@nexustech.com","service":"iconic-crm","timestamp":"2026-08-25 12:57:51"}
+{"level":"info","message":"   Subject: New Service Request - SR000001","service":"iconic-crm","timestamp":"2026-08-25 12:57:51"}
+{"level":"warn","message":"⚠️ Service request email not sent: Email service not configured","service":"iconic-crm","timestamp":"2026-08-25 12:57:51"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'service' is disabled for company '6a8d43f7b971e17ad1e62f3c'","service":"iconic-crm","timestamp":"2026-08-25 12:57:51"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'bulk_import' is disabled for company '6a8d43fadc567b985a32add5'","service":"iconic-crm","timestamp":"2026-08-25 12:57:54"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'bulk_import' is disabled for company '6a8d43fadc567b985a32add5'","service":"iconic-crm","timestamp":"2026-08-25 12:57:57"}
+{"level":"info","message":"🔌 Validation result for serial ***1001: VALID (Latency: 10ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:57"}
+{"level":"info","message":"🔌 Validation result for serial ***1002: VALID (Latency: 5ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:57"}
+{"level":"info","message":"🔌 Validation result for serial ***1002: ALREADY_VALIDATED (Latency: 4ms)","service":"iconic-crm","timestamp":"2026-08-25 12:57:57"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'marketing.whatsapp' is disabled for company '6a8d440225132ea7fc99dcec'","service":"iconic-crm","timestamp":"2026-08-25 12:58:03"}
+{"level":"info","message":"🚀 Launched WhatsApp Campaign \"Diwali Festive Broadcast\" with 3 recipients.","service":"iconic-crm","timestamp":"2026-08-25 12:58:03"}
+{"level":"info","message":"🎉 Campaign \"Diwali Festive Broadcast\" (6a8d440325132ea7fc99dd93) completed successfully!","service":"iconic-crm","timestamp":"2026-08-25 12:58:04"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'marketing.social' is disabled for company '6a8d44066a0920abfb95bdf2'","service":"iconic-crm","timestamp":"2026-08-25 12:58:06"}
+{"level":"info","message":"📝 [Marketing Audit] META_ACCOUNT_CONNECTED on PLATFORM by System (6a8d44066a0920abfb95bded)","service":"iconic-crm","timestamp":"2026-08-25 12:58:06"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'marketing.social' is disabled for company '6a8d44066a0920abfb95bdf2'","service":"iconic-crm","timestamp":"2026-08-25 12:58:06"}
+{"level":"info","message":"📝 [Marketing Audit] CONTENT_ASSET_UPLOADED on CONTENT_STUDIO by System (6a8d44066a0920abfb95bded)","service":"iconic-crm","timestamp":"2026-08-25 12:58:06"}
+{"level":"info","message":"📝 [Marketing Audit] POST_CREATED on INSTAGRAM by System (6a8d44066a0920abfb95bded)","service":"iconic-crm","timestamp":"2026-08-25 12:58:06"}
+{"level":"info","message":"📝 [Marketing Audit] APPROVAL_GRANTED on PLATFORM by System (6a8d44066a0920abfb95bded)","service":"iconic-crm","timestamp":"2026-08-25 12:58:06"}
+{"level":"info","message":"📝 [Marketing Audit] POST_PUBLISHED on INSTAGRAM by System (6a8d44066a0920abfb95bded)","service":"iconic-crm","timestamp":"2026-08-25 12:58:06"}
+{"level":"info","message":"📝 [Marketing Audit] POST_BOOSTED on META_ADS by System (6a8d44066a0920abfb95bded)","service":"iconic-crm","timestamp":"2026-08-25 12:58:06"}
+{"level":"info","message":"✅ Seeded 9 master marketing holidays & campaign blueprints.","service":"iconic-crm","timestamp":"2026-08-25 12:58:06"}
+{"level":"info","message":"📝 [Marketing Audit] CAMPAIGN_PLAN_GENERATED on CALENDAR by System (6a8d44066a0920abfb95bded)","service":"iconic-crm","timestamp":"2026-08-25 12:58:06"}
+{"level":"info","message":"👑 Super Admin updated marketing commercial entitlements for company: Beta Electronics Corp (6a8d44066a0920abfb95bdf2)","service":"iconic-crm","timestamp":"2026-08-25 12:58:06"}
+{"level":"info","message":"🔒 Preflight PF-20260825-17496 locked and confirmed by user 6a8d440d6e8230fe3209ea71","service":"iconic-crm","timestamp":"2026-08-25 12:58:13"}
+{"level":"info","message":"📊 [Attribution] IMPRESSION on WHATSAPP for \"Diwali Warranty Renewal Campaign\" (Revenue: ₹0, Cost: ₹42000)","service":"iconic-crm","timestamp":"2026-08-25 12:58:13"}
+{"level":"info","message":"📊 [Attribution] LEAD_CAPTURED on WHATSAPP for \"Diwali Warranty Renewal Campaign\" (Revenue: ₹0, Cost: ₹0)","service":"iconic-crm","timestamp":"2026-08-25 12:58:13"}
+{"level":"info","message":"📊 [Attribution] OPPORTUNITY_CREATED on WHATSAPP for \"Diwali Warranty Renewal Campaign\" (Revenue: ₹0, Cost: ₹0)","service":"iconic-crm","timestamp":"2026-08-25 12:58:13"}
+{"level":"info","message":"📊 [Attribution] SERVICE_BOOKED on WHATSAPP for \"Diwali Warranty Renewal Campaign\" (Revenue: ₹382000, Cost: ₹0)","service":"iconic-crm","timestamp":"2026-08-25 12:58:13"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'marketing.whatsapp' is disabled for company '6a8d440fe31297c79281a895'","service":"iconic-crm","timestamp":"2026-08-25 12:58:15"}
+{"level":"warn","message":"🚫 Feature gate blocked: 'marketing.whatsapp' is disabled for company '6a8d44115ee81182d1f1c57c'","service":"iconic-crm","timestamp":"2026-08-25 12:58:17"}
+{"level":"info","message":"👑 Super Admin updated marketing commercial entitlements for company: Beta Electronics Corp (6a8d44115ee81182d1f1c57c)","service":"iconic-crm","timestamp":"2026-08-25 12:58:17"}
+{"level":"info","message":"🔒 Preflight PF-20260825-97667 locked and confirmed by user 6a8d44115ee81182d1f1c593","service":"iconic-crm","timestamp":"2026-08-25 12:58:17"}
+{"level":"info","message":"💳 [Wallet Ledger] Reserved ₹11524.59 for campaign CAM_DURABLES_01. Closing Balance: ₹6975.41","service":"iconic-crm","timestamp":"2026-08-25 12:58:17"}
+{"level":"info","message":"💳 [Wallet Ledger] Released ₹106.76 back to wallet for campaign CAM_DURABLES_01. Closing Balance: ₹7082.17","service":"iconic-crm","timestamp":"2026-08-25 12:58:17"}
+{"level":"info","message":"📝 [Marketing Audit] CAMPAIGN_STATE_TRANSITION_PREFLIGHT_PASSED on WHATSAPP by System (6a8d44115ee81182d1f1c56e)","service":"iconic-crm","timestamp":"2026-08-25 12:58:18"}
+{"level":"info","message":"🔄 [State Machine] Campaign \"Diwali State Machine Test\" (6a8d44125ee81182d1f1c5d0): DRAFT ➔ PREFLIGHT_PASSED","service":"iconic-crm","timestamp":"2026-08-25 12:58:18"}
+{"level":"info","message":"📝 [Marketing Audit] CAMPAIGN_STATE_TRANSITION_QUEUED on WHATSAPP by System (6a8d44115ee81182d1f1c56e)","service":"iconic-crm","timestamp":"2026-08-25 12:58:18"}
+{"level":"info","message":"🔄 [State Machine] Campaign \"Diwali State Machine Test\" (6a8d44125ee81182d1f1c5d0): PREFLIGHT_PASSED ➔ QUEUED","service":"iconic-crm","timestamp":"2026-08-25 12:58:18"}
+{"level":"info","message":"📝 [Marketing Audit] CAMPAIGN_STATE_TRANSITION_PROCESSING on WHATSAPP by System (6a8d44115ee81182d1f1c56e)","service":"iconic-crm","timestamp":"2026-08-25 12:58:18"}
+{"level":"info","message":"🔄 [State Machine] Campaign \"Diwali State Machine Test\" (6a8d44125ee81182d1f1c5d0): QUEUED ➔ PROCESSING","service":"iconic-crm","timestamp":"2026-08-25 12:58:18"}
+{"level":"info","message":"📝 [Marketing Audit] CAMPAIGN_STATE_TRANSITION_COMPLETED on WHATSAPP by System (6a8d44115ee81182d1f1c56e)","service":"iconic-crm","timestamp":"2026-08-25 12:58:18"}
+{"level":"info","message":"🔄 [State Machine] Campaign \"Diwali State Machine Test\" (6a8d44125ee81182d1f1c5d0): PROCESSING ➔ COMPLETED","service":"iconic-crm","timestamp":"2026-08-25 12:58:18"}
+{"level":"warn","message":"🚫 State Machine Blocked: Invalid campaign state transition from \"COMPLETED\" to \"PROCESSING\". Allowed transitions: []","service":"iconic-crm","timestamp":"2026-08-25 12:58:18"}
+{"level":"info","message":"📊 [Attribution] IMPRESSION on WHATSAPP for \"Diwali State Machine Test\" (Revenue: ₹0, Cost: ₹42000)","service":"iconic-crm","timestamp":"2026-08-25 12:58:18"}
+{"level":"info","message":"📊 [Attribution] LEAD_CAPTURED on WHATSAPP for \"Diwali State Machine Test\" (Revenue: ₹0, Cost: ₹0)","service":"iconic-crm","timestamp":"2026-08-25 12:58:18"}
+{"level":"info","message":"📊 [Attribution] SERVICE_BOOKED on WHATSAPP for \"Diwali State Machine Test\" (Revenue: ₹382000, Cost: ₹0)","service":"iconic-crm","timestamp":"2026-08-25 12:58:18"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4412d5272b6c0ea69bb5 -> WHATSAPP_BUSINESS","service":"iconic-crm","timestamp":"2026-08-25 12:58:18"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4412d5272b6c0ea69bb5 -> META_FACEBOOK","service":"iconic-crm","timestamp":"2026-08-25 12:58:18"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4412d5272b6c0ea69bb5 -> META_INSTAGRAM","service":"iconic-crm","timestamp":"2026-08-25 12:58:18"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4412d5272b6c0ea69bb5 -> META_ADS","service":"iconic-crm","timestamp":"2026-08-25 12:58:18"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4412d5272b6c0ea69bb5 -> GOOGLE_ADS","service":"iconic-crm","timestamp":"2026-08-25 12:58:18"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4412d5272b6c0ea69bb5 -> GOOGLE_MERCHANT","service":"iconic-crm","timestamp":"2026-08-25 12:58:18"}
+{"cause":{"beforeHandshake":false,"errorLabelSet":{}},"errorLabelSet":{},"level":"error","message":"Error in WhatsApp queue processing tick: connect ECONNREFUSED 127.0.0.1:56549","reason":{"commonWireVersion":0,"compatible":true,"heartbeatFrequencyMS":10000,"localThresholdMS":15,"logicalSessionTimeoutMinutes":null,"maxElectionId":null,"maxSetVersion":null,"servers":{"127.0.0.1:56549":{"$clusterTime":null,"address":"127.0.0.1:56549","arbiters":[],"electionId":null,"error":{"beforeHandshake":false,"errorLabelSet":{}},"hosts":[],"iscryptd":false,"lastUpdateTime":170419157,"lastWriteDate":0,"logicalSessionTimeoutMinutes":null,"maxBsonObjectSize":null,"maxMessageSizeBytes":null,"maxWireVersion":0,"maxWriteBatchSize":null,"me":null,"minRoundTripTime":0,"minWireVersion":0,"passives":[],"primary":null,"roundTripTime":-1,"setName":null,"setVersion":null,"tags":{},"topologyVersion":null,"type":"Unknown"}},"setName":null,"stale":false,"type":"Single"},"service":"iconic-crm","stack":"MongoServerSelectionError: connect ECONNREFUSED 127.0.0.1:56549\n    at Topology.selectServer (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\node_modules\\mongodb\\lib\\sdam\\topology.js:327:38)\n    at async tryOperation (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\node_modules\\mongodb\\lib\\operations\\execute_operation.js:196:22)\n    at async executeOperation (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\node_modules\\mongodb\\lib\\operations\\execute_operation.js:78:16)\n    at async FindCursor._initialize (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\node_modules\\mongodb\\lib\\cursor\\find_cursor.js:62:26)\n    at async FindCursor.cursorInit (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\node_modules\\mongodb\\lib\\cursor\\abstract_cursor.js:632:27)\n    at async FindCursor.fetchBatch (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\node_modules\\mongodb\\lib\\cursor\\abstract_cursor.js:666:13)\n    at async FindCursor.next (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\node_modules\\mongodb\\lib\\cursor\\abstract_cursor.js:342:17)\n    at async [Symbol.asyncIterator] (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\node_modules\\mongodb\\lib\\cursor\\abstract_cursor.js:250:34)\n    at async FindCursor.toArray (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\node_modules\\mongodb\\lib\\cursor\\abstract_cursor.js:422:26)\n    at async model.Query._find (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\node_modules\\mongoose\\lib\\query.js:2430:14)","timestamp":"2026-08-25 12:58:19"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4416d829ef08d8885ca9 -> WHATSAPP_BUSINESS","service":"iconic-crm","timestamp":"2026-08-25 12:58:22"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4416d829ef08d8885ca9 -> META_FACEBOOK","service":"iconic-crm","timestamp":"2026-08-25 12:58:22"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4416d829ef08d8885ca9 -> META_INSTAGRAM","service":"iconic-crm","timestamp":"2026-08-25 12:58:22"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4416d829ef08d8885ca9 -> META_ADS","service":"iconic-crm","timestamp":"2026-08-25 12:58:22"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4416d829ef08d8885ca9 -> GOOGLE_ADS","service":"iconic-crm","timestamp":"2026-08-25 12:58:22"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4416d829ef08d8885ca9 -> GOOGLE_MERCHANT","service":"iconic-crm","timestamp":"2026-08-25 12:58:22"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d442fdaae7cb7190003af -> WHATSAPP_BUSINESS","service":"iconic-crm","timestamp":"2026-08-25 12:58:47"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d442fdaae7cb7190003af -> META_FACEBOOK","service":"iconic-crm","timestamp":"2026-08-25 12:58:47"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d442fdaae7cb7190003af -> META_INSTAGRAM","service":"iconic-crm","timestamp":"2026-08-25 12:58:47"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d442fdaae7cb7190003af -> META_ADS","service":"iconic-crm","timestamp":"2026-08-25 12:58:47"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d442fdaae7cb7190003af -> GOOGLE_ADS","service":"iconic-crm","timestamp":"2026-08-25 12:58:47"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d442fdaae7cb7190003af -> GOOGLE_MERCHANT","service":"iconic-crm","timestamp":"2026-08-25 12:58:47"}
+{"level":"info","message":"🛒 Merchant Center feed synced for company 6a8d442fdaae7cb7190003af: 0 approved, 0 disapproved.","service":"iconic-crm","timestamp":"2026-08-25 12:58:47"}
+{"level":"info","message":"🎨 AI Creative config updated for company 6a8d442fdaae7cb7190003af (Mode: PLATFORM)","service":"iconic-crm","timestamp":"2026-08-25 12:58:47"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d44563fe51cb8e47abd39 -> WHATSAPP_BUSINESS","service":"iconic-crm","timestamp":"2026-08-25 12:59:26"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d44563fe51cb8e47abd39 -> META_FACEBOOK","service":"iconic-crm","timestamp":"2026-08-25 12:59:26"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d44563fe51cb8e47abd39 -> META_INSTAGRAM","service":"iconic-crm","timestamp":"2026-08-25 12:59:26"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d44563fe51cb8e47abd39 -> META_ADS","service":"iconic-crm","timestamp":"2026-08-25 12:59:26"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d44563fe51cb8e47abd39 -> GOOGLE_ADS","service":"iconic-crm","timestamp":"2026-08-25 12:59:26"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d44563fe51cb8e47abd39 -> GOOGLE_MERCHANT","service":"iconic-crm","timestamp":"2026-08-25 12:59:26"}
+{"level":"info","message":"🛒 Merchant Center feed synced for company 6a8d44563fe51cb8e47abd39: 2 approved, 0 disapproved.","service":"iconic-crm","timestamp":"2026-08-25 12:59:26"}
+{"level":"info","message":"🎨 AI Creative config updated for company 6a8d44563fe51cb8e47abd39 (Mode: PLATFORM)","service":"iconic-crm","timestamp":"2026-08-25 12:59:26"}
+{"level":"info","message":"💾 Content asset saved for company 6a8d44563fe51cb8e47abd39: Diwali 2026 Primary Campaign Creative","service":"iconic-crm","timestamp":"2026-08-25 12:59:26"}
+{"level":"info","message":"🎨 AI Creative config updated for company 6a8d44563fe51cb8e47abd39 (Mode: BYOK)","service":"iconic-crm","timestamp":"2026-08-25 12:59:26"}
+{"level":"info","message":"✨ Unified campaign created for company 6a8d44563fe51cb8e47abd39: UC-966860-1 - Diwali Grand Festival 2026 — Omnichannel Blitz","service":"iconic-crm","timestamp":"2026-08-25 12:59:26"}
+{"level":"info","message":"🗺️ Generated 7-Milestone Omnichannel Roadmap for Diwali Grand Festival (Campaign: UC-966860-1)","service":"iconic-crm","timestamp":"2026-08-25 12:59:26"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4477cca9f756d5a3eaf7 -> WHATSAPP_BUSINESS","service":"iconic-crm","timestamp":"2026-08-25 12:59:59"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4477cca9f756d5a3eaf7 -> META_FACEBOOK","service":"iconic-crm","timestamp":"2026-08-25 13:00:00"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4477cca9f756d5a3eaf7 -> META_INSTAGRAM","service":"iconic-crm","timestamp":"2026-08-25 13:00:00"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4477cca9f756d5a3eaf7 -> META_ADS","service":"iconic-crm","timestamp":"2026-08-25 13:00:00"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4477cca9f756d5a3eaf7 -> GOOGLE_ADS","service":"iconic-crm","timestamp":"2026-08-25 13:00:00"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4477cca9f756d5a3eaf7 -> GOOGLE_MERCHANT","service":"iconic-crm","timestamp":"2026-08-25 13:00:00"}
+{"level":"info","message":"🛒 Merchant Center feed synced for company 6a8d4477cca9f756d5a3eaf7: 2 approved, 0 disapproved.","service":"iconic-crm","timestamp":"2026-08-25 13:00:00"}
+{"level":"info","message":"🎨 AI Creative config updated for company 6a8d4477cca9f756d5a3eaf7 (Mode: PLATFORM)","service":"iconic-crm","timestamp":"2026-08-25 13:00:00"}
+{"level":"info","message":"💾 Content asset saved for company 6a8d4477cca9f756d5a3eaf7: Diwali 2026 Primary Campaign Creative","service":"iconic-crm","timestamp":"2026-08-25 13:00:00"}
+{"level":"info","message":"🎨 AI Creative config updated for company 6a8d4477cca9f756d5a3eaf7 (Mode: BYOK)","service":"iconic-crm","timestamp":"2026-08-25 13:00:00"}
+{"level":"info","message":"✨ Unified campaign created for company 6a8d4477cca9f756d5a3eaf7: UC-000332-1 - Diwali Grand Festival 2026 — Omnichannel Blitz","service":"iconic-crm","timestamp":"2026-08-25 13:00:00"}
+{"level":"info","message":"🗺️ Generated 7-Milestone Omnichannel Roadmap for Diwali Grand Festival (Campaign: UC-000332-1)","service":"iconic-crm","timestamp":"2026-08-25 13:00:00"}
+{"level":"info","message":"📊 Closed-loop attribution computed for UC-000332-1: ROAS 6.35x, CAC ₹1598","service":"iconic-crm","timestamp":"2026-08-25 13:00:00"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4486c950679f0652e67d -> WHATSAPP_BUSINESS","service":"iconic-crm","timestamp":"2026-08-25 13:00:14"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4486c950679f0652e67d -> META_FACEBOOK","service":"iconic-crm","timestamp":"2026-08-25 13:00:14"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4486c950679f0652e67d -> META_INSTAGRAM","service":"iconic-crm","timestamp":"2026-08-25 13:00:14"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4486c950679f0652e67d -> META_ADS","service":"iconic-crm","timestamp":"2026-08-25 13:00:14"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4486c950679f0652e67d -> GOOGLE_ADS","service":"iconic-crm","timestamp":"2026-08-25 13:00:14"}
+{"level":"info","message":"🔗 Marketing connection established for company 6a8d4486c950679f0652e67d -> GOOGLE_MERCHANT","service":"iconic-crm","timestamp":"2026-08-25 13:00:14"}
+{"level":"info","message":"🛒 Merchant Center feed synced for company 6a8d4486c950679f0652e67d: 2 approved, 0 disapproved.","service":"iconic-crm","timestamp":"2026-08-25 13:00:14"}
+{"level":"info","message":"🎨 AI Creative config updated for company 6a8d4486c950679f0652e67d (Mode: PLATFORM)","service":"iconic-crm","timestamp":"2026-08-25 13:00:14"}
+{"level":"info","message":"💾 Content asset saved for company 6a8d4486c950679f0652e67d: Diwali 2026 Primary Campaign Creative","service":"iconic-crm","timestamp":"2026-08-25 13:00:14"}
+{"level":"info","message":"🎨 AI Creative config updated for company 6a8d4486c950679f0652e67d (Mode: BYOK)","service":"iconic-crm","timestamp":"2026-08-25 13:00:14"}
+{"level":"info","message":"✨ Unified campaign created for company 6a8d4486c950679f0652e67d: UC-014850-1 - Diwali Grand Festival 2026 — Omnichannel Blitz","service":"iconic-crm","timestamp":"2026-08-25 13:00:14"}
+{"level":"info","message":"🗺️ Generated 7-Milestone Omnichannel Roadmap for Diwali Grand Festival (Campaign: UC-014850-1)","service":"iconic-crm","timestamp":"2026-08-25 13:00:14"}
+{"level":"info","message":"📊 Closed-loop attribution computed for UC-014850-1: ROAS 6.35x, CAC ₹1598","service":"iconic-crm","timestamp":"2026-08-25 13:00:14"}
+{"level":"info","message":"🔌 Connecting to configured production MongoDB...","service":"iconic-crm","timestamp":"2026-08-25 13:00:24"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-25 13:00:25"}
+{"level":"info","message":"\n🚀 Charlie Smart CRM server running on port 7001 (0.0.0.0)","service":"iconic-crm","timestamp":"2026-08-25 13:00:25"}
+{"level":"info","message":"📱 Healthcheck active at /api/health","service":"iconic-crm","timestamp":"2026-08-25 13:00:25"}
+{"level":"info","message":"🔧 Development mode: http://localhost:7001","service":"iconic-crm","timestamp":"2026-08-25 13:00:25"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2026-08-25 13:00:25"}
+{"0":"t","1":"e","2":"s","3":"t","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2026-08-25 13:00:25"}
+{"level":"info","message":"Creating default primary company: Charlie's Primary (CHARLIES_PRIMARY)...","service":"iconic-crm","timestamp":"2026-08-25 13:00:25"}
+{"level":"info","message":"Default Company created with ID: 6a8d4492e23e67b7a1925037","service":"iconic-crm","timestamp":"2026-08-25 13:00:26"}
+{"level":"info","message":"Migrated 11 Users records to Company: Charlie's Primary","service":"iconic-crm","timestamp":"2026-08-25 13:00:26"}
+{"level":"info","message":"Migrated 5 Orders records to Company: Charlie's Primary","service":"iconic-crm","timestamp":"2026-08-25 13:00:26"}
+{"level":"info","message":"Migrated 5 Leads records to Company: Charlie's Primary","service":"iconic-crm","timestamp":"2026-08-25 13:00:26"}
+{"level":"info","message":"Migrated 5 Contacts records to Company: Charlie's Primary","service":"iconic-crm","timestamp":"2026-08-25 13:00:26"}
+{"level":"info","message":"Created default demo product: 2552 / UTIXK","service":"iconic-crm","timestamp":"2026-08-25 13:00:26"}
+{"level":"info","message":"Created default demo serial: IXHFJDGHH (UTIXK / 55262)","service":"iconic-crm","timestamp":"2026-08-25 13:00:26"}
+{"level":"info","message":"Multi-Tenant migration completed successfully!","service":"iconic-crm","timestamp":"2026-08-25 13:00:26"}
+{"level":"info","message":"⚡ WhatsApp persistent message queue worker started.","service":"iconic-crm","timestamp":"2026-08-25 13:00:26"}
+{"level":"info","message":"📱 WhatsApp campaign queue worker started.","service":"iconic-crm","timestamp":"2026-08-25 13:00:26"}
+{"level":"info","message":"⏰ Social Marketing Scheduler initialized (polling every 15s)","service":"iconic-crm","timestamp":"2026-08-25 13:00:26"}
+{"level":"info","message":"📱 Social marketing scheduler and Holiday Master initialized.","service":"iconic-crm","timestamp":"2026-08-25 13:00:26"}
+{"level":"info","message":"✅ Seeded 9 master marketing holidays & campaign blueprints.","service":"iconic-crm","timestamp":"2026-08-25 13:00:26"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"info","message":"⏰ SLA Timer created for service-request 507f1f77bcf86cd799439099 (response). Target: 2026-08-25T08:30:29.688Z","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"info","message":"⏰ SLA Timer completed for service-request 507f1f77bcf86cd799439099 (response)","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"info","message":"⏰ SLA Timer created for service-request 507f1f77bcf86cd799439098 (resolution). Target: 2026-08-25T11:30:29.774Z","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"warn","message":"🚨 Escalation recorded: service-request 507f1f77bcf86cd799439098 escalated to service-manager","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"info","message":"🚨 Escalation 6a8d449532cda5c4b8c1401c resolved by admin@charlieai.com","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"info","message":"📝 Approval request created for order ORD-999 by user 6a8d449532cda5c4b8c14021","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"error","message":"Error approving request: Segregation of duties: Requesters cannot approve their own requests","service":"iconic-crm","stack":"Error: Segregation of duties: Requesters cannot approve their own requests\n    at Object.approveRequest (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\services\\approvalService.js:33:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\test-crm-audit-regression.js:220:9\n    at async waitForActual (node:assert:565:5)\n    at async ok.rejects (node:assert:686:25)\n    at async main (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\test-crm-audit-regression.js:218:5)","timestamp":"2026-08-25 13:00:29"}
+{"level":"info","message":"📝 Approval request 6a8d449532cda5c4b8c14022 approved by 6a8d449532cda5c4b8c14025","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"info","message":"📋 Task \"Follow up client\" created for user 6a8d449532cda5c4b8c14021","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"info","message":"📋 Task \"Follow up client\" completed","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"info","message":"🔌 Validation result for serial *****_SNO: VALID (Latency: 6ms)","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"info","message":"🔌 Validation result for serial *******_SNO: INVALID_SERIAL (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"info","message":"🔌 Validation result for serial ********_SNO: MODEL_SERIAL_MISMATCH (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"info","message":"🔌 Validation result for serial *******_SNO: ALREADY_VALIDATED (Latency: 1ms)","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"info","message":"🔌 Validation result for serial *******_MAT: INVALID_MATERIAL_CODE (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"info","message":"🔌 Validation result for serial ***************_SNO: DEALER_MISMATCH (Latency: 1ms)","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"info","message":"🔌 Validation result for serial *******_SNO: UNKNOWN_RESPONSE (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"info","message":"🔌 Validation result for serial *******_SNO: SERVICE_UNAVAILABLE (Latency: 1ms)","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"info","message":"🔌 Validation result for serial *********_SNO: SERVICE_UNAVAILABLE (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-25 13:00:29"}
+{"level":"info","message":"📊 /stats requested","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: canViewAll = true","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: filter = {}","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: counting orders...","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: totalOrders = 5","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: calculating revenue...","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: totalRevenue = 2459.78","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: getting unique retailers...","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: retailerCount = 1","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: counting active services...","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: activeServices = 1","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: getting recent orders...","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: recentOrders count = 5","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: aggregating sales by day...","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: salesByDay count = 1","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: aggregating status distribution...","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: statusDistribution count = 1","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: counting previous week orders...","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: prevWeekOrders = 0","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: aggregating previous week revenue...","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: prevWeekRevenue = 0","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: getting previous week retailers...","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: prevWeekRetailers count = 0","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: counting previous week services...","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: prevWeekServices = 0","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📊 /stats: sending response","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"✅ Order Created: ORD000006","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"   Retailer: Direct","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"   Items: 1","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"   Total: ₹236.00 (incl. 18% GST)","service":"iconic-crm","timestamp":"2026-08-25 13:00:32"}
+{"level":"info","message":"📧 Email (not sent - service not configured):","service":"iconic-crm","timestamp":"2026-08-25 13:00:33"}
+{"level":"info","message":"   Sender: Charlie's CRM","service":"iconic-crm","timestamp":"2026-08-25 13:00:33"}
+{"level":"info","message":"   To: test-service@example.com","service":"iconic-crm","timestamp":"2026-08-25 13:00:33"}
+{"level":"info","message":"   Subject: New Service Request - SR000002","service":"iconic-crm","timestamp":"2026-08-25 13:00:33"}
+{"level":"warn","message":"⚠️ Service request email not sent: Email service not configured","service":"iconic-crm","timestamp":"2026-08-25 13:00:33"}
+{"level":"info","message":"🔌 Validation result for serial *******_001: VALID (Latency: 7ms)","service":"iconic-crm","timestamp":"2026-08-25 13:00:40"}
+{"level":"info","message":"🔌 Validation result for serial *******_001: INVALID_SERIAL (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-25 13:00:40"}
+{"level":"info","message":"🔌 Validation result for serial *******_001: DEALER_MISMATCH (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-25 13:00:40"}
+{"date":"Tue Aug 25 2026 13:00:41 GMT+0530 (India Standard Time)","error":{},"level":"error","message":"unhandledRejection: Mongod internal error (fassert() failure\\n\\n\"})\nError: Mongod internal error (fassert() failure\\n\\n\"})\n    at MongoInstance.checkErrorInLine (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\node_modules\\mongodb-memory-server-core\\lib\\util\\MongoInstance.js:398:58)\n    at MongoInstance.stdoutHandler (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\node_modules\\mongodb-memory-server-core\\lib\\util\\MongoInstance.js:337:14)\n    at Socket.emit (node:events:507:28)\n    at addChunk (node:internal/streams/readable:559:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)\n    at Readable.push (node:internal/streams/readable:390:5)\n    at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)","os":{"loadavg":[0,0,0],"uptime":170521.203},"process":{"argv":["C:\\nvm4w\\nodejs\\node.exe","C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\scratch\\test-saas-multitenant-e2e.js"],"cwd":"C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main","execPath":"C:\\nvm4w\\nodejs\\node.exe","gid":null,"memoryUsage":{"arrayBuffers":18332680,"external":21978113,"heapTotal":58175488,"heapUsed":31767944,"rss":95105024},"pid":23428,"uid":null,"version":"v24.1.0"},"rejection":true,"service":"iconic-crm","stack":"Error: Mongod internal error (fassert() failure\\n\\n\"})\n    at MongoInstance.checkErrorInLine (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\node_modules\\mongodb-memory-server-core\\lib\\util\\MongoInstance.js:398:58)\n    at MongoInstance.stdoutHandler (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\node_modules\\mongodb-memory-server-core\\lib\\util\\MongoInstance.js:337:14)\n    at Socket.emit (node:events:507:28)\n    at addChunk (node:internal/streams/readable:559:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)\n    at Readable.push (node:internal/streams/readable:390:5)\n    at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)","timestamp":"2026-08-25 13:00:41","trace":[{"column":58,"file":"C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\node_modules\\mongodb-memory-server-core\\lib\\util\\MongoInstance.js","function":"MongoInstance.checkErrorInLine","line":398,"method":"checkErrorInLine","native":false},{"column":14,"file":"C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\node_modules\\mongodb-memory-server-core\\lib\\util\\MongoInstance.js","function":"MongoInstance.stdoutHandler","line":337,"method":"stdoutHandler","native":false},{"column":28,"file":"node:events","function":"Socket.emit","line":507,"method":"emit","native":false},{"column":12,"file":"node:internal/streams/readable","function":"addChunk","line":559,"method":null,"native":false},{"column":3,"file":"node:internal/streams/readable","function":"readableAddChunkPushByteMode","line":510,"method":null,"native":false},{"column":5,"file":"node:internal/streams/readable","function":"Readable.push","line":390,"method":"push","native":false},{"column":23,"file":"node:internal/stream_base_commons","function":"Pipe.onStreamRead","line":189,"method":"onStreamRead","native":false}]}
+{"level":"info","message":"🔌 Connecting to configured production MongoDB...","service":"iconic-crm","timestamp":"2026-08-25 13:01:58"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-25 13:01:58"}
+{"level":"info","message":"\n🚀 Charlie Smart CRM server running on port 7001 (0.0.0.0)","service":"iconic-crm","timestamp":"2026-08-25 13:02:00"}
+{"level":"info","message":"📱 Healthcheck active at /api/health","service":"iconic-crm","timestamp":"2026-08-25 13:02:00"}
+{"level":"info","message":"🔧 Development mode: http://localhost:7001","service":"iconic-crm","timestamp":"2026-08-25 13:02:00"}
+{"level":"info","message":"✅ MongoDB connected successfully!","service":"iconic-crm","timestamp":"2026-08-25 13:02:00"}
+{"0":"t","1":"e","2":"s","3":"t","level":"info","message":"📊 Database:","service":"iconic-crm","timestamp":"2026-08-25 13:02:00"}
+{"level":"info","message":"Creating default primary company: Charlie's Primary (CHARLIES_PRIMARY)...","service":"iconic-crm","timestamp":"2026-08-25 13:02:00"}
+{"level":"info","message":"Default Company created with ID: 6a8d44f0e00a89bed7da8524","service":"iconic-crm","timestamp":"2026-08-25 13:02:01"}
+{"level":"info","message":"Migrated 11 Users records to Company: Charlie's Primary","service":"iconic-crm","timestamp":"2026-08-25 13:02:01"}
+{"level":"info","message":"Migrated 5 Orders records to Company: Charlie's Primary","service":"iconic-crm","timestamp":"2026-08-25 13:02:01"}
+{"level":"info","message":"Migrated 5 Leads records to Company: Charlie's Primary","service":"iconic-crm","timestamp":"2026-08-25 13:02:01"}
+{"level":"info","message":"Migrated 5 Contacts records to Company: Charlie's Primary","service":"iconic-crm","timestamp":"2026-08-25 13:02:01"}
+{"level":"info","message":"Created default demo product: 2552 / UTIXK","service":"iconic-crm","timestamp":"2026-08-25 13:02:01"}
+{"level":"info","message":"Created default demo serial: IXHFJDGHH (UTIXK / 55262)","service":"iconic-crm","timestamp":"2026-08-25 13:02:01"}
+{"level":"info","message":"Multi-Tenant migration completed successfully!","service":"iconic-crm","timestamp":"2026-08-25 13:02:01"}
+{"level":"info","message":"⚡ WhatsApp persistent message queue worker started.","service":"iconic-crm","timestamp":"2026-08-25 13:02:01"}
+{"level":"info","message":"📱 WhatsApp campaign queue worker started.","service":"iconic-crm","timestamp":"2026-08-25 13:02:01"}
+{"level":"info","message":"⏰ Social Marketing Scheduler initialized (polling every 15s)","service":"iconic-crm","timestamp":"2026-08-25 13:02:01"}
+{"level":"info","message":"📱 Social marketing scheduler and Holiday Master initialized.","service":"iconic-crm","timestamp":"2026-08-25 13:02:01"}
+{"level":"info","message":"✅ Seeded 9 master marketing holidays & campaign blueprints.","service":"iconic-crm","timestamp":"2026-08-25 13:02:01"}
+{"level":"warn","message":"Email credentials not configured. Email notifications disabled.","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"info","message":"⏰ SLA Timer created for service-request 507f1f77bcf86cd799439099 (response). Target: 2026-08-25T08:32:04.476Z","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"info","message":"⏰ SLA Timer completed for service-request 507f1f77bcf86cd799439099 (response)","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"info","message":"⏰ SLA Timer created for service-request 507f1f77bcf86cd799439098 (resolution). Target: 2026-08-25T11:32:04.567Z","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"warn","message":"🚨 Escalation recorded: service-request 507f1f77bcf86cd799439098 escalated to service-manager","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"info","message":"🚨 Escalation 6a8d44f40769bf872a227180 resolved by admin@charlieai.com","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"info","message":"📝 Approval request created for order ORD-999 by user 6a8d44f40769bf872a227185","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"error","message":"Error approving request: Segregation of duties: Requesters cannot approve their own requests","service":"iconic-crm","stack":"Error: Segregation of duties: Requesters cannot approve their own requests\n    at Object.approveRequest (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\services\\approvalService.js:33:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\test-crm-audit-regression.js:220:9\n    at async waitForActual (node:assert:565:5)\n    at async ok.rejects (node:assert:686:25)\n    at async main (C:\\Users\\mayur_hlx0x09\\Downloads\\Iconic-Smart-CRM-main\\Iconic-Smart-CRM-main\\test-crm-audit-regression.js:218:5)","timestamp":"2026-08-25 13:02:04"}
+{"level":"info","message":"📝 Approval request 6a8d44f40769bf872a227186 approved by 6a8d44f40769bf872a227189","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"info","message":"📋 Task \"Follow up client\" created for user 6a8d44f40769bf872a227185","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"info","message":"📋 Task \"Follow up client\" completed","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"info","message":"🔌 Validation result for serial *****_SNO: VALID (Latency: 24ms)","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"info","message":"🔌 Validation result for serial *******_SNO: INVALID_SERIAL (Latency: 3ms)","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"info","message":"🔌 Validation result for serial ********_SNO: MODEL_SERIAL_MISMATCH (Latency: 1ms)","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"info","message":"🔌 Validation result for serial *******_SNO: ALREADY_VALIDATED (Latency: 1ms)","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"info","message":"🔌 Validation result for serial *******_MAT: INVALID_MATERIAL_CODE (Latency: 1ms)","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"info","message":"🔌 Validation result for serial ***************_SNO: DEALER_MISMATCH (Latency: 1ms)","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"info","message":"🔌 Validation result for serial *******_SNO: UNKNOWN_RESPONSE (Latency: 1ms)","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"info","message":"🔌 Validation result for serial *******_SNO: SERVICE_UNAVAILABLE (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"info","message":"🔌 Validation result for serial *********_SNO: SERVICE_UNAVAILABLE (Latency: 2ms)","service":"iconic-crm","timestamp":"2026-08-25 13:02:04"}
+{"level":"info","message":"📊 /stats requested","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: canViewAll = true","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: filter = {}","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: counting orders...","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: totalOrders = 5","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: calculating revenue...","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: totalRevenue = 2459.78","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: getting unique retailers...","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: retailerCount = 1","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: counting active services...","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: activeServices = 1","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: getting recent orders...","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: recentOrders count = 5","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: aggregating sales by day...","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: salesByDay count = 1","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: aggregating status distribution...","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: statusDistribution count = 1","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: counting previous week orders...","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: prevWeekOrders = 0","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: aggregating previous week revenue...","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: prevWeekRevenue = 0","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: getting previous week retailers...","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: prevWeekRetailers count = 0","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: counting previous week services...","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: prevWeekServices = 0","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📊 /stats: sending response","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"✅ Order Created: ORD000006","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"   Retailer: Direct","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"   Items: 1","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"   Total: ₹236.00 (incl. 18% GST)","service":"iconic-crm","timestamp":"2026-08-25 13:02:07"}
+{"level":"info","message":"📧 Email (not sent - service not configured):","service":"iconic-crm","timestamp":"2026-08-25 13:02:08"}
+{"level":"info","message":"   Sender: Charlie's CRM","service":"iconic-crm","timestamp":"2026-08-25 13:02:08"}
+{"level":"info","message":"   To: test-service@example.com","service":"iconic-crm","timestamp":"2026-08-25 13:02:08"}
+{"level":"info","message":"   Subject: New Service Request - SR000002","service":"iconic-crm","timestamp":"2026-08-25 13:02:08"}
+{"level":"warn","message":"⚠️ Service request email not sent: Email service not configured","service":"iconic-crm","timestamp":"2026-08-25 13:02:08"}
+{"level":"info","message":"🔌 Validation result for serial *******_001: VALID (Latency: 12ms)","service":"iconic-crm","timestamp":"2026-08-25 13:02:15"}
+{"level":"info","message":"🔌 Validation result for serial *******_001: INVALID_SERIAL (Latency: 3ms)","service":"iconic-crm","timestamp":"2026-08-25 13:02:15"}
+{"level":"info","message":"🔌 Validation result for serial *******_001: DEALER_MISMATCH (Latency: 4ms)","service":"iconic-crm","timestamp":"2026-08-25 13:02:15"}
