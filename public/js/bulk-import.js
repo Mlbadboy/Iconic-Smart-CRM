@@ -415,47 +415,84 @@ async function loadHistoryList() {
     });
     if (!res.ok) throw new Error('Failed to load history');
     const data = await res.json();
-
-    const tbody = document.getElementById('historyTableBody');
-    if (!data.length) {
-      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted);">No bulk data imports performed yet.</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = data.map(job => {
-      const dateStr = new Date(job.createdAt).toLocaleString();
-      const statusClass = `status-${job.status.toLowerCase()}`;
-
-      return `
-        <tr>
-          <td><strong>${escapeHtml(job.fileName)}</strong></td>
-          <td><span style="text-transform:uppercase;">${job.importType}</span></td>
-          <td>${dateStr}</td>
-          <td>${job.totalRows}</td>
-          <td style="color:var(--success); font-weight:600;">${job.importedRows}</td>
-          <td style="color:${job.rejectedRows > 0 ? 'var(--danger)' : 'var(--text-muted)'};">${job.rejectedRows}</td>
-          <td><span class="status-pill ${statusClass}">${job.status.replace(/_/g, ' ')}</span></td>
-          <td style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
-            ${job.errorRows > 0 ? `
-              <button class="btn btn-secondary" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="window.open('/api/bulk-import/${job.jobId}/errors?token=${token}', '_blank')">
-                ✕ Error CSV
-              </button>
-            ` : ''}
-            ${job.status === 'ROLLED_BACK' ? `
-              <span style="color: #c084fc; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.2rem;">
-                ↩️ Rolled Back (${job.rolledBackCount || 0} deleted)
-              </span>
-            ` : ['COMPLETED', 'COMPLETED_WITH_ERRORS'].includes(job.status) ? `
-              <button class="btn btn-danger" style="padding:0.25rem 0.6rem; font-size:0.75rem; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; border-radius: 6px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.3)'" onmouseout="this.style.background='rgba(239, 68, 68, 0.15)'" onclick="openRollbackModal('${job.jobId}', '${escapeHtml(job.fileName)}', ${job.importedRows || 0}, '${job.importType}')">
-                ↩️ Rollback Lot
-              </button>
-            ` : (job.errorRows === 0 ? '-' : '')}
-          </td>
-        </tr>
-      `;
-    }).join('');
+    allHistoryJobs = Array.isArray(data) ? data : [];
+    filterHistoryTable();
   } catch (err) {
-    console.error('Error rendering history:', err);
+    console.error('Error loading history:', err);
+    const tbody = document.getElementById('historyTableBody');
+    if (tbody) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--danger); padding:1rem;">Failed to load import history: ${escapeHtml(err.message)}</td></tr>`;
+    }
+  }
+}
+
+function filterHistoryTable() {
+  const filter = document.getElementById('historyTypeFilter')?.value || 'ALL';
+  const filtered = (filter === 'ALL')
+    ? allHistoryJobs
+    : allHistoryJobs.filter(j => j.importType === filter);
+  renderHistoryTable(filtered);
+}
+
+function renderHistoryTable(jobs) {
+  const tbody = document.getElementById('historyTableBody');
+  if (!tbody) return;
+
+  if (!jobs || !jobs.length) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:1.5rem;">No bulk data imports found for this filter.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = jobs.map(job => {
+    const dateStr = new Date(job.createdAt).toLocaleString();
+    const statusUpper = (job.status || '').toUpperCase();
+    const statusClass = `status-${statusUpper.toLowerCase()}`;
+    const isRolledBack = statusUpper === 'ROLLED_BACK';
+
+    return `
+      <tr>
+        <td><strong>${escapeHtml(job.fileName)}</strong></td>
+        <td><span style="text-transform:uppercase; font-weight: 600; color: ${job.importType === 'products' ? '#818cf8' : '#38bdf8'};">${job.importType}</span></td>
+        <td>${dateStr}</td>
+        <td>${job.totalRows || 0}</td>
+        <td style="color:var(--success); font-weight:600;">${job.importedRows || 0}</td>
+        <td style="color:${(job.rejectedRows || 0) > 0 ? 'var(--danger)' : 'var(--text-muted)'};">${job.rejectedRows || 0}</td>
+        <td><span class="status-pill ${statusClass}">${statusUpper.replace(/_/g, ' ')}</span></td>
+        <td style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
+          ${(job.errorRows || 0) > 0 ? `
+            <button class="btn btn-secondary" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="window.open('/api/bulk-import/${job.jobId}/errors?token=${token}', '_blank')">
+              ✕ Error CSV
+            </button>
+          ` : ''}
+          ${isRolledBack ? `
+            <span style="color: #c084fc; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.2rem; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); padding: 0.25rem 0.5rem; border-radius: 4px;">
+              ↩️ Rolled Back (${job.rolledBackCount || 0} deleted)
+            </span>
+          ` : `
+            <button class="btn btn-danger" style="padding:0.35rem 0.75rem; font-size:0.8rem; font-weight: 600; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: #fca5a5; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.35)'" onmouseout="this.style.background='rgba(239, 68, 68, 0.2)'" onclick="openRollbackModal('${job.jobId}', '${escapeHtml(job.fileName)}', ${job.importedRows || 0}, '${job.importType}')">
+              ↩️ Rollback Lot
+            </button>
+          `}
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function scrollToHistoryOrRollback() {
+  const section = document.getElementById('historySection');
+  if (section) {
+    section.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Find the first active (not rolled back) lot
+  const activeLot = allHistoryJobs.find(j => (j.status || '').toUpperCase() !== 'ROLLED_BACK');
+  if (activeLot) {
+    openRollbackModal(activeLot.jobId, activeLot.fileName, activeLot.importedRows || 0, activeLot.importType);
+  } else if (allHistoryJobs.length > 0) {
+    showToast('All previous import lots have already been rolled back.', 'info');
+  } else {
+    showToast('No uploaded lots found to rollback.', 'warning');
   }
 }
 

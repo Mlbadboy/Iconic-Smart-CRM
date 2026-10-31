@@ -770,10 +770,57 @@ router.get('/:jobId', auth, requirePermission('bulk_import.view'), async (req, r
 // 5. Get import history list
 router.get('/', auth, requirePermission('bulk_import.history'), async (req, res) => {
   try {
-    // List history for tenant
-    const list = await BulkImportJob.find({ companyId: req.user.companyId })
+    const companyId = req.user.companyId;
+    const list = await BulkImportJob.find({ companyId })
       .sort({ createdAt: -1 })
       .lean();
+
+    // Check for recent unlinked serials (uploaded directly or before tracking)
+    const unlinkedSerialQuery = {
+      companyId,
+      $or: [{ importJobId: { $exists: false } }, { importJobId: null }, { importJobId: '' }]
+    };
+    const unlinkedSerialCount = await SerialRegistry.countDocuments(unlinkedSerialQuery);
+    if (unlinkedSerialCount > 0) {
+      const latestSerial = await SerialRegistry.findOne(unlinkedSerialQuery).sort({ createdAt: -1, _id: -1 }).lean();
+      list.push({
+        jobId: 'RECENT-UNLINKED-SERIALS',
+        fileName: 'Recent Serials Registry Upload',
+        importType: 'serials',
+        totalRows: unlinkedSerialCount,
+        validRows: unlinkedSerialCount,
+        importedRows: unlinkedSerialCount,
+        rejectedRows: 0,
+        errorRows: 0,
+        status: 'COMPLETED',
+        createdAt: latestSerial?.createdAt || (latestSerial?._id ? latestSerial._id.getTimestamp() : new Date())
+      });
+    }
+
+    // Check for recent unlinked products (uploaded directly or before tracking)
+    const unlinkedProdQuery = {
+      companyId,
+      $or: [{ importJobId: { $exists: false } }, { importJobId: null }, { importJobId: '' }]
+    };
+    const unlinkedProdCount = await Product.countDocuments(unlinkedProdQuery);
+    if (unlinkedProdCount > 0) {
+      const latestProd = await Product.findOne(unlinkedProdQuery).sort({ createdAt: -1, _id: -1 }).lean();
+      list.push({
+        jobId: 'RECENT-UNLINKED-PRODUCTS',
+        fileName: 'Recent Product Catalog Upload',
+        importType: 'products',
+        totalRows: unlinkedProdCount,
+        validRows: unlinkedProdCount,
+        importedRows: unlinkedProdCount,
+        rejectedRows: 0,
+        errorRows: 0,
+        status: 'COMPLETED',
+        createdAt: latestProd?.createdAt || (latestProd?._id ? latestProd._id.getTimestamp() : new Date())
+      });
+    }
+
+    // Sort all lots by createdAt descending
+    list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     res.json(list);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -845,6 +892,67 @@ router.get('/:jobId/lot-preview', auth, requirePermission('bulk_import.view'), a
     const { jobId } = req.params;
     const companyId = req.user.companyId;
 
+    if (jobId === 'RECENT-UNLINKED-SERIALS') {
+      const serialQuery = {
+        companyId,
+        $or: [{ importJobId: { $exists: false } }, { importJobId: null }, { importJobId: '' }]
+      };
+      const totalLinked = await SerialRegistry.countDocuments(serialQuery);
+      const activeOrSoldCount = await SerialRegistry.countDocuments({
+        ...serialQuery,
+        status: { $in: ['SOLD', 'REGISTERED', 'VALIDATED'] }
+      });
+      const inStockCount = Math.max(0, totalLinked - activeOrSoldCount);
+
+      return res.json({
+        success: true,
+        data: {
+          jobId,
+          fileName: 'Recent Serials Registry Upload',
+          importType: 'serials',
+          status: 'COMPLETED',
+          importedRows: totalLinked,
+          totalLinked,
+          inStockCount,
+          activeOrSoldCount,
+          isRolledBack: false
+        }
+      });
+    }
+
+    if (jobId === 'RECENT-UNLINKED-PRODUCTS') {
+      const prodQuery = {
+        companyId,
+        $or: [{ importJobId: { $exists: false } }, { importJobId: null }, { importJobId: '' }]
+      };
+      const totalLinked = await Product.countDocuments(prodQuery);
+      const productIds = await Product.find(prodQuery).distinct('_id');
+      let activeOrSoldCount = 0;
+      if (productIds.length > 0) {
+        const attached = await SerialRegistry.distinct('productId', {
+          companyId,
+          productId: { $in: productIds }
+        });
+        activeOrSoldCount = attached.length;
+      }
+      const inStockCount = Math.max(0, totalLinked - activeOrSoldCount);
+
+      return res.json({
+        success: true,
+        data: {
+          jobId,
+          fileName: 'Recent Product Catalog Upload',
+          importType: 'products',
+          status: 'COMPLETED',
+          importedRows: totalLinked,
+          totalLinked,
+          inStockCount,
+          activeOrSoldCount,
+          isRolledBack: false
+        }
+      });
+    }
+
     const job = await BulkImportJob.findOne({ jobId, companyId }).lean();
     if (!job) {
       return res.status(404).json({ success: false, error: 'Bulk import job not found for this tenant.' });
@@ -875,7 +983,6 @@ router.get('/:jobId/lot-preview', auth, requirePermission('bulk_import.view'), a
       };
       totalLinked = await Product.countDocuments(prodQuery);
 
-      // Check if any products have active serials attached
       const productIds = await Product.find(prodQuery).distinct('_id');
       if (productIds.length > 0) {
         const attached = await SerialRegistry.distinct('productId', {
@@ -898,7 +1005,7 @@ router.get('/:jobId/lot-preview', auth, requirePermission('bulk_import.view'), a
         totalLinked,
         inStockCount,
         activeOrSoldCount,
-        isRolledBack: job.status === 'ROLLED_BACK',
+        isRolledBack: (job.status || '').toUpperCase() === 'ROLLED_BACK',
         rolledBackAt: job.rolledBackAt,
         rolledBackCount: job.rolledBackCount
       }
@@ -916,17 +1023,109 @@ router.post('/:jobId/rollback', auth, requirePermission('bulk_import.execute'), 
     const { reason, force } = req.body || {};
     const companyId = req.user.companyId;
 
+    if (jobId === 'RECENT-UNLINKED-SERIALS') {
+      const serialQuery = {
+        companyId,
+        $or: [{ importJobId: { $exists: false } }, { importJobId: null }, { importJobId: '' }]
+      };
+      let deletedCount = 0;
+      let protectedCount = 0;
+
+      if (!force) {
+        const activeUnits = await SerialRegistry.countDocuments({
+          ...serialQuery,
+          status: { $in: ['SOLD', 'REGISTERED', 'VALIDATED'] }
+        });
+
+        if (activeUnits > 0) {
+          protectedCount = activeUnits;
+          const deleteResult = await SerialRegistry.deleteMany({
+            ...serialQuery,
+            status: { $nin: ['SOLD', 'REGISTERED', 'VALIDATED'] }
+          });
+          deletedCount = deleteResult.deletedCount || 0;
+        } else {
+          const deleteResult = await SerialRegistry.deleteMany(serialQuery);
+          deletedCount = deleteResult.deletedCount || 0;
+        }
+      } else {
+        const deleteResult = await SerialRegistry.deleteMany(serialQuery);
+        deletedCount = deleteResult.deletedCount || 0;
+      }
+
+      await recordAuditEvent(req, {
+        action: 'bulk_import.rollback',
+        entity: 'SerialRegistry',
+        entityId: null,
+        previousValue: { deletedCount, protectedCount },
+        newValue: { status: 'ROLLED_BACK', deletedCount, protectedCount },
+        reason: reason || 'Recent serial registry upload rolled back by tenant',
+        metadata: { companyId, jobId, importType: 'serials', deletedCount, protectedCount }
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: `Successfully rolled back recent serials. ${deletedCount} records deleted.` + (protectedCount > 0 ? ` (${protectedCount} active/sold units protected)` : ''),
+        data: { jobId, deletedCount, protectedCount, status: 'ROLLED_BACK' }
+      });
+    }
+
+    if (jobId === 'RECENT-UNLINKED-PRODUCTS') {
+      const prodQuery = {
+        companyId,
+        $or: [{ importJobId: { $exists: false } }, { importJobId: null }, { importJobId: '' }]
+      };
+      let deletedCount = 0;
+      let protectedCount = 0;
+
+      if (!force) {
+        const productIds = await Product.find(prodQuery).distinct('_id');
+        const attachedProductIds = await SerialRegistry.distinct('productId', {
+          companyId,
+          productId: { $in: productIds }
+        });
+
+        if (attachedProductIds.length > 0) {
+          protectedCount = attachedProductIds.length;
+          const deleteResult = await Product.deleteMany({
+            ...prodQuery,
+            _id: { $nin: attachedProductIds }
+          });
+          deletedCount = deleteResult.deletedCount || 0;
+        } else {
+          const deleteResult = await Product.deleteMany(prodQuery);
+          deletedCount = deleteResult.deletedCount || 0;
+        }
+      } else {
+        const deleteResult = await Product.deleteMany(prodQuery);
+        deletedCount = deleteResult.deletedCount || 0;
+      }
+
+      await recordAuditEvent(req, {
+        action: 'bulk_import.rollback',
+        entity: 'Product',
+        entityId: null,
+        previousValue: { deletedCount, protectedCount },
+        newValue: { status: 'ROLLED_BACK', deletedCount, protectedCount },
+        reason: reason || 'Recent product catalog upload rolled back by tenant',
+        metadata: { companyId, jobId, importType: 'products', deletedCount, protectedCount }
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: `Successfully rolled back recent products. ${deletedCount} records deleted.` + (protectedCount > 0 ? ` (${protectedCount} products with registered serials protected)` : ''),
+        data: { jobId, deletedCount, protectedCount, status: 'ROLLED_BACK' }
+      });
+    }
+
     const job = await BulkImportJob.findOne({ jobId, companyId });
     if (!job) {
       return res.status(404).json({ success: false, error: 'Bulk import job not found for this tenant.' });
     }
 
-    if (job.status === 'ROLLED_BACK') {
+    const currentStatusUpper = (job.status || '').toUpperCase();
+    if (currentStatusUpper === 'ROLLED_BACK') {
       return res.status(400).json({ success: false, error: 'This import lot has already been rolled back.' });
-    }
-
-    if (!['COMPLETED', 'COMPLETED_WITH_ERRORS', 'VALIDATED'].includes(job.status)) {
-      return res.status(400).json({ success: false, error: `Cannot rollback job in '${job.status}' status.` });
     }
 
     let deletedCount = 0;
@@ -942,7 +1141,6 @@ router.post('/:jobId/rollback', auth, requirePermission('bulk_import.execute'), 
       };
 
       if (!force) {
-        // Protect units that have progressed to SOLD, REGISTERED, or VALIDATED
         const activeUnits = await SerialRegistry.countDocuments({
           ...serialQuery,
           status: { $in: ['SOLD', 'REGISTERED', 'VALIDATED'] }
@@ -950,7 +1148,6 @@ router.post('/:jobId/rollback', auth, requirePermission('bulk_import.execute'), 
 
         if (activeUnits > 0) {
           protectedCount = activeUnits;
-          // Delete only unconsumed stock
           const deleteResult = await SerialRegistry.deleteMany({
             ...serialQuery,
             status: { $nin: ['SOLD', 'REGISTERED', 'VALIDATED'] }
@@ -971,7 +1168,6 @@ router.post('/:jobId/rollback', auth, requirePermission('bulk_import.execute'), 
       };
 
       if (!force) {
-        // Protect products that already have serials registered to them
         const productIds = await Product.find(prodQuery).distinct('_id');
         const attachedProductIds = await SerialRegistry.distinct('productId', {
           companyId,
@@ -1059,4 +1255,3 @@ router.post('/:jobId/rollback', auth, requirePermission('bulk_import.execute'), 
 });
 
 module.exports = router;
-

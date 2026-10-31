@@ -603,12 +603,15 @@
         <div class="page-title-section">
             <h1 class="page-title">📥 Bulk Import Center</h1>
             <p class="page-desc">Import products or serial numbers securely into your tenant catalog registry.</p>
-            <div style="display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap;">
+            <div style="display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; align-items: center;">
                 <button type="button" id="tabBtnProducts" onclick="selectImportType('products')" class="btn btn-secondary" style="border-radius: 99px; padding: 0.45rem 1.25rem; font-size: 0.88rem; display: flex; align-items: center; gap: 0.4rem;">
                     📦 Products / Catalog Upload
                 </button>
                 <button type="button" id="tabBtnSerials" onclick="selectImportType('serials')" class="btn btn-secondary" style="border-radius: 99px; padding: 0.45rem 1.25rem; font-size: 0.88rem; display: flex; align-items: center; gap: 0.4rem;">
                     🔢 Serial Numbers Upload
+                </button>
+                <button type="button" id="topRollbackActionBtn" onclick="scrollToHistoryOrRollback()" class="btn btn-danger" style="margin-left: auto; border-radius: 99px; padding: 0.45rem 1.25rem; font-size: 0.88rem; display: flex; align-items: center; gap: 0.4rem; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.6); color: #fca5a5; cursor: pointer;">
+                    ↩️ Rollback / Delete Uploaded Lot
                 </button>
             </div>
         </div>
@@ -752,7 +755,7 @@
         </div>
 
         <!-- History Section -->
-        <div class="history-section">
+        <div class="history-section" id="historySection">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
                 <h2 class="page-title" style="font-size:1.5rem; margin-bottom:0;">📋 Import Execution History</h2>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
@@ -826,8 +829,8 @@
     <!-- Toast -->
     <div id="toast" class="toast">Job completed successfully</div>
 
-    <script src="/js/tenant-branding.js"></script>
-    <script src="/js/feature-guard.js"></script>
-    <script src="/js/bulk-import.js"></script>
+    <script src="/js/tenant-branding.js?v=20261101_06"></script>
+    <script src="/js/feature-guard.js?v=20261101_06"></script>
+    <script src="/js/bulk-import.js?v=20261101_06"></script>
 </body>
 </html>
