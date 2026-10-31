@@ -5,6 +5,7 @@ const cheerio = require('cheerio');
 const Product = require('../models/Product');
 const { auth } = require('../middleware/auth');
 const { requireFeature } = require('../middleware/featureGate');
+const { recordAuditEvent } = require('../services/auditService');
 
 router.use(requireFeature('products'));
 
@@ -347,14 +348,57 @@ router.post('/', auth, async (req, res) => {
 // Update product
 router.put('/:id', auth, async (req, res) => {
     try {
-        const product = await Product.findByIdAndUpdate(
-            req.params.id,
+        const companyId = req.user.companyId;
+        const filter = companyId ? { _id: req.params.id, companyId } : { _id: req.params.id };
+        const existing = await Product.findOne(filter);
+        if (!existing) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        const previousValue = {
+            name: existing.name,
+            sku: existing.sku,
+            materialCode: existing.materialCode,
+            productCode: existing.productCode,
+            price: existing.price,
+            category: existing.category,
+            brand: existing.brand,
+            active: existing.active
+        };
+
+        const product = await Product.findOneAndUpdate(
+            filter,
             req.body,
             { new: true, runValidators: true }
         );
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
+
+        const newValue = {
+            name: product.name,
+            sku: product.sku,
+            materialCode: product.materialCode,
+            productCode: product.productCode,
+            price: product.price,
+            category: product.category,
+            brand: product.brand,
+            active: product.active
+        };
+
+        // Record immutable audit event for Super Admin
+        await recordAuditEvent(req, {
+            action: 'product.edit',
+            entity: 'Product',
+            entityId: product._id,
+            previousValue,
+            newValue,
+            reason: req.body.editReason || 'User updated product details',
+            metadata: {
+                companyId,
+                sku: product.sku,
+                name: product.name,
+                productId: product.productId
+            }
+        });
+
         res.json(product);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -364,15 +408,49 @@ router.put('/:id', auth, async (req, res) => {
 // Delete/deactivate product
 router.delete('/:id', auth, async (req, res) => {
     try {
-        const product = await Product.findByIdAndUpdate(
-            req.params.id,
-            { active: false },
-            { new: true }
-        );
-        if (!product) {
+        const companyId = req.user.companyId;
+        const filter = companyId ? { _id: req.params.id, companyId } : { _id: req.params.id };
+        const existing = await Product.findOne(filter);
+        if (!existing) {
             return res.status(404).json({ message: 'Product not found' });
         }
-        res.json({ message: 'Product deactivated' });
+
+        const previousValue = {
+            name: existing.name,
+            sku: existing.sku,
+            materialCode: existing.materialCode,
+            price: existing.price,
+            category: existing.category,
+            brand: existing.brand,
+            active: existing.active
+        };
+
+        // Check if hard delete was requested (e.g. mistaken upload)
+        const isHardDelete = req.query.hard === 'true';
+        if (isHardDelete) {
+            await Product.deleteOne(filter);
+        } else {
+            existing.active = false;
+            await existing.save();
+        }
+
+        // Record immutable audit event for Super Admin
+        await recordAuditEvent(req, {
+            action: isHardDelete ? 'product.delete' : 'product.deactivate',
+            entity: 'Product',
+            entityId: existing._id,
+            previousValue,
+            newValue: isHardDelete ? null : { active: false },
+            reason: req.body?.reason || req.query.reason || 'User deleted/deactivated product',
+            metadata: {
+                companyId,
+                sku: existing.sku,
+                name: existing.name,
+                productId: existing.productId
+            }
+        });
+
+        res.json({ message: isHardDelete ? 'Product deleted permanently' : 'Product deactivated' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

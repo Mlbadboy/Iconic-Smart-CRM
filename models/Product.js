@@ -70,6 +70,10 @@ const productSchema = new mongoose.Schema({
     active: {
         type: Boolean,
         default: true
+    },
+    importJobId: {
+        type: String,
+        index: true
     }
 }, {
     timestamps: true
@@ -88,5 +92,6 @@ productSchema.pre('validate', async function(next) {
 
 productSchema.index({ companyId: 1, sku: 1 });
 productSchema.index({ companyId: 1, active: 1 });
+productSchema.index({ companyId: 1, importJobId: 1 });
 
 module.exports = mongoose.model('Product', productSchema);

@@ -527,7 +527,8 @@ async function runAsyncDbExecution(job, mode, req) {
           unit,
           warranty,
           stockQuantity,
-          active: rec.status ? rec.status.toUpperCase() === 'ACTIVE' : true
+          active: rec.status ? rec.status.toUpperCase() === 'ACTIVE' : true,
+          importJobId: job.jobId
         };
 
         if (mode === 'CREATE_UPDATE') {
@@ -861,11 +862,22 @@ router.get('/:jobId/lot-preview', auth, requirePermission('bulk_import.view'), a
       });
       inStockCount = Math.max(0, totalLinked - activeOrSoldCount);
     } else if (job.importType === 'products') {
-      totalLinked = await Product.countDocuments({
+      const prodQuery = {
         companyId,
         $or: [{ importJobId: job.jobId }, { 'metadata.importJobId': job.jobId }]
-      });
-      inStockCount = totalLinked;
+      };
+      totalLinked = await Product.countDocuments(prodQuery);
+
+      // Check if any products have active serials attached
+      const productIds = await Product.find(prodQuery).distinct('_id');
+      if (productIds.length > 0) {
+        const attached = await SerialRegistry.distinct('productId', {
+          companyId,
+          productId: { $in: productIds }
+        });
+        activeOrSoldCount = attached.length;
+      }
+      inStockCount = Math.max(0, totalLinked - activeOrSoldCount);
     }
 
     return res.json({
@@ -946,11 +958,34 @@ router.post('/:jobId/rollback', auth, requirePermission('bulk_import.execute'), 
         deletedCount = deleteResult.deletedCount || 0;
       }
     } else if (job.importType === 'products') {
-      const deleteResult = await Product.deleteMany({
+      const prodQuery = {
         companyId,
         $or: [{ importJobId: job.jobId }, { 'metadata.importJobId': job.jobId }]
-      });
-      deletedCount = deleteResult.deletedCount || 0;
+      };
+
+      if (!force) {
+        // Protect products that already have serials registered to them
+        const productIds = await Product.find(prodQuery).distinct('_id');
+        const attachedProductIds = await SerialRegistry.distinct('productId', {
+          companyId,
+          productId: { $in: productIds }
+        });
+
+        if (attachedProductIds.length > 0) {
+          protectedCount = attachedProductIds.length;
+          const deleteResult = await Product.deleteMany({
+            ...prodQuery,
+            _id: { $nin: attachedProductIds }
+          });
+          deletedCount = deleteResult.deletedCount || 0;
+        } else {
+          const deleteResult = await Product.deleteMany(prodQuery);
+          deletedCount = deleteResult.deletedCount || 0;
+        }
+      } else {
+        const deleteResult = await Product.deleteMany(prodQuery);
+        deletedCount = deleteResult.deletedCount || 0;
+      }
     }
 
     const previousStatus = job.status;

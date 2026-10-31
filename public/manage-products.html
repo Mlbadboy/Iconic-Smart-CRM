@@ -135,7 +135,10 @@
         <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                 <h2 style="margin-bottom: 0;">➕ Add New Product</h2>
-                <a href="/bulk-import.html?type=products" class="btn btn-secondary">⬆ Import CSV</a>
+                <div style="display: flex; gap: 0.5rem;">
+                    <a href="/bulk-import.html?type=products" class="btn btn-secondary">⬆ Import CSV</a>
+                    <a href="/bulk-import.html?type=products#history" class="btn btn-secondary">↩️ Rollback Bulk Lots</a>
+                </div>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                 <div class="form-group">
@@ -246,6 +249,11 @@ LG 6.5 kg Fully Automatic Washing Machine, T65SJSF1Z, 16990, LG, Washing Machine
     <script>
         const API_URL = window.location.origin + '/api';
         const token = localStorage.getItem('authToken');
+        let currentProductsList = [];
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
         
         if (!token) {
             window.location.href = '/login.html';
@@ -494,15 +502,17 @@ LG 6.5 kg Fully Automatic Washing Machine, T65SJSF1Z, 16990, LG, Washing Machine
                     return;
                 }
 
+                currentProductsList = products;
                 tbody.innerHTML = products.map(p => `
                     <tr>
-                        <td><strong>${p.name}</strong></td>
-                        <td>${p.brand || 'N/A'}</td>
-                        <td><code>${p.sku}</code></td>
-                        <td><strong>₹${p.price.toFixed(2)}</strong>${p.mrp ? `<br><small style="color: #718096; text-decoration: line-through;">₹${p.mrp.toFixed(2)}</small>` : ''}</td>
-                        <td><span style="background: #e6f7ff; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem;">${p.category}</span></td>
+                        <td><strong>${escapeHtml(p.name)}</strong></td>
+                        <td>${escapeHtml(p.brand || 'N/A')}</td>
+                        <td><code>${escapeHtml(p.sku)}</code></td>
+                        <td><strong>₹${Number(p.price || 0).toFixed(2)}</strong>${p.mrp ? `<br><small style="color: #718096; text-decoration: line-through;">₹${Number(p.mrp || 0).toFixed(2)}</small>` : ''}</td>
+                        <td><span style="background: #e6f7ff; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem;">${escapeHtml(p.category || '')}</span></td>
                         <td>${p.stockQuantity || 0}</td>
                         <td>
+                            <button class="btn btn-secondary" onclick="openEditProductModal('${p._id}')" style="padding: 0.25rem 0.65rem; font-size: 0.85rem; margin-right: 0.35rem;">✏️ Edit</button>
                             <button class="btn btn-danger" onclick="deleteProduct('${p._id}')" style="padding: 0.25rem 0.75rem; font-size: 0.85rem;">🗑️ Delete</button>
                         </td>
                     </tr>
@@ -663,5 +673,117 @@ Bajaj 36L Air Cooler,Platini PX36 TORQUE,5990,Bajaj,Air Cooler`;
     <script src="/js/feature-guard.js"></script>
     <script src="/js/tenant-branding.js"></script>
     <script src="/js/tenant-notifications.js"></script>
+    <!-- Edit Product Modal -->
+    <div id="editProductModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center;">
+        <div class="card" style="width: 100%; max-width: 520px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 20px 30px rgba(0,0,0,0.25); color: #2d3748;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h3 style="font-size: 1.25rem; font-weight: bold; color: #2d3748;">✏️ Edit Product Details</h3>
+                <button type="button" onclick="closeEditProductModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #718096;">&times;</button>
+            </div>
+            <form id="editProductForm" onsubmit="handleSaveProductEdit(event)">
+                <input type="hidden" id="editProductId">
+                <div class="form-group" style="margin-bottom: 0.85rem;">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Product Name</label>
+                    <input type="text" id="editProdName" required style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 6px;">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-bottom: 0.85rem;">
+                    <div class="form-group">
+                        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">SKU / Code</label>
+                        <input type="text" id="editProdSku" required style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 6px;">
+                    </div>
+                    <div class="form-group">
+                        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Price (₹)</label>
+                        <input type="number" id="editProdPrice" step="0.01" required style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 6px;">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-bottom: 0.85rem;">
+                    <div class="form-group">
+                        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Brand</label>
+                        <input type="text" id="editProdBrand" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 6px;">
+                    </div>
+                    <div class="form-group">
+                        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Category</label>
+                        <input type="text" id="editProdCategory" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 6px;">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Stock Quantity</label>
+                    <input type="number" id="editProdStock" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 6px;">
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button type="button" onclick="closeEditProductModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" id="saveProdEditBtn" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function openEditProductModal(id) {
+        const p = currentProductsList.find(x => String(x._id) === String(id));
+        if (!p) return;
+        document.getElementById('editProductId').value = p._id;
+        document.getElementById('editProdName').value = p.name || '';
+        document.getElementById('editProdSku').value = p.sku || '';
+        document.getElementById('editProdCategory').value = p.category || '';
+        document.getElementById('editProdBrand').value = p.brand || '';
+        document.getElementById('editProdPrice').value = p.price || 0;
+        document.getElementById('editProdStock').value = p.stockQuantity || 0;
+        const modal = document.getElementById('editProductModal');
+        modal.style.display = 'flex';
+    }
+
+    function closeEditProductModal() {
+        document.getElementById('editProductModal').style.display = 'none';
+    }
+
+    async function handleSaveProductEdit(e) {
+        e.preventDefault();
+        const id = document.getElementById('editProductId').value;
+        const btn = document.getElementById('saveProdEditBtn');
+        btn.disabled = true;
+        btn.innerText = 'Saving...';
+
+        const payload = {
+            name: document.getElementById('editProdName').value.trim(),
+            sku: document.getElementById('editProdSku').value.trim(),
+            category: document.getElementById('editProdCategory').value.trim(),
+            brand: document.getElementById('editProdBrand').value.trim(),
+            price: parseFloat(document.getElementById('editProdPrice').value) || 0,
+            stockQuantity: parseInt(document.getElementById('editProdStock').value, 10) || 0,
+            editReason: 'Updated via Product Catalog Manager'
+        };
+
+        try {
+            const res = await fetch(`${API_URL}/products/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.message || 'Failed to update product');
+            }
+
+            closeEditProductModal();
+            showToast('✅ Product updated successfully');
+            loadProducts();
+        } catch (err) {
+            alert('Error updating product: ' + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = 'Save Changes';
+        }
+    }
+    </script>
 </body>
 </html>

@@ -279,16 +279,22 @@ async function loadAuditLogs() {
             const actorName = log.actorId?.name || 'Unknown';
             const actorEmail = log.actorId?.email ? ` (${log.actorId.email})` : '';
             const actorRole = log.actorRole || log.actorId?.role || '-';
-            let actionBadge = `<span style="background: #3b82f620; color: #60a5fa; border: 1px solid #3b82f640; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">EDIT</span>`;
+            let actionBadge = `<span style="background: #3b82f620; color: #60a5fa; border: 1px solid #3b82f640; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">SERIAL EDIT</span>`;
             if (log.action === 'serial.delete') {
-                actionBadge = `<span style="background: #ef444420; color: #f87171; border: 1px solid #ef444440; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">DELETE</span>`;
+                actionBadge = `<span style="background: #ef444420; color: #f87171; border: 1px solid #ef444440; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">SERIAL DELETE</span>`;
             } else if (log.action === 'bulk_import.rollback') {
                 actionBadge = `<span style="background: #a855f720; color: #c084fc; border: 1px solid #a855f740; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">LOT ROLLBACK</span>`;
+            } else if (log.action === 'product.edit') {
+                actionBadge = `<span style="background: #10b98120; color: #34d399; border: 1px solid #10b98140; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">PRODUCT EDIT</span>`;
+            } else if (log.action === 'product.delete') {
+                actionBadge = `<span style="background: #ef444420; color: #f87171; border: 1px solid #ef444440; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">PRODUCT DELETE</span>`;
             }
 
             const serialNum = log.action === 'bulk_import.rollback'
                 ? (log.metadata?.fileName || log.metadata?.jobId || 'Bulk Lot')
-                : (log.metadata?.serialNumber || log.previousValue?.serialNumber || log.newValue?.serialNumber || log.entityId);
+                : (log.action.startsWith('product.')
+                    ? (log.metadata?.sku ? `${log.metadata.sku} (${log.metadata.name || 'Product'})` : log.metadata?.name || log.entityId)
+                    : (log.metadata?.serialNumber || log.previousValue?.serialNumber || log.newValue?.serialNumber || log.entityId));
 
             let detailsHtml = '';
             if (log.action === 'serial.edit') {
@@ -308,6 +314,19 @@ async function loadAuditLogs() {
                 const meta = log.metadata || {};
                 const next = log.newValue || {};
                 detailsHtml = `<span style="color:#c084fc; font-weight:600;">Lot Rollback:</span> Deleted <strong>${next.deletedCount || 0}</strong> ${escapeHtml(meta.importType || 'unit')}(s) from file <em>${escapeHtml(meta.fileName || '-')}</em>` + (next.protectedCount > 0 ? `<br><span style="color:#fbbf24; font-size:0.75rem;">(${next.protectedCount} active units preserved)</span>` : '');
+            } else if (log.action === 'product.edit') {
+                const diffs = [];
+                const prev = log.previousValue || {};
+                const next = log.newValue || {};
+                ['name', 'sku', 'materialCode', 'price', 'category', 'brand'].forEach(k => {
+                    if (prev[k] !== next[k] && (prev[k] !== undefined || next[k] !== undefined)) {
+                        diffs.push(`<strong>${k}:</strong> <span style="color:#f87171; text-decoration:line-through;">${escapeHtml(String(prev[k] ?? 'none'))}</span> → <span style="color:#34d399;">${escapeHtml(String(next[k] ?? 'none'))}</span>`);
+                    }
+                });
+                detailsHtml = diffs.length ? diffs.join('<br>') : 'Updated catalog product details';
+            } else if (log.action === 'product.delete') {
+                const prev = log.previousValue || {};
+                detailsHtml = `<span style="color:#f87171;">Deleted Product Snapshot:</span> Name: ${escapeHtml(prev.name || '-')} | SKU: ${escapeHtml(prev.sku || '-')} | Price: ₹${prev.price || 0}`;
             }
 
             return `
