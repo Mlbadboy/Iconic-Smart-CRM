@@ -4,6 +4,7 @@ const { auth } = require('../middleware/auth');
 const { requirePermission } = require('../middleware/rbac');
 const SerialRegistry = require('../models/SerialRegistry');
 const ImportSession = require('../models/ImportSession');
+const { recordAuditEvent } = require('../services/auditService');
 const { success, error } = require('../utils/apiResponse');
 const { requireFeature } = require('../middleware/featureGate');
 
@@ -262,6 +263,163 @@ router.get('/units', auth, async (req, res) => {
 
     const units = await SerialRegistry.find(filter).sort({ createdAt: -1 }).limit(100).lean();
     return success(res, { units, count: units.length });
+  } catch (err) {
+    return error(res, { status: 500, message: err.message });
+  }
+});
+
+// Update a mistakenly uploaded or incorrect Serial Unit (Tenant Scoped with Audit Trail)
+router.put('/:id', auth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const companyId = req.user?.companyId;
+    if (!companyId && req.user?.role !== 'superadmin') {
+      return error(res, { status: 403, message: 'Tenant company context required.' });
+    }
+
+    const query = { _id: id };
+    if (req.user?.role !== 'superadmin') {
+      query.companyId = companyId;
+    }
+
+    const serialDoc = await SerialRegistry.findOne(query);
+    if (!serialDoc) {
+      return error(res, { status: 404, message: 'Serial unit not found in your tenant registry.' });
+    }
+
+    const { materialCode, serialNumber, dealerCode, status, customer, batchNumber, reason } = req.body;
+
+    const previousValue = {
+      materialCode: serialDoc.materialCode,
+      serialNumber: serialDoc.serialNumber,
+      dealerCode: serialDoc.dealerCode,
+      status: serialDoc.status,
+      customer: serialDoc.customer,
+      batchNumber: serialDoc.batchNumber
+    };
+
+    let isModified = false;
+
+    if (materialCode !== undefined && materialCode.trim()) {
+      serialDoc.materialCode = materialCode.trim();
+      isModified = true;
+    }
+    if (serialNumber !== undefined && serialNumber.trim()) {
+      serialDoc.serialNumber = serialNumber.trim();
+      isModified = true;
+    }
+    if (dealerCode !== undefined) {
+      serialDoc.dealerCode = dealerCode.trim();
+      isModified = true;
+    }
+    if (status !== undefined && status.trim()) {
+      serialDoc.status = status.trim().toUpperCase();
+      isModified = true;
+    }
+    if (customer !== undefined) {
+      serialDoc.customer = customer.trim();
+      isModified = true;
+    }
+    if (batchNumber !== undefined) {
+      serialDoc.batchNumber = batchNumber.trim();
+      isModified = true;
+    }
+
+    if (!isModified) {
+      return error(res, { status: 400, message: 'No valid fields provided to update.' });
+    }
+
+    // Append to ownership history
+    serialDoc.ownershipHistory.push({
+      dealerCode: serialDoc.dealerCode,
+      customerName: serialDoc.customer,
+      source: 'MANUAL_EDIT',
+      assignedAt: new Date(),
+      changedBy: req.user.id,
+      reason: reason || 'Manual modification of mistakenly uploaded serial details'
+    });
+
+    await serialDoc.save();
+
+    const newValue = {
+      materialCode: serialDoc.materialCode,
+      serialNumber: serialDoc.serialNumber,
+      dealerCode: serialDoc.dealerCode,
+      status: serialDoc.status,
+      customer: serialDoc.customer,
+      batchNumber: serialDoc.batchNumber
+    };
+
+    // Record Immutable Audit Event
+    await recordAuditEvent(req, {
+      action: 'serial.edit',
+      entity: 'SerialRegistry',
+      entityId: String(serialDoc._id),
+      previousValue,
+      newValue,
+      reason: reason || 'Manual correction of mistakenly uploaded serial details',
+      metadata: {
+        companyId: serialDoc.companyId,
+        serialNumber: serialDoc.serialNumber,
+        materialCode: serialDoc.materialCode
+      }
+    });
+
+    return success(res, serialDoc);
+  } catch (err) {
+    if (err.code === 11000) {
+      return error(res, { status: 409, message: 'Duplicate serial number for this material code in your company.' });
+    }
+    return error(res, { status: 500, message: err.message });
+  }
+});
+
+// Delete a mistakenly uploaded Serial Unit (Tenant Scoped with Audit Trail)
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const companyId = req.user?.companyId;
+    if (!companyId && req.user?.role !== 'superadmin') {
+      return error(res, { status: 403, message: 'Tenant company context required.' });
+    }
+
+    const query = { _id: id };
+    if (req.user?.role !== 'superadmin') {
+      query.companyId = companyId;
+    }
+
+    const serialDoc = await SerialRegistry.findOne(query);
+    if (!serialDoc) {
+      return error(res, { status: 404, message: 'Serial unit not found in your tenant registry.' });
+    }
+
+    // Capture complete snapshot before deletion
+    const deletedSnapshot = serialDoc.toObject();
+
+    // Delete ONLY this single document strictly scoped to tenant companyId
+    await SerialRegistry.deleteOne({ _id: serialDoc._id, companyId: serialDoc.companyId });
+
+    // Record Immutable Audit Event
+    await recordAuditEvent(req, {
+      action: 'serial.delete',
+      entity: 'SerialRegistry',
+      entityId: String(serialDoc._id),
+      previousValue: deletedSnapshot,
+      newValue: null,
+      reason: req.body?.reason || 'Mistaken upload deleted by tenant manager',
+      metadata: {
+        companyId: serialDoc.companyId,
+        serialNumber: serialDoc.serialNumber,
+        materialCode: serialDoc.materialCode,
+        deletedAt: new Date()
+      }
+    });
+
+    return success(res, {
+      message: `Serial unit '${serialDoc.serialNumber}' deleted successfully.`,
+      deletedId: serialDoc._id,
+      serialNumber: serialDoc.serialNumber
+    });
   } catch (err) {
     return error(res, { status: 500, message: err.message });
   }
