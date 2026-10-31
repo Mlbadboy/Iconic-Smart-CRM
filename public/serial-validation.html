@@ -329,6 +329,59 @@
                 grid-template-columns: 1fr;
             }
         }
+        /* Modal & Unit Management */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.show {
+            display: flex;
+        }
+        .modal-card {
+            background: var(--bg-white);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 540px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+        }
+        .btn-action-edit {
+            background: #eef2ff;
+            color: #4f46e5;
+            border: 1px solid #c7d2fe;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.825rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+        .btn-action-edit:hover {
+            background: #e0e7ff;
+        }
+        .btn-action-delete {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.825rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-action-delete:hover {
+            background: #fee2e2;
+        }
     </style>
 </head>
 <body>
@@ -406,6 +459,40 @@
             </div>
         </div>
 
+        <!-- Uploaded Serial Registry Units Management (For correcting or deleting mistaken uploads) -->
+        <div id="serialRegistryCard" class="history-card" style="margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <div class="card-title" style="margin-bottom: 0.25rem;">📦 Uploaded Serial Registry Units</div>
+                    <p style="color: var(--text-light); font-size: 0.875rem;">View, modify, or delete mistaken serial uploads. All edits and deletions are audit-logged for Super Admin review.</p>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="text" id="unitSearchInput" placeholder="🔍 Search serial, material, dealer..." class="form-control" style="max-width: 280px; padding: 0.45rem 0.75rem; font-size: 0.9rem;" onkeyup="filterUnitsTable()">
+                    <button onclick="loadUnits()" class="btn btn-secondary" style="font-size: 0.875rem; padding: 0.45rem 0.85rem;">🔄 Refresh</button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Serial Number</th>
+                            <th>Material Code</th>
+                            <th>Dealer Code</th>
+                            <th>Status</th>
+                            <th>Customer</th>
+                            <th>Uploaded</th>
+                            <th style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="unitsTableBody">
+                        <tr>
+                            <td colspan="7" class="text-center" style="color: var(--text-light);">Loading registered units...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- History Section -->
         <div class="history-card">
             <div class="card-title">Validation History</div>
@@ -431,6 +518,56 @@
             </div>
         </div>
     </main>
+
+    <!-- Edit Serial Unit Modal -->
+    <div id="editSerialModal" class="modal-overlay">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h3 style="font-size: 1.2rem; font-weight: bold; color: var(--text-dark);">✏️ Edit Serial Number Details</h3>
+                <button type="button" onclick="closeEditModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light);">&times;</button>
+            </div>
+            <form id="editSerialForm" onsubmit="handleSaveEdit(event)">
+                <input type="hidden" id="editUnitId">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label for="editSerialNumber" style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-dark); margin-bottom: 0.25rem;">Serial Number</label>
+                    <input type="text" id="editSerialNumber" class="form-control" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label for="editMaterialCode" style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-dark); margin-bottom: 0.25rem;">Material Code</label>
+                    <input type="text" id="editMaterialCode" class="form-control" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label for="editDealerCode" style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-dark); margin-bottom: 0.25rem;">Dealer Code</label>
+                    <input type="text" id="editDealerCode" class="form-control">
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label for="editStatus" style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-dark); margin-bottom: 0.25rem;">Status</label>
+                    <select id="editStatus" class="form-control">
+                        <option value="IN_STOCK">IN_STOCK</option>
+                        <option value="IN_TRANSIT">IN_TRANSIT</option>
+                        <option value="TRANSFERRED">TRANSFERRED</option>
+                        <option value="SOLD">SOLD</option>
+                        <option value="REGISTERED">REGISTERED</option>
+                        <option value="VALIDATED">VALIDATED</option>
+                        <option value="DEFECTIVE">DEFECTIVE</option>
+                        <option value="DEACTIVATED">DEACTIVATED</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label for="editCustomer" style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-dark); margin-bottom: 0.25rem;">Customer (Optional)</label>
+                    <input type="text" id="editCustomer" class="form-control">
+                </div>
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label for="editReason" style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-dark); margin-bottom: 0.25rem;">Reason for Modification (Logged in Audit Trail)</label>
+                    <input type="text" id="editReason" class="form-control" placeholder="e.g. Corrected typo in serial number" required>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button type="button" onclick="closeEditModal()" class="btn btn-secondary" style="padding: 0.6rem 1.25rem;">Cancel</button>
+                    <button type="submit" id="saveEditBtn" class="btn btn-primary" style="margin-top: 0; width: auto; padding: 0.6rem 1.5rem;">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
@@ -666,7 +803,171 @@
         }
 
         // Load History on Page Load
-        window.addEventListener('DOMContentLoaded', loadHistory);
+        window.addEventListener('DOMContentLoaded', () => {
+            loadHistory();
+            loadUnits();
+        });
+
+        // In-memory units cache
+        let cachedUnits = [];
+
+        // Fetch and load registered serial units
+        async function loadUnits() {
+            const tableBody = document.getElementById('unitsTableBody');
+            if (!tableBody) return;
+            tableBody.innerHTML = `<tr><td colspan="7" class="text-center" style="color: var(--text-light);">Loading registered units...</td></tr>`;
+
+            try {
+                const response = await fetch(`${window.location.origin}/api/v1/serial-registry/units`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (!response.ok) throw new Error('Could not fetch registered serials');
+                const result = await response.json();
+                cachedUnits = result.data?.units || [];
+                renderUnitsTable(cachedUnits);
+            } catch (err) {
+                tableBody.innerHTML = `<tr><td colspan="7" class="text-center" style="color: var(--danger);">Failed to load registered serial units: ${err.message}</td></tr>`;
+            }
+        }
+
+        // Render Units Table
+        function renderUnitsTable(units) {
+            const tableBody = document.getElementById('unitsTableBody');
+            if (!tableBody) return;
+            if (!units || units.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="7" class="text-center" style="color: var(--text-light);">No registered serial units found.</td></tr>`;
+                return;
+            }
+
+            tableBody.innerHTML = units.map(u => {
+                const statusColor = u.status === 'VALIDATED' || u.status === 'REGISTERED' || u.status === 'ACTIVE' 
+                    ? 'badge-success' 
+                    : (u.status === 'DEFECTIVE' || u.status === 'DEACTIVATED' ? 'badge-danger' : 'badge-warning');
+
+                const escapedUnit = encodeURIComponent(JSON.stringify(u));
+
+                return `
+                    <tr>
+                        <td style="font-family: monospace; font-weight: 600; color: var(--text-dark);">${u.serialNumber}</td>
+                        <td>${u.materialCode || '-'}</td>
+                        <td>${u.dealerCode || '-'}</td>
+                        <td><span class="badge ${statusColor}" style="margin-top:0;">${u.status || 'IN_STOCK'}</span></td>
+                        <td>${u.customer || '-'}</td>
+                        <td style="font-size: 0.85rem; color: var(--text-light);">${u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '-'}</td>
+                        <td style="text-align: right; white-space: nowrap;">
+                            <button onclick="openEditModal('${escapedUnit}')" class="btn-action-edit" title="Modify details">✏️ Edit</button>
+                            <button onclick="handleDeleteSerial('${u._id}', '${u.serialNumber}')" class="btn-action-delete" title="Delete mistaken upload">🗑️ Delete</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Filter units table by search query
+        function filterUnitsTable() {
+            const query = (document.getElementById('unitSearchInput').value || '').trim().toLowerCase();
+            if (!query) {
+                renderUnitsTable(cachedUnits);
+                return;
+            }
+            const filtered = cachedUnits.filter(u => 
+                (u.serialNumber && u.serialNumber.toLowerCase().includes(query)) ||
+                (u.materialCode && u.materialCode.toLowerCase().includes(query)) ||
+                (u.dealerCode && u.dealerCode.toLowerCase().includes(query)) ||
+                (u.customer && u.customer.toLowerCase().includes(query))
+            );
+            renderUnitsTable(filtered);
+        }
+
+        // Open Edit Modal
+        function openEditModal(escapedJson) {
+            const unit = JSON.parse(decodeURIComponent(escapedJson));
+            document.getElementById('editUnitId').value = unit._id;
+            document.getElementById('editSerialNumber').value = unit.serialNumber || '';
+            document.getElementById('editMaterialCode').value = unit.materialCode || '';
+            document.getElementById('editDealerCode').value = unit.dealerCode || '';
+            document.getElementById('editStatus').value = unit.status || 'IN_STOCK';
+            document.getElementById('editCustomer').value = unit.customer || '';
+            document.getElementById('editReason').value = '';
+            document.getElementById('editSerialModal').classList.add('show');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editSerialModal').classList.remove('show');
+        }
+
+        // Save Edit Serial
+        async function handleSaveEdit(e) {
+            e.preventDefault();
+            const id = document.getElementById('editUnitId').value;
+            const saveBtn = document.getElementById('saveEditBtn');
+            saveBtn.disabled = true;
+            saveBtn.innerText = 'Saving...';
+
+            const payload = {
+                serialNumber: document.getElementById('editSerialNumber').value.trim(),
+                materialCode: document.getElementById('editMaterialCode').value.trim(),
+                dealerCode: document.getElementById('editDealerCode').value.trim(),
+                status: document.getElementById('editStatus').value,
+                customer: document.getElementById('editCustomer').value.trim(),
+                reason: document.getElementById('editReason').value.trim()
+            };
+
+            try {
+                const response = await fetch(`${window.location.origin}/api/v1/serial-registry/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                saveBtn.disabled = false;
+                saveBtn.innerText = 'Save Changes';
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to update serial details');
+                }
+
+                showToast(`Serial ${payload.serialNumber} updated successfully!`);
+                closeEditModal();
+                loadUnits();
+            } catch (err) {
+                saveBtn.disabled = false;
+                saveBtn.innerText = 'Save Changes';
+                showToast(err.message, 'error');
+            }
+        }
+
+        // Delete Mistaken Serial
+        async function handleDeleteSerial(id, serialNumber) {
+            const confirmed = confirm(`Are you sure you want to delete mistakenly uploaded serial "${serialNumber}"?\n\nThis will permanently remove the record and will be logged in the audit trail for Super Admin review.`);
+            if (!confirmed) return;
+
+            try {
+                const response = await fetch(`${window.location.origin}/api/v1/serial-registry/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ reason: 'Mistaken upload removed from web UI' })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to delete serial');
+                }
+
+                showToast(`Serial ${serialNumber} deleted successfully.`);
+                loadUnits();
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
     </script>
     <script src="/js/feature-guard.js"></script>
     <script src="/js/tenant-branding.js"></script>
