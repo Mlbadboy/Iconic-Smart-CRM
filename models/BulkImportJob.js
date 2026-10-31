@@ -69,7 +69,8 @@ const bulkImportJobSchema = new mongoose.Schema({
       'COMPLETED',
       'COMPLETED_WITH_ERRORS',
       'FAILED',
-      'CANCELLED'
+      'CANCELLED',
+      'ROLLED_BACK'
     ],
     default: 'UPLOADED',
     required: true,
@@ -83,6 +84,16 @@ const bulkImportJobSchema = new mongoose.Schema({
   },
   startedAt: Date,
   completedAt: Date,
+  rolledBackAt: Date,
+  rolledBackBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  rolledBackCount: {
+    type: Number,
+    default: 0
+  },
+  rollbackReason: String,
   errorFilePath: String,
   resultFilePath: String
 }, {

@@ -406,12 +406,21 @@ async function loadHistoryList() {
           <td style="color:var(--success); font-weight:600;">${job.importedRows}</td>
           <td style="color:${job.rejectedRows > 0 ? 'var(--danger)' : 'var(--text-muted)'};">${job.rejectedRows}</td>
           <td><span class="status-pill ${statusClass}">${job.status.replace(/_/g, ' ')}</span></td>
-          <td>
+          <td style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
             ${job.errorRows > 0 ? `
               <button class="btn btn-secondary" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="window.open('/api/bulk-import/${job.jobId}/errors?token=${token}', '_blank')">
                 ✕ Error CSV
               </button>
-            ` : '-'}
+            ` : ''}
+            ${job.status === 'ROLLED_BACK' ? `
+              <span style="color: #c084fc; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.2rem;">
+                ↩️ Rolled Back (${job.rolledBackCount || 0} deleted)
+              </span>
+            ` : ['COMPLETED', 'COMPLETED_WITH_ERRORS'].includes(job.status) ? `
+              <button class="btn btn-danger" style="padding:0.25rem 0.6rem; font-size:0.75rem; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; border-radius: 6px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.3)'" onmouseout="this.style.background='rgba(239, 68, 68, 0.15)'" onclick="openRollbackModal('${job.jobId}', '${escapeHtml(job.fileName)}', ${job.importedRows || 0}, '${job.importType}')">
+                ↩️ Rollback Lot
+              </button>
+            ` : (job.errorRows === 0 ? '-' : '')}
           </td>
         </tr>
       `;
@@ -439,4 +448,105 @@ function showToast(msg, type = 'success') {
 function escapeHtml(str) {
   if (!str) return '';
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+
+// ==========================================
+// Lot Rollback & Bulk Deletion Handlers
+// ==========================================
+let pendingRollbackJobId = null;
+
+async function openRollbackModal(jobId, fileName, importedRows, importType) {
+  pendingRollbackJobId = jobId;
+  const modal = document.getElementById('rollbackModal');
+  const infoBox = document.getElementById('rollbackLotInfo');
+  const reasonInput = document.getElementById('rollbackReason');
+  const forceCheckbox = document.getElementById('forceDeleteCheckbox');
+  const confirmBtn = document.getElementById('confirmRollbackBtn');
+
+  if (reasonInput) reasonInput.value = '';
+  if (forceCheckbox) forceCheckbox.checked = false;
+  if (confirmBtn) {
+    confirmBtn.disabled = false;
+    confirmBtn.innerText = '🗑️ Confirm Rollback & Delete';
+  }
+
+  infoBox.innerHTML = `
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
+      <div><strong>File Name:</strong> ${escapeHtml(fileName)}</div>
+      <div><strong>Batch ID:</strong> <code>${jobId}</code></div>
+      <div><strong>Import Type:</strong> <span style="text-transform: uppercase;">${importType}</span></div>
+      <div><strong>Recorded Imports:</strong> <span style="color: var(--success); font-weight: 600;">${importedRows}</span></div>
+    </div>
+    <div style="color: var(--text-muted); font-size: 0.8rem; border-top: 1px solid var(--border-color); padding-top: 0.5rem;" id="lotLiveCounts">
+      ⏳ Checking live registered units in catalog...
+    </div>
+  `;
+
+  modal.classList.add('show');
+
+  // Fetch live lot preview
+  try {
+    const res = await fetch(`/api/bulk-import/${jobId}/lot-preview`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const p = data.data || {};
+      const liveCountsEl = document.getElementById('lotLiveCounts');
+      if (liveCountsEl) {
+        liveCountsEl.innerHTML = `
+          <div>📦 <strong>Units Found in Registry:</strong> ${p.totalLinked} (${p.inStockCount} in stock / deletable)</div>
+          ${p.activeOrSoldCount > 0 ? `<div style="color: #fbbf24; margin-top: 0.25rem;">⚠️ <strong>${p.activeOrSoldCount} unit(s) are SOLD/REGISTERED</strong> to customers. They will be preserved unless "Force deletion" is checked.</div>` : '<div style="color: #34d399; margin-top: 0.25rem;">✓ All units are in stock and can be cleanly rolled back.</div>'}
+        `;
+      }
+    }
+  } catch (e) {
+    console.error('Lot preview fetch error:', e);
+  }
+}
+
+function closeRollbackModal() {
+  const modal = document.getElementById('rollbackModal');
+  if (modal) modal.classList.remove('show');
+  pendingRollbackJobId = null;
+}
+
+async function executeLotRollback() {
+  if (!pendingRollbackJobId) return;
+
+  const confirmBtn = document.getElementById('confirmRollbackBtn');
+  const reason = document.getElementById('rollbackReason')?.value || '';
+  const force = document.getElementById('forceDeleteCheckbox')?.checked || false;
+
+  if (confirmBtn) {
+    confirmBtn.disabled = true;
+    confirmBtn.innerText = '⏳ Rolling back lot...';
+  }
+
+  try {
+    const res = await fetch(`/api/bulk-import/${pendingRollbackJobId}/rollback`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ reason, force })
+    });
+
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.error || 'Failed to rollback lot');
+    }
+
+    closeRollbackModal();
+    showToast(result.message || 'Import lot successfully rolled back!', 'success');
+    loadHistoryList();
+  } catch (err) {
+    showToast(err.message, 'error');
+    if (confirmBtn) {
+      confirmBtn.disabled = false;
+      confirmBtn.innerText = '🗑️ Confirm Rollback & Delete';
+    }
+  }
 }

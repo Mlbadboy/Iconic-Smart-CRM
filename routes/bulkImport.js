@@ -647,6 +647,7 @@ async function runAsyncDbExecution(job, mode, req) {
           status: statusVal,
           registrationStatus: 'REGISTERED',
           activationStatus: 'ACTIVE',
+          importJobId: job.jobId,
           uploadedBy: job.createdBy
         };
 
@@ -829,4 +830,191 @@ router.get('/templates/serials', auth, requirePermission('bulk_import.view'), (r
   res.status(200).send(headers);
 });
 
+
+// 10. Preview bulk import lot statistics before rollback
+router.get('/:jobId/lot-preview', auth, requirePermission('bulk_import.view'), async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const companyId = req.user.companyId;
+
+    const job = await BulkImportJob.findOne({ jobId, companyId }).lean();
+    if (!job) {
+      return res.status(404).json({ success: false, error: 'Bulk import job not found for this tenant.' });
+    }
+
+    let inStockCount = 0;
+    let activeOrSoldCount = 0;
+    let totalLinked = 0;
+
+    if (job.importType === 'serials') {
+      const serialQuery = {
+        companyId,
+        $or: [
+          { importJobId: job.jobId },
+          { 'ownershipHistory.importSessionId': job.jobId }
+        ]
+      };
+      totalLinked = await SerialRegistry.countDocuments(serialQuery);
+      activeOrSoldCount = await SerialRegistry.countDocuments({
+        ...serialQuery,
+        status: { $in: ['SOLD', 'REGISTERED', 'VALIDATED'] }
+      });
+      inStockCount = Math.max(0, totalLinked - activeOrSoldCount);
+    } else if (job.importType === 'products') {
+      totalLinked = await Product.countDocuments({
+        companyId,
+        $or: [{ importJobId: job.jobId }, { 'metadata.importJobId': job.jobId }]
+      });
+      inStockCount = totalLinked;
+    }
+
+    return res.json({
+      success: true,
+      data: {
+        jobId: job.jobId,
+        fileName: job.fileName,
+        importType: job.importType,
+        status: job.status,
+        importedRows: job.importedRows || 0,
+        totalLinked,
+        inStockCount,
+        activeOrSoldCount,
+        isRolledBack: job.status === 'ROLLED_BACK',
+        rolledBackAt: job.rolledBackAt,
+        rolledBackCount: job.rolledBackCount
+      }
+    });
+  } catch (err) {
+    logger.error('Failed to get lot preview:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 11. Rollback bulk import lot (Delete uploaded lot & audit log)
+router.post('/:jobId/rollback', auth, requirePermission('bulk_import.execute'), async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { reason, force } = req.body || {};
+    const companyId = req.user.companyId;
+
+    const job = await BulkImportJob.findOne({ jobId, companyId });
+    if (!job) {
+      return res.status(404).json({ success: false, error: 'Bulk import job not found for this tenant.' });
+    }
+
+    if (job.status === 'ROLLED_BACK') {
+      return res.status(400).json({ success: false, error: 'This import lot has already been rolled back.' });
+    }
+
+    if (!['COMPLETED', 'COMPLETED_WITH_ERRORS', 'VALIDATED'].includes(job.status)) {
+      return res.status(400).json({ success: false, error: `Cannot rollback job in '${job.status}' status.` });
+    }
+
+    let deletedCount = 0;
+    let protectedCount = 0;
+
+    if (job.importType === 'serials') {
+      const serialQuery = {
+        companyId,
+        $or: [
+          { importJobId: job.jobId },
+          { 'ownershipHistory.importSessionId': job.jobId }
+        ]
+      };
+
+      if (!force) {
+        // Protect units that have progressed to SOLD, REGISTERED, or VALIDATED
+        const activeUnits = await SerialRegistry.countDocuments({
+          ...serialQuery,
+          status: { $in: ['SOLD', 'REGISTERED', 'VALIDATED'] }
+        });
+
+        if (activeUnits > 0) {
+          protectedCount = activeUnits;
+          // Delete only unconsumed stock
+          const deleteResult = await SerialRegistry.deleteMany({
+            ...serialQuery,
+            status: { $nin: ['SOLD', 'REGISTERED', 'VALIDATED'] }
+          });
+          deletedCount = deleteResult.deletedCount || 0;
+        } else {
+          const deleteResult = await SerialRegistry.deleteMany(serialQuery);
+          deletedCount = deleteResult.deletedCount || 0;
+        }
+      } else {
+        const deleteResult = await SerialRegistry.deleteMany(serialQuery);
+        deletedCount = deleteResult.deletedCount || 0;
+      }
+    } else if (job.importType === 'products') {
+      const deleteResult = await Product.deleteMany({
+        companyId,
+        $or: [{ importJobId: job.jobId }, { 'metadata.importJobId': job.jobId }]
+      });
+      deletedCount = deleteResult.deletedCount || 0;
+    }
+
+    const previousStatus = job.status;
+    job.status = 'ROLLED_BACK';
+    job.rolledBackAt = new Date();
+    job.rolledBackBy = req.user.id;
+    job.rolledBackCount = deletedCount;
+    job.rollbackReason = reason || 'User requested lot rollback';
+    await job.save();
+
+    // Record immutable Audit Event for Super Admin
+    await recordAuditEvent(req, {
+      action: 'bulk_import.rollback',
+      entity: 'BulkImportJob',
+      entityId: job._id,
+      previousValue: {
+        status: previousStatus,
+        importedRows: job.importedRows,
+        fileName: job.fileName
+      },
+      newValue: {
+        status: 'ROLLED_BACK',
+        deletedCount,
+        protectedCount,
+        rolledBackAt: job.rolledBackAt
+      },
+      reason: reason || 'Bulk import lot deleted and rolled back',
+      metadata: {
+        companyId,
+        jobId: job.jobId,
+        fileName: job.fileName,
+        importType: job.importType,
+        deletedCount,
+        protectedCount
+      }
+    });
+
+    // Notify tenant
+    await PlatformNotification.create({
+      title: `${job.importType === 'serials' ? 'Serial' : 'Product'} Lot Rolled Back`,
+      message: `Lot '${job.fileName}' was rolled back. ${deletedCount} records deleted from active catalog registry.`,
+      type: 'GENERAL',
+      priority: 'HIGH',
+      audience: 'SELECTED_COMPANIES',
+      targetCompanies: [companyId],
+      status: 'PUBLISHED',
+      channels: ['IN_APP']
+    }).catch(() => {});
+
+    return res.status(200).json({
+      success: true,
+      message: `Successfully rolled back lot '${job.fileName}'. ${deletedCount} records deleted.` + (protectedCount > 0 ? ` (${protectedCount} active/sold units protected)` : ''),
+      data: {
+        jobId: job.jobId,
+        deletedCount,
+        protectedCount,
+        status: 'ROLLED_BACK'
+      }
+    });
+  } catch (err) {
+    logger.error('Bulk import rollback failed:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
+

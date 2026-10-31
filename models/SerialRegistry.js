@@ -101,6 +101,10 @@ const serialRegistrySchema = new mongoose.Schema({
     changedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     reason: String
   }],
+  importJobId: {
+    type: String,
+    index: true
+  },
   uploadedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
@@ -113,5 +117,6 @@ const serialRegistrySchema = new mongoose.Schema({
 serialRegistrySchema.index({ companyId: 1, materialCode: 1, serialNumber: 1 }, { unique: true });
 serialRegistrySchema.index({ companyId: 1, currentHolderType: 1, currentHolderId: 1, status: 1 });
 serialRegistrySchema.index({ companyId: 1, dealerCode: 1, status: 1 });
+serialRegistrySchema.index({ companyId: 1, importJobId: 1 });
 
 module.exports = mongoose.model('SerialRegistry', serialRegistrySchema);

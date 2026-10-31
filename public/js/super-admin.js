@@ -256,7 +256,7 @@ async function loadAuditLogs() {
     if (!tbody) return;
 
     const actionFilter = document.getElementById('auditActionFilter')?.value || '';
-    let url = '/api/tenant-control/audit-logs?entity=SerialRegistry&limit=50';
+    let url = '/api/tenant-control/audit-logs?limit=50';
     if (actionFilter) {
         url += `&action=${encodeURIComponent(actionFilter)}`;
     }
@@ -279,11 +279,16 @@ async function loadAuditLogs() {
             const actorName = log.actorId?.name || 'Unknown';
             const actorEmail = log.actorId?.email ? ` (${log.actorId.email})` : '';
             const actorRole = log.actorRole || log.actorId?.role || '-';
-            const actionBadge = log.action === 'serial.delete'
-                ? `<span style="background: #ef444420; color: #f87171; border: 1px solid #ef444440; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">DELETE</span>`
-                : `<span style="background: #3b82f620; color: #60a5fa; border: 1px solid #3b82f640; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">EDIT</span>`;
+            let actionBadge = `<span style="background: #3b82f620; color: #60a5fa; border: 1px solid #3b82f640; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">EDIT</span>`;
+            if (log.action === 'serial.delete') {
+                actionBadge = `<span style="background: #ef444420; color: #f87171; border: 1px solid #ef444440; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">DELETE</span>`;
+            } else if (log.action === 'bulk_import.rollback') {
+                actionBadge = `<span style="background: #a855f720; color: #c084fc; border: 1px solid #a855f740; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">LOT ROLLBACK</span>`;
+            }
 
-            const serialNum = log.metadata?.serialNumber || log.previousValue?.serialNumber || log.newValue?.serialNumber || log.entityId;
+            const serialNum = log.action === 'bulk_import.rollback'
+                ? (log.metadata?.fileName || log.metadata?.jobId || 'Bulk Lot')
+                : (log.metadata?.serialNumber || log.previousValue?.serialNumber || log.newValue?.serialNumber || log.entityId);
 
             let detailsHtml = '';
             if (log.action === 'serial.edit') {
@@ -299,6 +304,10 @@ async function loadAuditLogs() {
             } else if (log.action === 'serial.delete') {
                 const prev = log.previousValue || {};
                 detailsHtml = `<span style="color:#f87171;">Deleted Record Snapshot:</span> Mat: ${escapeHtml(prev.materialCode || '-')} | Dealer: ${escapeHtml(prev.dealerCode || '-')} | Status: ${escapeHtml(prev.status || '-')}`;
+            } else if (log.action === 'bulk_import.rollback') {
+                const meta = log.metadata || {};
+                const next = log.newValue || {};
+                detailsHtml = `<span style="color:#c084fc; font-weight:600;">Lot Rollback:</span> Deleted <strong>${next.deletedCount || 0}</strong> ${escapeHtml(meta.importType || 'unit')}(s) from file <em>${escapeHtml(meta.fileName || '-')}</em>` + (next.protectedCount > 0 ? `<br><span style="color:#fbbf24; font-size:0.75rem;">(${next.protectedCount} active units preserved)</span>` : '');
             }
 
             return `

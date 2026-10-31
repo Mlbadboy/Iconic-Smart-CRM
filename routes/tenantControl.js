@@ -150,7 +150,7 @@ router.get('/audit-logs', auth, superAdminOnly, async (req, res) => {
     if (req.query.entity) {
       query.entity = req.query.entity;
     } else {
-      query.entity = req.query.all ? { $exists: true } : 'SerialRegistry';
+      query.entity = req.query.all ? { $exists: true } : { $in: ['SerialRegistry', 'BulkImportJob'] };
     }
     if (req.query.action) {
       query.action = req.query.action;
