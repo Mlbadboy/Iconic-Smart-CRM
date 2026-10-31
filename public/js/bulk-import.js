@@ -3,6 +3,7 @@
 let activeJobId = null;
 let pollInterval = null;
 let selectedFile = null;
+let allHistoryJobs = [];
 
 const token = localStorage.getItem('authToken');
 if (!token) {
@@ -106,6 +107,34 @@ function handleFile(file) {
   document.getElementById('selectedFileName').innerText = file.name;
   document.getElementById('selectedFileSize').innerText = (file.size / 1024).toFixed(1) + ' KB';
   document.getElementById('selectedFileInfo').style.display = 'block';
+}
+
+function selectImportType(type) {
+  const radio = document.querySelector(`input[name="importType"][value="${type}"]`);
+  if (radio) radio.checked = true;
+
+  const btnProd = document.getElementById('tabBtnProducts');
+  const btnSer = document.getElementById('tabBtnSerials');
+  if (btnProd && btnSer) {
+    if (type === 'products') {
+      btnProd.className = 'btn btn-primary';
+      btnProd.style.boxShadow = '0 0 15px var(--primary-glow)';
+      btnSer.className = 'btn btn-secondary';
+      btnSer.style.boxShadow = 'none';
+    } else {
+      btnSer.className = 'btn btn-primary';
+      btnSer.style.boxShadow = '0 0 15px var(--primary-glow)';
+      btnProd.className = 'btn btn-secondary';
+      btnProd.style.boxShadow = 'none';
+    }
+  }
+
+  // Sync URL parameter without reload
+  const url = new URL(window.location);
+  url.searchParams.set('type', type);
+  window.history.replaceState({}, '', url);
+
+  toggleTemplateLink();
 }
 
 function toggleTemplateLink() {
@@ -495,10 +524,17 @@ async function openRollbackModal(jobId, fileName, importedRows, importType) {
       const p = data.data || {};
       const liveCountsEl = document.getElementById('lotLiveCounts');
       if (liveCountsEl) {
-        liveCountsEl.innerHTML = `
-          <div>📦 <strong>Units Found in Registry:</strong> ${p.totalLinked} (${p.inStockCount} in stock / deletable)</div>
-          ${p.activeOrSoldCount > 0 ? `<div style="color: #fbbf24; margin-top: 0.25rem;">⚠️ <strong>${p.activeOrSoldCount} unit(s) are SOLD/REGISTERED</strong> to customers. They will be preserved unless "Force deletion" is checked.</div>` : '<div style="color: #34d399; margin-top: 0.25rem;">✓ All units are in stock and can be cleanly rolled back.</div>'}
-        `;
+        if (importType === 'products') {
+          liveCountsEl.innerHTML = `
+            <div>📦 <strong>Products Found in Catalog:</strong> ${p.totalLinked} (${p.inStockCount} unattached / deletable)</div>
+            ${p.activeOrSoldCount > 0 ? `<div style="color: #fbbf24; margin-top: 0.25rem;">⚠️ <strong>${p.activeOrSoldCount} product(s) have registered serial units attached.</strong> They will be preserved unless "Force deletion" is checked.</div>` : '<div style="color: #34d399; margin-top: 0.25rem;">✓ All products in this lot have no attached serials and can be cleanly rolled back.</div>'}
+          `;
+        } else {
+          liveCountsEl.innerHTML = `
+            <div>📦 <strong>Units Found in Registry:</strong> ${p.totalLinked} (${p.inStockCount} in stock / deletable)</div>
+            ${p.activeOrSoldCount > 0 ? `<div style="color: #fbbf24; margin-top: 0.25rem;">⚠️ <strong>${p.activeOrSoldCount} unit(s) are SOLD/REGISTERED</strong> to customers. They will be preserved unless "Force deletion" is checked.</div>` : '<div style="color: #34d399; margin-top: 0.25rem;">✓ All units are in stock and can be cleanly rolled back.</div>'}
+          `;
+        }
       }
     }
   } catch (e) {

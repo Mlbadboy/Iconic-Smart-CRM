@@ -738,6 +738,13 @@ async function runAsyncDbExecution(job, mode, req) {
       importedRows: job.importedRows,
       rejectedRows: job.rejectedRows,
       status: job.status
+    },
+    metadata: {
+      companyId: job.companyId || req.user.companyId,
+      jobId: job.jobId,
+      fileName: job.fileName,
+      importType: job.importType,
+      importedRows: job.importedRows
     }
   });
 

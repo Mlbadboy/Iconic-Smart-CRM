@@ -3,6 +3,7 @@ const router = express.Router();
 const axios = require('axios');
 const cheerio = require('cheerio');
 const Product = require('../models/Product');
+const BulkImportJob = require('../models/BulkImportJob');
 const { auth } = require('../middleware/auth');
 const { requireFeature } = require('../middleware/featureGate');
 const { recordAuditEvent } = require('../services/auditService');
@@ -460,6 +461,7 @@ router.delete('/:id', auth, async (req, res) => {
 router.post('/bulk-import', auth, async (req, res) => {
     try {
         const { products } = req.body;
+        const companyId = req.user.companyId;
         
         if (!products || !Array.isArray(products) || products.length === 0) {
             return res.status(400).json({ 
@@ -470,10 +472,11 @@ router.post('/bulk-import', auth, async (req, res) => {
             });
         }
 
+        const jobId = 'JOB-PROD-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
         const created = [];
         const errorList = [];
 
-        console.log('📦 Bulk import request received with', products.length, 'products');
+        console.log('📦 Bulk import request received with', products.length, 'products for company:', companyId);
 
         // Process products sequentially to avoid productId conflicts
         for (const productData of products) {
@@ -499,8 +502,9 @@ router.post('/bulk-import', auth, async (req, res) => {
                     continue;
                 }
 
-                // Check if SKU already exists
-                const existing = await Product.findOne({ sku: productData.sku });
+                // Check if SKU already exists for this tenant
+                const skuFilter = companyId ? { companyId, sku: productData.sku } : { sku: productData.sku };
+                const existing = await Product.findOne(skuFilter);
                 if (existing) {
                     errorList.push({
                         product: productData.name,
@@ -511,6 +515,8 @@ router.post('/bulk-import', auth, async (req, res) => {
 
                 // Prepare product data with defaults - ensure all required fields are present
                 const productToCreate = {
+                    companyId: companyId,
+                    importJobId: jobId,
                     name: productData.name.trim(),
                     sku: productData.sku.trim(),
                     price: price,
@@ -544,12 +550,57 @@ router.post('/bulk-import', auth, async (req, res) => {
 
         console.log(`✅ Bulk Import Complete: ${created.length} products created, ${errorList.length} errors`);
 
-        // Always return the expected format, even if there are errors
+        // If products were created, record BulkImportJob and Super Admin Audit Trail
+        if (created.length > 0) {
+            const job = new BulkImportJob({
+                jobId,
+                companyId: companyId,
+                fileName: req.body.fileName || 'Product Quick Import',
+                fileSize: req.body.fileSize || Buffer.byteLength(JSON.stringify(products), 'utf8'),
+                importType: 'products',
+                totalRows: products.length,
+                processedRows: products.length,
+                validRows: created.length,
+                errorRows: errorList.length,
+                importedRows: created.length,
+                rejectedRows: errorList.length,
+                status: errorList.length > 0 ? 'COMPLETED_WITH_ERRORS' : 'COMPLETED',
+                createdBy: req.user.id,
+                completedAt: new Date()
+            });
+            await job.save();
+
+            // Record immutable audit event for Super Admin
+            await recordAuditEvent(req, {
+                action: 'bulk_import.execute',
+                entity: 'BulkImportJob',
+                entityId: job._id,
+                newValue: {
+                    jobId: job.jobId,
+                    fileName: job.fileName,
+                    importType: 'products',
+                    totalRows: job.totalRows,
+                    importedRows: job.importedRows,
+                    rejectedRows: job.rejectedRows,
+                    status: job.status
+                },
+                metadata: {
+                    companyId: companyId,
+                    jobId: job.jobId,
+                    fileName: job.fileName,
+                    importType: 'products',
+                    importedRows: job.importedRows
+                }
+            });
+        }
+
+        // Always return the expected format, including jobId for lot management
         res.json({
             success: created.length,
             errors: errorList.length,
             created: created,
-            errors: errorList
+            errors: errorList,
+            jobId: created.length > 0 ? jobId : null
         });
     } catch (error) {
         console.error('❌ Bulk import error:', error.message);

@@ -385,11 +385,12 @@
             <div style="display: flex; gap: 0.75rem; align-items: center;">
                 <select id="auditActionFilter" onchange="loadAuditLogs()" style="background: #1e293b; color: white; border: 1px solid var(--border-color); padding: 0.45rem 0.75rem; border-radius: 6px; font-size: 0.85rem;">
                     <option value="">All Audit Actions</option>
-                    <option value="serial.edit">Serial Edits (Modifications)</option>
-                    <option value="serial.delete">Serial Deletions</option>
+                    <option value="bulk_import.execute">Bulk Lot Uploads / Executions</option>
                     <option value="bulk_import.rollback">Bulk Lot Rollbacks / Deletions</option>
                     <option value="product.edit">Product Edits (Catalog)</option>
                     <option value="product.delete">Product Deletions (Catalog)</option>
+                    <option value="serial.edit">Serial Edits (Modifications)</option>
+                    <option value="serial.delete">Serial Deletions</option>
                 </select>
                 <button onclick="loadAuditLogs()" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.45rem 0.85rem;">🔄 Refresh Logs</button>
             </div>

@@ -282,6 +282,8 @@ async function loadAuditLogs() {
             let actionBadge = `<span style="background: #3b82f620; color: #60a5fa; border: 1px solid #3b82f640; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">SERIAL EDIT</span>`;
             if (log.action === 'serial.delete') {
                 actionBadge = `<span style="background: #ef444420; color: #f87171; border: 1px solid #ef444440; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">SERIAL DELETE</span>`;
+            } else if (log.action === 'bulk_import.execute') {
+                actionBadge = `<span style="background: #3b82f620; color: #60a5fa; border: 1px solid #3b82f640; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">LOT UPLOAD</span>`;
             } else if (log.action === 'bulk_import.rollback') {
                 actionBadge = `<span style="background: #a855f720; color: #c084fc; border: 1px solid #a855f740; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">LOT ROLLBACK</span>`;
             } else if (log.action === 'product.edit') {
@@ -290,14 +292,19 @@ async function loadAuditLogs() {
                 actionBadge = `<span style="background: #ef444420; color: #f87171; border: 1px solid #ef444440; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">PRODUCT DELETE</span>`;
             }
 
-            const serialNum = log.action === 'bulk_import.rollback'
-                ? (log.metadata?.fileName || log.metadata?.jobId || 'Bulk Lot')
+            const serialNum = (log.action === 'bulk_import.rollback' || log.action === 'bulk_import.execute')
+                ? (log.metadata?.fileName || log.newValue?.fileName || log.metadata?.jobId || 'Bulk Lot')
                 : (log.action.startsWith('product.')
                     ? (log.metadata?.sku ? `${log.metadata.sku} (${log.metadata.name || 'Product'})` : log.metadata?.name || log.entityId)
                     : (log.metadata?.serialNumber || log.previousValue?.serialNumber || log.newValue?.serialNumber || log.entityId));
 
             let detailsHtml = '';
-            if (log.action === 'serial.edit') {
+            if (log.action === 'bulk_import.execute') {
+                const meta = log.metadata || {};
+                const next = log.newValue || {};
+                const typeLabel = (meta.importType || next.importType || 'unit').toUpperCase();
+                detailsHtml = `<span style="color:#60a5fa; font-weight:600;">Bulk Upload:</span> Committed <strong>${next.importedRows || meta.importedRows || 0}</strong> ${escapeHtml(typeLabel)} records from file <em>${escapeHtml(meta.fileName || next.fileName || '-')}</em>`;
+            } else if (log.action === 'serial.edit') {
                 const diffs = [];
                 const prev = log.previousValue || {};
                 const next = log.newValue || {};
