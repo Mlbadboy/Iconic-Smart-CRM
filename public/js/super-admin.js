@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         loadCompanies();
+        loadAuditLogs();
         loadApiOverview();
     } catch (err) {
         console.error(err);
@@ -214,6 +215,7 @@ async function handleCreateCompany(e) {
         alert(`✅ Company ${data.company.name} provisioned successfully!`);
         closeCreateModal();
         loadCompanies();
+        loadAuditLogs();
     } catch (err) {
         alert(`❌ Error: ${err.message}`);
     }
@@ -237,6 +239,7 @@ async function changeCompanyStatus(companyId, newStatus) {
         if (!res.ok) throw new Error(data.error || 'Failed to update status');
 
         loadCompanies();
+        loadAuditLogs();
     } catch (err) {
         alert(`❌ Error: ${err.message}`);
     }
@@ -245,6 +248,81 @@ async function changeCompanyStatus(companyId, newStatus) {
 function switchContext(companyId) {
     localStorage.setItem('activeCompanyId', companyId);
     window.location.href = `/dashboard.html?companyId=${companyId}`;
+}
+
+async function loadAuditLogs() {
+    const token = localStorage.getItem('authToken');
+    const tbody = document.getElementById('auditLogsTableBody');
+    if (!tbody) return;
+
+    const actionFilter = document.getElementById('auditActionFilter')?.value || '';
+    let url = '/api/tenant-control/audit-logs?entity=SerialRegistry&limit=50';
+    if (actionFilter) {
+        url += `&action=${encodeURIComponent(actionFilter)}`;
+    }
+
+    try {
+        const res = await fetch(url, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('Failed to load platform audit logs');
+        const json = await res.json();
+        const logs = json.data?.logs || [];
+
+        if (!logs.length) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No serial audit logs found.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = logs.map(log => {
+            const dateStr = log.createdAt ? new Date(log.createdAt).toLocaleString() : '-';
+            const actorName = log.actorId?.name || 'Unknown';
+            const actorEmail = log.actorId?.email ? ` (${log.actorId.email})` : '';
+            const actorRole = log.actorRole || log.actorId?.role || '-';
+            const actionBadge = log.action === 'serial.delete'
+                ? `<span style="background: #ef444420; color: #f87171; border: 1px solid #ef444440; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">DELETE</span>`
+                : `<span style="background: #3b82f620; color: #60a5fa; border: 1px solid #3b82f640; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">EDIT</span>`;
+
+            const serialNum = log.metadata?.serialNumber || log.previousValue?.serialNumber || log.newValue?.serialNumber || log.entityId;
+
+            let detailsHtml = '';
+            if (log.action === 'serial.edit') {
+                const diffs = [];
+                const prev = log.previousValue || {};
+                const next = log.newValue || {};
+                ['serialNumber', 'materialCode', 'dealerCode', 'status', 'customer'].forEach(k => {
+                    if (prev[k] !== next[k] && (prev[k] || next[k])) {
+                        diffs.push(`<strong>${k}:</strong> <span style="color:#f87171; text-decoration:line-through;">${escapeHtml(prev[k] || 'none')}</span> → <span style="color:#34d399;">${escapeHtml(next[k] || 'none')}</span>`);
+                    }
+                });
+                detailsHtml = diffs.length ? diffs.join('<br>') : 'Updated unit parameters';
+            } else if (log.action === 'serial.delete') {
+                const prev = log.previousValue || {};
+                detailsHtml = `<span style="color:#f87171;">Deleted Record Snapshot:</span> Mat: ${escapeHtml(prev.materialCode || '-')} | Dealer: ${escapeHtml(prev.dealerCode || '-')} | Status: ${escapeHtml(prev.status || '-')}`;
+            }
+
+            return `
+                <tr>
+                    <td style="font-size: 0.85rem; color: var(--text-muted); white-space: nowrap;">${dateStr}</td>
+                    <td>
+                        <strong style="color: #f1f5f9;">${escapeHtml(actorName)}</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">${escapeHtml(actorEmail)} <span style="color:#818cf8;">[${escapeHtml(actorRole)}]</span></div>
+                    </td>
+                    <td>
+                        <strong style="color: #e2e8f0;">${escapeHtml(log.companyName || 'N/A')}</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;">${escapeHtml(log.companyCode || '-')}</div>
+                    </td>
+                    <td>${actionBadge}</td>
+                    <td><code style="background: #1e293b; color: #38bdf8; padding: 2px 6px; border-radius: 4px; font-weight: 600;">${escapeHtml(serialNum)}</code></td>
+                    <td style="font-size: 0.825rem;">${detailsHtml}</td>
+                    <td style="font-size: 0.825rem; color: var(--text-muted); max-width: 200px;">${escapeHtml(log.reason || '-')}</td>
+                </tr>
+            `;
+        }).join('');
+    } catch (err) {
+        console.error('Error loading audit logs:', err);
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 1.5rem;">Error loading audit logs: ${escapeHtml(err.message)}</td></tr>`;
+    }
 }
 
 function handleLogout() {

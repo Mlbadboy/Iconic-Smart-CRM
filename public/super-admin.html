@@ -374,6 +374,41 @@
                 </tbody>
             </table>
         </div>
+        <!-- Platform Serial Audit Logs Overview (Super Admin Exclusive) -->
+        <div class="action-bar" style="margin-top: 2.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h2>📜 Serial Upload & Modification Audit Logs</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
+                    Immutable audit record of mistakenly uploaded serial modifications and deletions across all tenant companies.
+                </p>
+            </div>
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+                <select id="auditActionFilter" onchange="loadAuditLogs()" style="background: #1e293b; color: white; border: 1px solid var(--border-color); padding: 0.45rem 0.75rem; border-radius: 6px; font-size: 0.85rem;">
+                    <option value="">All Audit Actions</option>
+                    <option value="serial.edit">Serial Edits (Modifications)</option>
+                    <option value="serial.delete">Serial Deletions</option>
+                </select>
+                <button onclick="loadAuditLogs()" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.45rem 0.85rem;">🔄 Refresh Logs</button>
+            </div>
+        </div>
+        <div class="card" style="margin-bottom: 3rem;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Actor (User)</th>
+                        <th>Company</th>
+                        <th>Action</th>
+                        <th>Serial Number</th>
+                        <th>Modification / Deletion Details</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody id="auditLogsTableBody">
+                    <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Loading audit logs...</td></tr>
+                </tbody>
+            </table>
+        </div>
     </main>
 
     <!-- Provision Tenant Modal -->
