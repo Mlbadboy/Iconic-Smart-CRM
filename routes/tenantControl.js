@@ -5,6 +5,7 @@ const Order = require('../models/Order');
 const SerialRegistry = require('../models/SerialRegistry');
 const SerialValidationHistory = require('../models/SerialValidationHistory');
 const PlatformNotification = require('../models/PlatformNotification');
+const AuditEvent = require('../models/AuditEvent');
 const { auth } = require('../middleware/auth');
 const { recordAuditEvent } = require('../services/auditService');
 const logger = require('../services/logger');
@@ -134,6 +135,67 @@ router.get('/overview/list', auth, superAdminOnly, async (req, res) => {
     res.json(overview);
   } catch (err) {
     logger.error('Error listing tenant control overview:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Platform Audit Logs (Super Admin Only)
+router.get('/audit-logs', auth, superAdminOnly, async (req, res) => {
+  try {
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 50;
+    const skip = (page - 1) * limit;
+
+    const query = {};
+    if (req.query.entity) {
+      query.entity = req.query.entity;
+    } else {
+      query.entity = req.query.all ? { $exists: true } : 'SerialRegistry';
+    }
+    if (req.query.action) {
+      query.action = req.query.action;
+    }
+    if (req.query.companyId) {
+      query['metadata.companyId'] = req.query.companyId;
+    }
+
+    const [logs, total] = await Promise.all([
+      AuditEvent.find(query)
+        .populate('actorId', 'name email role')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      AuditEvent.countDocuments(query)
+    ]);
+
+    // Enhance logs with company details if companyId exists in metadata
+    const companyIds = [...new Set(logs.map(l => l.metadata?.companyId).filter(Boolean))];
+    const companies = await Company.find({ _id: { $in: companyIds } }, 'name code').lean();
+    const companyMap = new Map(companies.map(c => [String(c._id), c]));
+
+    const enrichedLogs = logs.map(log => {
+      const compId = log.metadata?.companyId ? String(log.metadata.companyId) : null;
+      const comp = compId ? companyMap.get(compId) : null;
+      return {
+        ...log,
+        companyName: comp?.name || 'Platform/Unknown',
+        companyCode: comp?.code || '-'
+      };
+    });
+
+    res.json({
+      success: true,
+      data: {
+        logs: enrichedLogs,
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit)
+      }
+    });
+  } catch (err) {
+    logger.error('Error fetching platform audit logs:', err);
     res.status(500).json({ error: err.message });
   }
 });
