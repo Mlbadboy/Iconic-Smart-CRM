@@ -16,23 +16,17 @@ router.post('/validate', auth, requirePermission('serial_validation.validate'), 
   try {
     let { materialCode, serialNumber, dealerCode } = req.body;
 
-    if (!materialCode || typeof materialCode !== 'string') {
-      return error(res, { status: 400, message: 'Material Code is required.' });
-    }
-    if (!serialNumber || typeof serialNumber !== 'string') {
+    if (!serialNumber || typeof serialNumber !== 'string' || !serialNumber.trim()) {
       return error(res, { status: 400, message: 'Serial Number is required.' });
-    }
-    if (!dealerCode || typeof dealerCode !== 'string') {
-      return error(res, { status: 400, message: 'Dealer Code is required.' });
     }
 
     // Trim surrounding whitespace
-    materialCode = materialCode.trim();
     serialNumber = serialNumber.trim();
-    dealerCode = dealerCode.trim();
+    materialCode = typeof materialCode === 'string' ? materialCode.trim() : '';
+    dealerCode = typeof dealerCode === 'string' ? dealerCode.trim() : '';
 
-    if (!materialCode || !serialNumber || !dealerCode) {
-      return error(res, { status: 400, message: 'Invalid payload: All fields must contain non-whitespace text.' });
+    if (!req.companyId && req.user?.companyId) {
+      req.companyId = req.user.companyId;
     }
 
     const result = await validateSerialNumber(req, { materialCode, serialNumber, dealerCode });
@@ -42,19 +36,32 @@ router.post('/validate', auth, requirePermission('serial_validation.validate'), 
   }
 });
 
-// View recent validation history
+// View recent validation history (Scoped by Tenant with Full Search)
 router.get('/history', auth, requirePermission('serial_validation.history'), async (req, res) => {
   try {
-    const history = await SerialValidationHistory.find()
+    const companyId = req.companyId || req.user?.companyId;
+    const filter = companyId ? { companyId } : {};
+
+    const search = String(req.query.search || req.query.q || '').trim();
+    if (search) {
+      const escaped = search.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+      const safeRegex = new RegExp(escaped, 'i');
+      filter.$or = [
+        { serialNumber: safeRegex },
+        { materialCode: safeRegex },
+        { dealerCode: safeRegex },
+        { responseMessage: safeRegex },
+        { validationResult: safeRegex }
+      ];
+    }
+
+    const history = await SerialValidationHistory.find(filter)
       .populate('validatedBy', 'name email role')
       .sort({ createdAt: -1 })
-      .limit(50);
-    const maskedHistory = history.map(item => {
-      const obj = item.toObject();
-      obj.serialNumber = maskSerial(obj.serialNumber);
-      return obj;
-    });
-    return success(res, { history: maskedHistory });
+      .limit(100)
+      .lean();
+
+    return success(res, { history });
   } catch (err) {
     return error(res, { status: 500, message: err.message });
   }

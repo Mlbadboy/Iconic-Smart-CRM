@@ -77,25 +77,28 @@ async function validateSerialNumber(req, { materialCode, serialNumber, dealerCod
   let latency = 0;
 
   try {
+    const companyId = req.companyId || req.user?.companyId;
+
     // Authoritative tenant-scoped master registry check
     const cleanSerial = serialNumber.trim();
     const query = {
       serialNumber: new RegExp(`^${cleanSerial}$`, 'i')
     };
-    if (req.companyId) {
-      query.companyId = req.companyId;
+    if (companyId) {
+      query.companyId = companyId;
     }
     const record = await SerialRegistry.findOne(query).populate('productId');
 
     if (record) {
-      const inputMat = materialCode.trim().toUpperCase();
+      const inputMat = (materialCode || '').trim().toUpperCase();
       const recMat = (record.materialCode || '').trim().toUpperCase();
       const prodSku = (record.productId?.sku || '').trim().toUpperCase();
       const prodCode = (record.productId?.productCode || '').trim().toUpperCase();
       const prodMat = (record.productId?.materialCode || '').trim().toUpperCase();
       const prodModel = (record.productId?.model || '').trim().toUpperCase();
 
-      const matMatches = (
+      // If user provided a material code, check for exact match against registered model/materials
+      const matMatches = !inputMat || (
         recMat === inputMat ||
         prodSku === inputMat ||
         prodCode === inputMat ||
@@ -103,17 +106,18 @@ async function validateSerialNumber(req, { materialCode, serialNumber, dealerCod
         prodModel === inputMat
       );
 
-      const inputDealer = dealerCode.trim().toUpperCase();
+      // If user provided a dealer code, check for exact match against registered dealer
+      const inputDealer = (dealerCode || '').trim().toUpperCase();
       const recDealer = (record.dealerCode || '').trim().toUpperCase();
-      const dealerMatches = !recDealer || recDealer === inputDealer;
+      const dealerMatches = !inputDealer || !recDealer || recDealer === inputDealer;
 
       if (!matMatches) {
         responseStatus = '-2';
-        responseMessage = 'Material code does not match the registered serial number';
+        responseMessage = `Material code mismatch: Entered "${materialCode}" does not match registered model/material "${record.materialCode}"`;
         matched = mapStatusToResult('-2');
       } else if (!dealerMatches) {
         responseStatus = '-5';
-        responseMessage = 'Serial number is not registered to this dealer';
+        responseMessage = `Dealer code mismatch: Entered "${dealerCode}" does not match registered dealer "${record.dealerCode || 'None'}"`;
         matched = mapStatusToResult('-5');
       } else if (record.activationStatus && record.activationStatus !== 'ACTIVE') {
         responseStatus = '2';
@@ -137,7 +141,7 @@ async function validateSerialNumber(req, { materialCode, serialNumber, dealerCod
         responseMessage = 'Valid Serial Number';
         matched = mapStatusToResult('0');
       }
-    } else if (process.env.SERIAL_VALIDATION_ACCESS_KEY && !req.companyId) {
+    } else if (process.env.SERIAL_VALIDATION_ACCESS_KEY && !companyId) {
       // Call upstream external validation gateway if configured
       const apiUrl = process.env.SERIAL_VALIDATION_URL || 'https://crm.iconicsmart.co.in/api/validatesno.asp';
       const timeoutMs = parseInt(process.env.SERIAL_VALIDATION_TIMEOUT || '5000', 10);
@@ -188,7 +192,7 @@ async function validateSerialNumber(req, { materialCode, serialNumber, dealerCod
     latency = Date.now() - startTime;
     validationResult = matched.resultCode;
 
-    // Build standard return object
+    // Build standard return object with rich diagnostic details
     const resultObj = {
       success: responseStatus === '0',
       verified: matched.verified,
@@ -197,23 +201,37 @@ async function validateSerialNumber(req, { materialCode, serialNumber, dealerCod
       statusCode: responseStatus,
       status: matched.resultCode,
       resultCode: matched.resultCode,
-      message: responseMessage
+      message: responseMessage,
+      details: {
+        enteredSerialNumber: serialNumber,
+        enteredMaterialCode: materialCode || null,
+        enteredDealerCode: dealerCode || null,
+        registeredSerialNumber: record ? record.serialNumber : null,
+        registeredMaterialCode: record ? record.materialCode : null,
+        registeredModel: record?.productId?.model || record?.materialCode || null,
+        registeredProductName: record?.productId?.name || null,
+        registeredDealerCode: record ? record.dealerCode : null,
+        registeredStatus: record ? record.status : 'NOT_FOUND',
+        registeredCustomer: record ? record.customer : null,
+        rejectionReason: responseStatus !== '0' ? responseMessage : null,
+        remark: responseMessage
+      }
     };
 
     const serialHash = require('crypto').createHash('sha256').update(String(serialNumber).trim().toUpperCase()).digest('hex');
 
     // Save history entry
     const history = new SerialValidationHistory({
-      companyId: req.companyId || null,
-      materialCode,
+      companyId: companyId || null,
+      materialCode: materialCode || (record ? record.materialCode : 'N/A'),
       serialNumber,
       maskedSerial: maskedSno,
       serialHash,
-      dealerCode,
+      dealerCode: dealerCode || (record ? record.dealerCode : 'N/A'),
       responseStatus,
       responseMessage: resultObj.message,
       validationResult,
-      clientName: req.apiKey ? (req.apiKey.clientName || req.apiKey.name) : (req.user?.name || 'API Client'),
+      clientName: req.apiKey ? (req.apiKey.clientName || req.apiKey.name) : (req.user?.name || 'Portal User'),
       feature: req.apiKey ? (req.apiKey.feature || 'Serial Number Validation') : 'Serial Number Validation',
       validatedBy: req.user ? req.user.id : (req.apiKey ? req.apiKey.userId : null),
       apiKeyId: req.apiKey ? req.apiKey.id || req.apiKey._id : null,

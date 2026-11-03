@@ -437,23 +437,23 @@
                 <div class="card-title">Verification Details</div>
                 <form id="validationForm" onsubmit="handleValidate(event)">
                     <div class="form-group">
-                        <label for="materialCode">Material Code</label>
-                        <input type="text" id="materialCode" class="form-control" placeholder="Enter Material Code" required>
-                    </div>
-                    <div class="form-group">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-                            <label for="serialNumber" style="margin-bottom: 0;">Serial Number</label>
+                            <label for="serialNumber" style="margin-bottom: 0; font-weight: 600;">Serial Number <span style="color: var(--danger);">*</span></label>
                             <span style="font-size: 0.75rem; color: var(--text-light);">🔍 Type to search all uploaded serials</span>
                         </div>
                         <input type="text" id="serialNumber" list="serialNumberSuggestions" class="form-control" placeholder="Enter or search serial number..." autocomplete="off" required oninput="handleSerialInputAutocomplete(this.value)">
                         <datalist id="serialNumberSuggestions"></datalist>
                     </div>
                     <div class="form-group">
-                        <label for="dealerCode">Dealer Code</label>
-                        <input type="text" id="dealerCode" class="form-control" placeholder="Enter Dealer Code" required>
+                        <label for="materialCode">Material / Model Code <span style="font-size: 0.75rem; color: var(--text-light); font-weight: normal;">(Optional - verify exact model)</span></label>
+                        <input type="text" id="materialCode" class="form-control" placeholder="Enter Material / Model Code (optional)">
                     </div>
-                    <button type="submit" id="submitBtn" class="btn btn-primary">
-                        Validate Serial Number
+                    <div class="form-group">
+                        <label for="dealerCode">Dealer Code <span style="font-size: 0.75rem; color: var(--text-light); font-weight: normal;">(Optional - verify dealer)</span></label>
+                        <input type="text" id="dealerCode" class="form-control" placeholder="Enter Dealer Code (optional)">
+                    </div>
+                    <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; padding: 0.75rem;">
+                        🔍 Validate Serial Number
                     </button>
                 </form>
             </div>
@@ -531,16 +531,28 @@
 
         <!-- History Section -->
         <div class="history-card">
-            <div class="card-title">Validation History</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <div class="card-title" style="margin-bottom: 0.25rem;">📜 Validation History</div>
+                    <p style="color: var(--text-light); font-size: 0.875rem;">Full audit log of validation checks, inputs, rejection reasons, and remarks.</p>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                    <div style="position: relative; display: flex; align-items: center;">
+                        <input type="text" id="historySearchInput" placeholder="🔍 Search history by serial, model, dealer, remark..." class="form-control" style="min-width: 300px; padding: 0.45rem 2rem 0.45rem 0.75rem; font-size: 0.9rem;" oninput="handleHistorySearch(this.value)">
+                        <button type="button" id="clearHistorySearchBtn" onclick="clearHistorySearch()" style="display:none; position: absolute; right: 8px; background: transparent; border: none; color: var(--text-light); cursor: pointer; font-size: 0.85rem;" title="Clear search">✕</button>
+                    </div>
+                    <button onclick="loadHistory()" class="btn btn-secondary" style="font-size: 0.875rem; padding: 0.45rem 0.85rem;">🔄 Refresh</button>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
-                            <th>Material Code</th>
                             <th>Serial Number</th>
+                            <th>Material Code</th>
                             <th>Dealer Code</th>
-                            <th>Result</th>
-                            <th>Message</th>
+                            <th class="text-center">Result</th>
+                            <th>Rejection Reason & Remarks</th>
                             <th>Checked By</th>
                             <th>Timestamp</th>
                         </tr>
@@ -702,6 +714,27 @@
             reader.readAsText(file);
         }
 
+        let historySearchDebounceTimer = null;
+
+        function handleHistorySearch(val) {
+            const query = (val || '').trim();
+            const clearBtn = document.getElementById('clearHistorySearchBtn');
+            if (clearBtn) clearBtn.style.display = query ? 'inline-block' : 'none';
+
+            clearTimeout(historySearchDebounceTimer);
+            historySearchDebounceTimer = setTimeout(() => {
+                loadHistory(query);
+            }, 300);
+        }
+
+        function clearHistorySearch() {
+            const input = document.getElementById('historySearchInput');
+            if (input) input.value = '';
+            const clearBtn = document.getElementById('clearHistorySearchBtn');
+            if (clearBtn) clearBtn.style.display = 'none';
+            loadHistory('');
+        }
+
         // Handle Validation Request
         async function handleValidate(event) {
             event.preventDefault();
@@ -712,8 +745,8 @@
             const submitBtn = document.getElementById('submitBtn');
             const resultPanel = document.getElementById('resultPanel');
 
-            if (!materialCode || !serialNumber || !dealerCode) {
-                showToast('Please fill in all fields', 'error');
+            if (!serialNumber) {
+                showToast('Please enter or select a Serial Number', 'error');
                 return;
             }
 
@@ -735,28 +768,71 @@
                     body: JSON.stringify({ materialCode, serialNumber, dealerCode })
                 });
 
-                const data = await response.json();
+                const resJson = await response.json();
                 submitBtn.disabled = false;
                 submitBtn.innerText = 'Validate Serial Number';
 
                 if (!response.ok) {
-                    throw new Error(data.message || 'Validation failed');
+                    throw new Error(resJson.message || 'Validation request failed');
                 }
 
-                // Render result details
-                const proceedBadge = data.canProceed 
+                // Unwrap response payload
+                const result = resJson.data || resJson;
+                const canProceed = result.canProceed === true || result.success === true;
+                const message = result.message || (canProceed ? 'Valid Serial Number' : 'Serial validation failed');
+                const details = result.details || {};
+
+                // Rejection / Approval styling
+                const alertStyle = canProceed 
+                    ? 'background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46;'
+                    : 'background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;';
+
+                const alertTitle = canProceed ? '✅ VALIDATION APPROVED' : '❌ REJECTION REASON & REMARKS';
+                const proceedBadge = canProceed 
                     ? '<span class="badge badge-success">APPROVED - CAN PROCEED</span>' 
                     : '<span class="badge badge-danger">REJECTED - GATED</span>';
 
                 resultPanel.innerHTML = `
-                    <div class="result-icon">${data.canProceed ? '✅' : '❌'}</div>
-                    <h3>${data.message}</h3>
+                    <div class="result-icon">${canProceed ? '✅' : '❌'}</div>
                     ${proceedBadge}
                     
+                    <div style="width: 100%; margin-top: 1rem; padding: 0.85rem 1rem; border-radius: 8px; text-align: left; font-size: 0.95rem; font-weight: 600; line-height: 1.4; ${alertStyle}">
+                        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; opacity: 0.85;">${alertTitle}</div>
+                        <div>${escapeHtml(message)}</div>
+                    </div>
+
                     <div class="result-details">
                         <div class="detail-row">
+                            <span class="detail-label">Serial Number Entered:</span>
+                            <span class="detail-value" style="font-family: monospace;">${escapeHtml(details.enteredSerialNumber || serialNumber)}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Master Registered Serial:</span>
+                            <span class="detail-value" style="font-family: monospace;">${escapeHtml(details.registeredSerialNumber || 'Not in master registry')}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Material / Model Entered:</span>
+                            <span class="detail-value">${details.enteredMaterialCode ? escapeHtml(details.enteredMaterialCode) : '<em style="color:var(--text-light);">(None provided)</em>'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Master Registered Model:</span>
+                            <span class="detail-value">${details.registeredMaterialCode || details.registeredModel ? escapeHtml(details.registeredMaterialCode || details.registeredModel) : '<em style="color:var(--text-light);">Not found</em>'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Dealer Code Entered:</span>
+                            <span class="detail-value">${details.enteredDealerCode ? escapeHtml(details.enteredDealerCode) : '<em style="color:var(--text-light);">(None provided)</em>'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Master Registered Dealer:</span>
+                            <span class="detail-value">${details.registeredDealerCode ? escapeHtml(details.registeredDealerCode) : '<em style="color:var(--text-light);">None / Unassigned</em>'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Master Registry Status:</span>
+                            <span class="detail-value">${details.registeredStatus ? escapeHtml(details.registeredStatus) : 'UNKNOWN'}</span>
+                        </div>
+                        <div class="detail-row">
                             <span class="detail-label">Status Code:</span>
-                            <span class="detail-value">${data.statusCode || '0'}</span>
+                            <span class="detail-value">${result.statusCode !== undefined ? escapeHtml(String(result.statusCode)) : '0'}</span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Validated At:</span>
@@ -764,12 +840,16 @@
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Checked By:</span>
-                            <span class="detail-value">${user.name || 'User'}</span>
+                            <span class="detail-value">${escapeHtml(user?.name || 'User')}</span>
                         </div>
                     </div>
                 `;
 
-                showToast('Validation completed successfully!');
+                if (canProceed) {
+                    showToast('Validation approved! Serial number verified.');
+                } else {
+                    showToast(message, 'error');
+                }
                 
                 // Refresh History Table
                 loadHistory();
@@ -780,18 +860,23 @@
                 resultPanel.innerHTML = `
                     <div class="result-icon">⚠️</div>
                     <h3>Error Performing Validation</h3>
-                    <p style="color: var(--danger); margin-top: 0.5rem;">${error.message}</p>
+                    <p style="color: var(--danger); margin-top: 0.5rem;">${escapeHtml(error.message)}</p>
                 `;
                 showToast(error.message, 'error');
             }
         }
 
         // Fetch and load validation history
-        async function loadHistory() {
+        async function loadHistory(searchQuery = '') {
             const tableBody = document.getElementById('historyTableBody');
+            if (!tableBody) return;
             
             try {
-                const response = await fetch(`${API_URL}/serial-validation/history`, {
+                const url = searchQuery 
+                    ? `${API_URL}/serial-validation/history?search=${encodeURIComponent(searchQuery)}`
+                    : `${API_URL}/serial-validation/history`;
+
+                const response = await fetch(url, {
                     headers: {
                         'Authorization': `Bearer ${authToken}`
                     }
@@ -799,31 +884,37 @@
 
                 if (!response.ok) throw new Error('Failed to load history');
 
-                const data = await response.json();
+                const resJson = await response.json();
+                const historyList = (resJson.data && resJson.data.history) || resJson.history || [];
                 
-                if (!data.history || data.history.length === 0) {
+                if (!historyList || historyList.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
-                            <td colspan="7" class="text-center" style="color: var(--text-light);">No serial validation history found.</td>
+                            <td colspan="7" class="text-center" style="color: var(--text-light); padding: 1.5rem;">${searchQuery ? `No validation records found matching "${escapeHtml(searchQuery)}".` : 'No serial validation history recorded yet.'}</td>
                         </tr>
                     `;
                     return;
                 }
 
-                tableBody.innerHTML = data.history.map(row => {
-                    const statusBadge = row.canProceed 
+                tableBody.innerHTML = historyList.map(row => {
+                    const isApproved = row.validationResult === 'VALID' || row.responseStatus === '0';
+                    const statusBadge = isApproved 
                         ? '<span class="badge badge-success" style="margin-top:0;">VALID</span>' 
-                        : '<span class="badge badge-danger" style="margin-top:0;">INVALID</span>';
+                        : '<span class="badge badge-danger" style="margin-top:0;">REJECTED</span>';
                     
+                    const remark = row.responseMessage || row.message || (isApproved ? 'Approved' : 'Rejected');
+                    const userName = (row.validatedBy && row.validatedBy.name) || row.clientName || 'Portal User';
+                    const timeStr = row.createdAt || row.validatedAt ? new Date(row.createdAt || row.validatedAt).toLocaleString() : '-';
+
                     return `
                         <tr>
-                            <td>${row.materialCode}</td>
-                            <td>${row.serialNumber}</td>
-                            <td>${row.dealerCode}</td>
+                            <td style="font-family: monospace; font-weight: 600;">${escapeHtml(row.serialNumber || '-')}</td>
+                            <td>${escapeHtml(row.materialCode || '-')}</td>
+                            <td>${escapeHtml(row.dealerCode || '-')}</td>
                             <td class="text-center">${statusBadge}</td>
-                            <td>${row.message}</td>
-                            <td>${row.checkedBy.name}</td>
-                            <td>${new Date(row.validatedAt).toLocaleString()}</td>
+                            <td style="max-width: 340px; font-size: 0.875rem;">${escapeHtml(remark)}</td>
+                            <td>${escapeHtml(userName)}</td>
+                            <td style="font-size: 0.85rem; color: var(--text-light); white-space: nowrap;">${timeStr}</td>
                         </tr>
                     `;
                 }).join('');
@@ -831,7 +922,7 @@
             } catch (error) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="text-center" style="color: var(--danger);">Failed to load history data.</td>
+                        <td colspan="7" class="text-center" style="color: var(--danger); padding: 1.5rem;">Failed to load history data: ${escapeHtml(error.message)}</td>
                     </tr>
                 `;
                 console.error('Error fetching history:', error);
@@ -1145,8 +1236,8 @@
             }
         }
     </script>
-    <script src="/js/feature-guard.js?v=20261103_01"></script>
-    <script src="/js/tenant-branding.js?v=20261103_01"></script>
-    <script src="/js/tenant-notifications.js?v=20261103_01"></script>
+    <script src="/js/feature-guard.js?v=20261103_02"></script>
+    <script src="/js/tenant-branding.js?v=20261103_02"></script>
+    <script src="/js/tenant-notifications.js?v=20261103_02"></script>
 </body>
 </html>

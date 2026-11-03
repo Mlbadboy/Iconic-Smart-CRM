@@ -8,7 +8,8 @@ const serialValidationHistorySchema = new mongoose.Schema({
   },
   materialCode: {
     type: String,
-    required: true,
+    required: false,
+    default: 'N/A',
     trim: true
   },
   serialNumber: {
@@ -18,7 +19,8 @@ const serialValidationHistorySchema = new mongoose.Schema({
   },
   dealerCode: {
     type: String,
-    required: true,
+    required: false,
+    default: 'N/A',
     trim: true
   },
   responseStatus: {
@@ -36,6 +38,7 @@ const serialValidationHistorySchema = new mongoose.Schema({
       'ALREADY_VALIDATED',
       'INVALID_MATERIAL_CODE',
       'DEALER_MISMATCH',
+      'EXPIRED',
       'UNAUTHORIZED',
       'RATE_LIMITED',
       'SERVICE_ERROR',
