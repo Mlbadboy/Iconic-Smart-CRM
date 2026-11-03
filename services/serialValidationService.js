@@ -79,6 +79,11 @@ async function validateSerialNumber(req, { materialCode, serialNumber, dealerCod
   try {
     const companyId = req.companyId || req.user?.companyId;
 
+    let previousStatus = null;
+    let currentStatus = null;
+    let statusChanged = false;
+    let statusChangeRemark = '';
+
     // Authoritative tenant-scoped master registry check
     const cleanSerial = serialNumber.trim();
     const query = {
@@ -90,6 +95,9 @@ async function validateSerialNumber(req, { materialCode, serialNumber, dealerCod
     const record = await SerialRegistry.findOne(query).populate('productId');
 
     if (record) {
+      previousStatus = record.status || 'IN_STOCK';
+      currentStatus = record.status || 'IN_STOCK';
+
       const inputMat = (materialCode || '').trim().toUpperCase();
       const recMat = (record.materialCode || '').trim().toUpperCase();
       const prodSku = (record.productId?.sku || '').trim().toUpperCase();
@@ -115,27 +123,40 @@ async function validateSerialNumber(req, { materialCode, serialNumber, dealerCod
         responseStatus = '-2';
         responseMessage = `Material code mismatch: Entered "${materialCode}" does not match registered model/material "${record.materialCode}"`;
         matched = mapStatusToResult('-2');
+        statusChangeRemark = `Status unchanged: ${currentStatus} (Material mismatch)`;
       } else if (!dealerMatches) {
         responseStatus = '-5';
         responseMessage = `Dealer code mismatch: Entered "${dealerCode}" does not match registered dealer "${record.dealerCode || 'None'}"`;
         matched = mapStatusToResult('-5');
+        statusChangeRemark = `Status unchanged: ${currentStatus} (Dealer mismatch)`;
       } else if (record.activationStatus && record.activationStatus !== 'ACTIVE') {
         responseStatus = '2';
         responseMessage = `Serial number activation status is ${record.activationStatus.toLowerCase()}`;
         matched = { verified: false, canProceed: false, resultCode: 'EXPIRED', message: responseMessage };
+        statusChangeRemark = `Status unchanged: ${currentStatus} (Activation: ${record.activationStatus})`;
       } else if (record.registrationStatus === 'DEACTIVATED') {
         responseStatus = '2';
         responseMessage = 'Serial number is deactivated in master registry';
         matched = { verified: false, canProceed: false, resultCode: 'EXPIRED', message: responseMessage };
+        statusChangeRemark = `Status unchanged: ${currentStatus} (Deactivated)`;
       } else if (record.status === 'VALIDATED') {
         responseStatus = '-3';
         responseMessage = 'Serial Number Already Validated';
         matched = mapStatusToResult('-3');
+        statusChangeRemark = 'Status unchanged: Already VALIDATED';
       } else {
         // Valid! Update status to VALIDATED and record date
-        record.status = 'VALIDATED';
-        record.registrationDate = new Date();
-        await record.save();
+        if (record.status !== 'VALIDATED') {
+          statusChanged = true;
+          record.status = 'VALIDATED';
+          record.registrationDate = new Date();
+          await record.save();
+          currentStatus = 'VALIDATED';
+          statusChangeRemark = `Status updated from ${previousStatus} to VALIDATED`;
+        } else {
+          currentStatus = 'VALIDATED';
+          statusChangeRemark = 'Status unchanged: Already VALIDATED';
+        }
 
         responseStatus = '0';
         responseMessage = 'Valid Serial Number';
@@ -184,6 +205,10 @@ async function validateSerialNumber(req, { materialCode, serialNumber, dealerCod
         };
       }
     } else {
+      previousStatus = null;
+      currentStatus = 'NOT_FOUND';
+      statusChanged = false;
+      statusChangeRemark = 'Serial number does not exist in master registry';
       responseStatus = '-1';
       responseMessage = 'Serial number does not exist in master registry';
       matched = mapStatusToResult('-1');
@@ -192,7 +217,7 @@ async function validateSerialNumber(req, { materialCode, serialNumber, dealerCod
     latency = Date.now() - startTime;
     validationResult = matched.resultCode;
 
-    // Build standard return object with rich diagnostic details
+    // Build standard return object with rich diagnostic details and status change tracking
     const resultObj = {
       success: responseStatus === '0',
       verified: matched.verified,
@@ -202,6 +227,10 @@ async function validateSerialNumber(req, { materialCode, serialNumber, dealerCod
       status: matched.resultCode,
       resultCode: matched.resultCode,
       message: responseMessage,
+      statusChanged: Boolean(statusChanged),
+      previousStatus: previousStatus || null,
+      currentStatus: currentStatus || null,
+      statusChangeRemark: statusChangeRemark || null,
       details: {
         enteredSerialNumber: serialNumber,
         enteredMaterialCode: materialCode || null,
@@ -211,16 +240,41 @@ async function validateSerialNumber(req, { materialCode, serialNumber, dealerCod
         registeredModel: record?.productId?.model || record?.materialCode || null,
         registeredProductName: record?.productId?.name || null,
         registeredDealerCode: record ? record.dealerCode : null,
-        registeredStatus: record ? record.status : 'NOT_FOUND',
+        registeredStatus: currentStatus || (record ? record.status : 'NOT_FOUND'),
+        previousStatus: previousStatus || null,
+        currentStatus: currentStatus || null,
+        statusChanged: Boolean(statusChanged),
+        statusChangeRemark: statusChangeRemark || null,
         registeredCustomer: record ? record.customer : null,
         rejectionReason: responseStatus !== '0' ? responseMessage : null,
         remark: responseMessage
       }
     };
 
+    // If status changed, trigger webhooks for external subscribers
+    if (statusChanged && record) {
+      try {
+        const WebhookService = require('./webhookService');
+        WebhookService.triggerWebhooks('serial.status.update', {
+          serialNumber: record.serialNumber,
+          materialCode: record.materialCode,
+          dealerCode: record.dealerCode,
+          previousStatus,
+          currentStatus,
+          statusChanged: true,
+          statusChangeRemark,
+          validatedBy: req.user ? req.user.id : (req.apiKey ? req.apiKey.userId : 'API'),
+          clientName: req.apiKey ? (req.apiKey.clientName || req.apiKey.name) : (req.user?.name || 'Portal User'),
+          timestamp: new Date().toISOString()
+        }).catch(err => logger.warn(`Webhook dispatch warning: ${err.message}`));
+      } catch (wErr) {
+        // Non-blocking
+      }
+    }
+
     const serialHash = require('crypto').createHash('sha256').update(String(serialNumber).trim().toUpperCase()).digest('hex');
 
-    // Save history entry
+    // Save history entry with status change tracking
     const history = new SerialValidationHistory({
       companyId: companyId || null,
       materialCode: materialCode || (record ? record.materialCode : 'N/A'),
@@ -228,6 +282,10 @@ async function validateSerialNumber(req, { materialCode, serialNumber, dealerCod
       maskedSerial: maskedSno,
       serialHash,
       dealerCode: dealerCode || (record ? record.dealerCode : 'N/A'),
+      previousStatus: previousStatus || 'N/A',
+      currentStatus: currentStatus || 'N/A',
+      statusChanged: Boolean(statusChanged),
+      statusChangeRemark: statusChangeRemark || '',
       responseStatus,
       responseMessage: resultObj.message,
       validationResult,
@@ -240,15 +298,21 @@ async function validateSerialNumber(req, { materialCode, serialNumber, dealerCod
     });
     await history.save();
 
-    // Record audit event
+    // Record audit event with status change history
     await recordAuditEvent(req, {
       action: 'serial.validate',
       entity: 'SerialValidation',
       entityId: history._id,
+      previousValue: {
+        status: previousStatus
+      },
       newValue: {
         materialCode,
         serialNumber: maskedSno,
         dealerCode,
+        status: currentStatus,
+        statusChanged: Boolean(statusChanged),
+        statusChangeRemark,
         responseStatus,
         validationResult,
         latency

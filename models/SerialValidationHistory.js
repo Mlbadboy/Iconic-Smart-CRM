@@ -23,6 +23,24 @@ const serialValidationHistorySchema = new mongoose.Schema({
     default: 'N/A',
     trim: true
   },
+  previousStatus: {
+    type: String,
+    trim: true,
+    default: 'N/A'
+  },
+  currentStatus: {
+    type: String,
+    trim: true,
+    default: 'N/A'
+  },
+  statusChanged: {
+    type: Boolean,
+    default: false
+  },
+  statusChangeRemark: {
+    type: String,
+    trim: true
+  },
   responseStatus: {
     type: String,
     required: true

@@ -24,17 +24,7 @@ router.post('/validate', apiKeyAuth, requirePermission('serial_validation.valida
     let serialNumber = getBodyParam('serialNumber');
     let dealerCode = getBodyParam('dealerCode');
 
-    if (!materialCode || typeof materialCode !== 'string') {
-      return res.status(400).json({ 
-        valid: false, 
-        status: 'INVALID_INPUT', 
-        message: 'Material Code is required.',
-        responseStatus: '-4',
-        responseMessage: 'Invalid Material code',
-        responeMessage: 'Invalid Material code'
-      });
-    }
-    if (!serialNumber || typeof serialNumber !== 'string') {
+    if (!serialNumber || typeof serialNumber !== 'string' || !serialNumber.trim()) {
       return res.status(400).json({ 
         valid: false, 
         status: 'INVALID_INPUT', 
@@ -44,36 +34,13 @@ router.post('/validate', apiKeyAuth, requirePermission('serial_validation.valida
         responeMessage: 'Invalid Serial Number'
       });
     }
-    if (!dealerCode || typeof dealerCode !== 'string') {
-      return res.status(400).json({ 
-        valid: false, 
-        status: 'INVALID_INPUT', 
-        message: 'Dealer Code is required.',
-        responseStatus: '-5',
-        responseMessage: 'Serial Number not billed to this dealer',
-        responeMessage: 'Serial Number not billed to this dealer'
-      });
-    }
 
-    materialCode = materialCode.trim();
     serialNumber = serialNumber.trim();
-    dealerCode = dealerCode.trim();
+    materialCode = typeof materialCode === 'string' ? materialCode.trim() : '';
+    dealerCode = typeof dealerCode === 'string' ? dealerCode.trim() : '';
 
-    if (!materialCode || !serialNumber || !dealerCode) {
-      return res.status(400).json({ 
-        valid: false, 
-        verified: false, 
-        canProceed: false, 
-        status: 'INVALID_INPUT', 
-        message: 'All validation fields must contain non-empty text.',
-        responseStatus: '-1',
-        responseMessage: 'Invalid Serial Number',
-        responeMessage: 'Invalid Serial Number'
-      });
-    }
-
-    // Check API Key Dealer Scope Authorization
-    if (req.apiKey && req.apiKey.dealerScope && req.apiKey.dealerScope.length > 0) {
+    // Check API Key Dealer Scope Authorization if dealerCode is provided
+    if (dealerCode && req.apiKey && req.apiKey.dealerScope && req.apiKey.dealerScope.length > 0) {
       if (!req.apiKey.dealerScope.includes(dealerCode)) {
         return res.status(200).json({
           valid: false,
@@ -82,6 +49,10 @@ router.post('/validate', apiKeyAuth, requirePermission('serial_validation.valida
           statusCode: '4',
           status: 'DEALER_MISMATCH',
           message: `API key is not authorized for dealer '${dealerCode}'.`,
+          statusChanged: false,
+          previousStatus: null,
+          currentStatus: null,
+          statusChangeRemark: 'Dealer not authorized by API key scope',
           // Bajaj Finance specific
           responseStatus: '-5',
           responseMessage: 'Serial Number not billed to this dealer',
@@ -106,18 +77,23 @@ router.post('/validate', apiKeyAuth, requirePermission('serial_validation.valida
       valid: Boolean(result.verified),
       verified: Boolean(result.verified),
       canProceed: Boolean(result.canProceed),
+      statusChanged: Boolean(result.statusChanged),
+      previousStatus: result.previousStatus || null,
+      currentStatus: result.currentStatus || null,
+      statusChangeRemark: result.statusChangeRemark || null,
       resultCode: result.resultCode || result.status,
       status: result.status || result.resultCode,
       statusCode: result.statusCode || (result.verified ? '0' : '-1'),
       message: result.message,
-      materialCode,
+      materialCode: materialCode || result.details?.registeredMaterialCode || null,
       serialNumber,
-      dealerCode,
+      dealerCode: dealerCode || result.details?.registeredDealerCode || null,
       validatedAt: new Date().toISOString(),
       // Bajaj Finance Salesforce specific response fields
       responseStatus: result.statusCode || (result.verified ? '0' : '-1'),
       responseMessage: responseMsg,
-      responeMessage: responseMsg
+      responeMessage: responseMsg,
+      details: result.details || null
     });
   } catch (err) {
     return res.status(500).json({
