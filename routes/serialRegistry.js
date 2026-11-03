@@ -263,7 +263,10 @@ router.get('/search', auth, async (req, res) => {
   try {
     const companyId = req.user?.companyId;
     const q = String(req.query.q || req.query.search || '').trim();
-    const filter = companyId ? { companyId } : {};
+    const filter = {};
+    if (companyId && req.user?.role !== 'superadmin') {
+      filter.$or = [{ companyId }, { companyId: null }, { companyId: { $exists: false } }];
+    }
 
     if (q) {
       const safeRegex = new RegExp(escapeRegex(q), 'i');
@@ -292,7 +295,10 @@ router.get('/search', auth, async (req, res) => {
 router.get('/units', auth, async (req, res) => {
   try {
     const companyId = req.user?.companyId;
-    const filter = companyId ? { companyId } : {};
+    const filter = {};
+    if (companyId && req.user?.role !== 'superadmin') {
+      filter.$or = [{ companyId }, { companyId: null }, { companyId: { $exists: false } }];
+    }
     
     if (req.query.materialCode) filter.materialCode = req.query.materialCode.toUpperCase();
     if (req.query.status) filter.status = req.query.status;
@@ -352,8 +358,8 @@ router.put('/:id', auth, async (req, res) => {
     }
 
     const query = { _id: id };
-    if (req.user?.role !== 'superadmin') {
-      query.companyId = companyId;
+    if (req.user?.role !== 'superadmin' && companyId) {
+      query.$or = [{ companyId }, { companyId: null }, { companyId: { $exists: false } }];
     }
 
     const serialDoc = await SerialRegistry.findOne(query);
@@ -386,9 +392,22 @@ router.put('/:id', auth, async (req, res) => {
       serialDoc.dealerCode = dealerCode.trim();
       isModified = true;
     }
+    let statusWasUpdated = false;
+    let oldStatusVal = serialDoc.status || 'IN_STOCK';
+    let newStatusVal = null;
+
     if (status !== undefined && status.trim()) {
-      serialDoc.status = status.trim().toUpperCase();
-      isModified = true;
+      newStatusVal = status.trim().toUpperCase();
+      if (newStatusVal !== oldStatusVal) {
+        serialDoc.status = newStatusVal;
+        statusWasUpdated = true;
+        isModified = true;
+
+        // If changed to IN_STOCK or READY, clear registrationDate so it is 100% ready to be re-validated!
+        if (newStatusVal === 'IN_STOCK' || newStatusVal === 'READY' || newStatusVal === 'REGISTERED') {
+          serialDoc.registrationDate = null;
+        }
+      }
     }
     if (customer !== undefined) {
       serialDoc.customer = customer.trim();
@@ -438,6 +457,41 @@ router.put('/:id', auth, async (req, res) => {
         materialCode: serialDoc.materialCode
       }
     });
+
+    // If status changed (e.g. from VALIDATED/SOLD to IN_STOCK), record in Validation History so history immediately shows unit is ready to validate!
+    if (statusWasUpdated && newStatusVal) {
+      try {
+        const SerialValidationHistory = require('../models/SerialValidationHistory');
+        const isReadyToValidate = (newStatusVal === 'IN_STOCK' || newStatusVal === 'REGISTERED' || newStatusVal === 'READY');
+        const historyRemark = isReadyToValidate
+          ? `Status edited from ${oldStatusVal} to ${newStatusVal} by ${req.user?.name || 'User'} — Ready to validate again`
+          : `Status edited from ${oldStatusVal} to ${newStatusVal} by ${req.user?.name || 'User'}`;
+        
+        const serialHash = require('crypto').createHash('sha256').update(String(serialDoc.serialNumber).trim().toUpperCase()).digest('hex');
+
+        const resetHistory = new SerialValidationHistory({
+          companyId: serialDoc.companyId || companyId || null,
+          materialCode: serialDoc.materialCode || 'N/A',
+          serialNumber: serialDoc.serialNumber,
+          maskedSerial: serialDoc.serialNumber,
+          serialHash,
+          dealerCode: serialDoc.dealerCode || 'N/A',
+          previousStatus: oldStatusVal,
+          currentStatus: newStatusVal,
+          statusChanged: true,
+          statusChangeRemark: historyRemark,
+          responseStatus: isReadyToValidate ? '0' : 'STATUS_UPDATE',
+          responseMessage: historyRemark,
+          validationResult: isReadyToValidate ? 'READY' : 'STATUS_UPDATE',
+          clientName: req.user ? req.user.name : 'Portal User',
+          feature: 'Serial Status Edit',
+          validatedBy: req.user ? req.user.id : null
+        });
+        await resetHistory.save();
+      } catch (hErr) {
+        console.error('Failed to append status reset entry to SerialValidationHistory:', hErr.message);
+      }
+    }
 
     return success(res, serialDoc);
   } catch (err) {

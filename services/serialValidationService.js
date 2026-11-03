@@ -84,13 +84,13 @@ async function validateSerialNumber(req, { materialCode, serialNumber, dealerCod
     let statusChanged = false;
     let statusChangeRemark = '';
 
-    // Authoritative tenant-scoped master registry check
+    // Authoritative tenant-scoped master registry check (with company + unassigned fallback)
     const cleanSerial = serialNumber.trim();
     const query = {
       serialNumber: new RegExp(`^${cleanSerial}$`, 'i')
     };
-    if (companyId) {
-      query.companyId = companyId;
+    if (companyId && req.user?.role !== 'superadmin') {
+      query.$or = [{ companyId }, { companyId: null }, { companyId: { $exists: false } }];
     }
     const record = await SerialRegistry.findOne(query).populate('productId');
 
@@ -144,6 +144,16 @@ async function validateSerialNumber(req, { materialCode, serialNumber, dealerCod
         responseMessage = 'Serial Number Already Validated';
         matched = mapStatusToResult('-3');
         statusChangeRemark = 'Status unchanged: Already VALIDATED';
+      } else if (record.status === 'SOLD') {
+        responseStatus = '-3';
+        responseMessage = 'Serial Number is marked as SOLD in master registry';
+        matched = { verified: false, canProceed: false, alreadyValidated: true, resultCode: 'ALREADY_VALIDATED', message: responseMessage };
+        statusChangeRemark = 'Status unchanged: Already SOLD';
+      } else if (record.status === 'DEFECTIVE') {
+        responseStatus = '-6';
+        responseMessage = 'Serial Number is marked as DEFECTIVE in master registry';
+        matched = { verified: false, canProceed: false, resultCode: 'DEFECTIVE', message: responseMessage };
+        statusChangeRemark = 'Status unchanged: DEFECTIVE';
       } else {
         // Valid! Update status to VALIDATED and record date
         if (record.status !== 'VALIDATED') {

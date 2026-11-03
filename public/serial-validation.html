@@ -911,14 +911,31 @@
                 }
 
                 tableBody.innerHTML = historyList.map(row => {
-                    const isApproved = row.validationResult === 'VALID' || row.responseStatus === '0';
-                    const statusBadge = isApproved 
-                        ? '<span class="badge badge-success" style="margin-top:0;">VALID</span>' 
-                        : '<span class="badge badge-danger" style="margin-top:0;">REJECTED</span>';
+                    const isApproved = row.validationResult === 'VALID' || (row.responseStatus === '0' && row.validationResult !== 'READY');
+                    const isReady = row.validationResult === 'READY';
+                    
+                    let statusBadge;
+                    if (isReady) {
+                        statusBadge = '<span class="badge badge-success" style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; margin-top:0; white-space:nowrap;">READY</span>';
+                    } else if (isApproved) {
+                        statusBadge = '<span class="badge badge-success" style="margin-top:0; white-space:nowrap;">VALID</span>';
+                    } else if (row.validationResult === 'STATUS_UPDATE') {
+                        statusBadge = '<span class="badge badge-info" style="margin-top:0; white-space:nowrap;">UPDATED</span>';
+                    } else {
+                        statusBadge = '<span class="badge badge-danger" style="margin-top:0; white-space:nowrap;">REJECTED</span>';
+                    }
                     
                     const remark = row.responseMessage || row.message || (isApproved ? 'Approved' : 'Rejected');
                     const userName = (row.validatedBy && row.validatedBy.name) || row.clientName || 'Portal User';
                     const timeStr = row.createdAt || row.validatedAt ? new Date(row.createdAt || row.validatedAt).toLocaleString() : '-';
+
+                    // If unit is currently IN_STOCK in the registry, display prominent Ready indicator even on older historical records
+                    let liveStatusPill = '';
+                    if (row.currentRegistryStatus === 'IN_STOCK' && !isReady) {
+                        liveStatusPill = `<div style="margin-top: 4px;"><span class="badge badge-success" style="font-size: 0.725rem; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; padding: 2px 6px;">⚡ Current: IN_STOCK (Ready to validate)</span></div>`;
+                    } else if (row.currentRegistryStatus && row.currentRegistryStatus !== row.currentStatus && !isReady) {
+                        liveStatusPill = `<div style="margin-top: 4px;"><span class="badge badge-info" style="font-size: 0.725rem; padding: 2px 6px;">Current: ${escapeHtml(row.currentRegistryStatus)}</span></div>`;
+                    }
 
                     return `
                         <tr>
@@ -932,7 +949,10 @@
                                     : `<span style="font-size: 0.8rem; color: var(--text-light); white-space: nowrap;">${escapeHtml(row.currentStatus || 'Unchanged')}</span>`
                                 }
                             </td>
-                            <td style="max-width: 320px; font-size: 0.875rem;">${escapeHtml(remark)}</td>
+                            <td style="max-width: 320px; font-size: 0.875rem;">
+                                <div>${escapeHtml(remark)}</div>
+                                ${liveStatusPill}
+                            </td>
                             <td>${escapeHtml(userName)}</td>
                             <td style="font-size: 0.85rem; color: var(--text-light); white-space: nowrap;">${timeStr}</td>
                         </tr>
@@ -1093,6 +1113,30 @@
                 if (serialInput) serialInput.value = item.serialNumber || '';
                 if (dealerInput) dealerInput.value = item.dealerCode || '';
 
+                const resultPanel = document.getElementById('resultPanel');
+                if (resultPanel) {
+                    if (item.status === 'IN_STOCK' || item.status === 'REGISTERED') {
+                        resultPanel.innerHTML = `
+                            <div class="result-icon">⚡</div>
+                            <h3 style="color: var(--success); margin-bottom: 0.25rem;">Ready to Validate</h3>
+                            <span class="badge badge-success">STATUS: ${escapeHtml(item.status)}</span>
+                            <div style="margin-top: 1rem; padding: 0.75rem 1rem; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; text-align: left; font-size: 0.9rem; color: #065f46;">
+                                Serial <strong>${escapeHtml(item.serialNumber)}</strong> is in stock and ready to validate. Click <strong>Validate Serial Number</strong> to proceed.
+                            </div>
+                        `;
+                    } else if (item.status === 'VALIDATED') {
+                        resultPanel.innerHTML = `
+                            <div class="result-icon">⚠️</div>
+                            <h3 style="color: #b45309; margin-bottom: 0.25rem;">Already Validated</h3>
+                            <span class="badge badge-warning" style="background:#fef3c7; color:#92400e; border:1px solid #fde68a;">STATUS: VALIDATED</span>
+                            <div style="margin-top: 1rem; padding: 0.75rem 1rem; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; text-align: left; font-size: 0.875rem; color: #92400e;">
+                                Serial <strong>${escapeHtml(item.serialNumber)}</strong> is already marked as <strong>VALIDATED</strong>.<br>
+                                To validate it again, click <strong>✏️ Edit</strong> in the units table below and change its status back to <strong>IN_STOCK</strong>.
+                            </div>
+                        `;
+                    }
+                }
+
                 const form = document.getElementById('validationForm');
                 if (form) {
                     form.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1115,6 +1159,17 @@
                 }
                 if (exact.dealerCode && !document.getElementById('dealerCode').value) {
                     document.getElementById('dealerCode').value = exact.dealerCode;
+                }
+                const resultPanel = document.getElementById('resultPanel');
+                if (resultPanel && exact.status === 'IN_STOCK') {
+                    resultPanel.innerHTML = `
+                        <div class="result-icon">⚡</div>
+                        <h3 style="color: var(--success); margin-bottom: 0.25rem;">Ready to Validate</h3>
+                        <span class="badge badge-success">STATUS: IN_STOCK</span>
+                        <div style="margin-top: 1rem; padding: 0.75rem 1rem; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; text-align: left; font-size: 0.9rem; color: #065f46;">
+                            Serial <strong>${escapeHtml(exact.serialNumber)}</strong> is in stock and ready to validate. Click <strong>Validate Serial Number</strong> to verify.
+                        </div>
+                    `;
                 }
                 return;
             }
@@ -1170,6 +1225,7 @@
         // Open Edit Modal
         function openEditModal(escapedJson) {
             const unit = JSON.parse(decodeURIComponent(escapedJson));
+            window._lastEditingOldStatus = unit.status || 'IN_STOCK';
             document.getElementById('editUnitId').value = unit._id;
             document.getElementById('editSerialNumber').value = unit.serialNumber || '';
             document.getElementById('editMaterialCode').value = unit.materialCode || '';
@@ -1198,7 +1254,8 @@
                 dealerCode: document.getElementById('editDealerCode').value.trim(),
                 status: document.getElementById('editStatus').value,
                 customer: document.getElementById('editCustomer').value.trim(),
-                reason: document.getElementById('editReason').value.trim()
+                reason: document.getElementById('editReason').value.trim(),
+                oldStatus: window._lastEditingOldStatus || 'IN_STOCK'
             };
 
             try {
@@ -1219,9 +1276,37 @@
                     throw new Error(data.message || 'Failed to update serial details');
                 }
 
-                showToast(`Serial ${payload.serialNumber} updated successfully!`);
+                showToast(`Serial ${payload.serialNumber} status updated to ${payload.status}!`);
                 closeEditModal();
                 loadUnits();
+                loadHistory(); // Instantly refresh history table!
+
+                // If this serial is currently in the verification form, update result panel to show ready to validate!
+                const currentFormSerial = document.getElementById('serialNumber')?.value.trim();
+                if (currentFormSerial && currentFormSerial.toLowerCase() === payload.serialNumber.toLowerCase()) {
+                    const resultPanel = document.getElementById('resultPanel');
+                    if (resultPanel) {
+                        if (payload.status === 'IN_STOCK' || payload.status === 'REGISTERED') {
+                            resultPanel.innerHTML = `
+                                <div class="result-icon">⚡</div>
+                                <h3 style="color: var(--success); margin-bottom: 0.25rem;">Status Updated — Ready to Validate!</h3>
+                                <span class="badge badge-success">STATUS: ${escapeHtml(payload.status)}</span>
+                                <div style="margin-top: 1rem; padding: 0.75rem 1rem; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; text-align: left; font-size: 0.9rem; color: #065f46;">
+                                    <strong>Ready for Verification:</strong> Unit status was updated from <strong>${escapeHtml(payload.oldStatus || 'Previous')}</strong> to <strong>${escapeHtml(payload.status)}</strong>. Click <strong>Validate Serial Number</strong> to validate it.
+                                </div>
+                            `;
+                        } else {
+                            resultPanel.innerHTML = `
+                                <div class="result-icon">ℹ️</div>
+                                <h3 style="margin-bottom: 0.25rem;">Status Updated</h3>
+                                <span class="badge badge-info">STATUS: ${escapeHtml(payload.status)}</span>
+                                <p style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-dark);">
+                                    Serial <strong>${escapeHtml(payload.serialNumber)}</strong> status changed to <strong>${escapeHtml(payload.status)}</strong>.
+                                </p>
+                            `;
+                        }
+                    }
+                }
             } catch (err) {
                 saveBtn.disabled = false;
                 saveBtn.innerText = 'Save Changes';
@@ -1256,8 +1341,8 @@
             }
         }
     </script>
-    <script src="/js/feature-guard.js?v=20261103_03"></script>
-    <script src="/js/tenant-branding.js?v=20261103_03"></script>
-    <script src="/js/tenant-notifications.js?v=20261103_03"></script>
+    <script src="/js/feature-guard.js?v=20261103_05"></script>
+    <script src="/js/tenant-branding.js?v=20261103_05"></script>
+    <script src="/js/tenant-notifications.js?v=20261103_05"></script>
 </body>
 </html>

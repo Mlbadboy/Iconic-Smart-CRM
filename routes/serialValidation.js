@@ -36,23 +36,37 @@ router.post('/validate', auth, requirePermission('serial_validation.validate'), 
   }
 });
 
-// View recent validation history (Scoped by Tenant with Full Search)
+// View recent validation history (Scoped by Tenant with Full Search & Live Status Enrichment)
 router.get('/history', auth, requirePermission('serial_validation.history'), async (req, res) => {
   try {
     const companyId = req.companyId || req.user?.companyId;
-    const filter = companyId ? { companyId } : {};
+    const filter = {};
+    if (companyId && req.user?.role !== 'superadmin') {
+      filter.$and = [
+        { $or: [{ companyId }, { companyId: null }, { companyId: { $exists: false } }] }
+      ];
+    }
 
     const search = String(req.query.search || req.query.q || '').trim();
     if (search) {
       const escaped = search.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
       const safeRegex = new RegExp(escaped, 'i');
-      filter.$or = [
-        { serialNumber: safeRegex },
-        { materialCode: safeRegex },
-        { dealerCode: safeRegex },
-        { responseMessage: safeRegex },
-        { validationResult: safeRegex }
-      ];
+      const searchOr = {
+        $or: [
+          { serialNumber: safeRegex },
+          { materialCode: safeRegex },
+          { dealerCode: safeRegex },
+          { responseMessage: safeRegex },
+          { statusChangeRemark: safeRegex },
+          { currentStatus: safeRegex },
+          { validationResult: safeRegex }
+        ]
+      };
+      if (filter.$and) {
+        filter.$and.push(searchOr);
+      } else {
+        filter.$or = searchOr.$or;
+      }
     }
 
     const history = await SerialValidationHistory.find(filter)
@@ -60,6 +74,31 @@ router.get('/history', auth, requirePermission('serial_validation.history'), asy
       .sort({ createdAt: -1 })
       .limit(100)
       .lean();
+
+    // Attach current live registry status for each serial in the history list
+    const serialNumbers = [...new Set(history.map(h => h.serialNumber).filter(Boolean))];
+    if (serialNumbers.length > 0) {
+      const regQuery = { serialNumber: { $in: serialNumbers } };
+      if (companyId && req.user?.role !== 'superadmin') {
+        regQuery.$or = [{ companyId }, { companyId: null }, { companyId: { $exists: false } }];
+      }
+      const liveUnits = await SerialRegistry.find(regQuery, 'serialNumber status materialCode dealerCode').lean();
+      const statusMap = {};
+      liveUnits.forEach(u => {
+        if (u.serialNumber) {
+          statusMap[u.serialNumber.trim().toUpperCase()] = u.status || 'IN_STOCK';
+        }
+      });
+      history.forEach(h => {
+        if (h.serialNumber) {
+          const liveStatus = statusMap[h.serialNumber.trim().toUpperCase()];
+          if (liveStatus) {
+            h.currentRegistryStatus = liveStatus;
+            h.isReadyToValidate = (liveStatus === 'IN_STOCK' || liveStatus === 'REGISTERED' || liveStatus === 'READY');
+          }
+        }
+      });
+    }
 
     return success(res, { history });
   } catch (err) {
