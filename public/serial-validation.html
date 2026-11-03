@@ -382,6 +382,25 @@
         .btn-action-delete:hover {
             background: #fee2e2;
         }
+        .btn-action-validate {
+            background: #ecfdf5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.825rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 0.5rem;
+            transition: all 0.2s;
+        }
+        .btn-action-validate:hover {
+            background: #d1fae5;
+        }
+        .badge-info {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
     </style>
 </head>
 <body>
@@ -422,8 +441,12 @@
                         <input type="text" id="materialCode" class="form-control" placeholder="Enter Material Code" required>
                     </div>
                     <div class="form-group">
-                        <label for="serialNumber">Serial Number</label>
-                        <input type="text" id="serialNumber" class="form-control" placeholder="Enter Serial Number" required>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                            <label for="serialNumber" style="margin-bottom: 0;">Serial Number</label>
+                            <span style="font-size: 0.75rem; color: var(--text-light);">🔍 Type to search all uploaded serials</span>
+                        </div>
+                        <input type="text" id="serialNumber" list="serialNumberSuggestions" class="form-control" placeholder="Enter or search serial number..." autocomplete="off" required oninput="handleSerialInputAutocomplete(this.value)">
+                        <datalist id="serialNumberSuggestions"></datalist>
                     </div>
                     <div class="form-group">
                         <label for="dealerCode">Dealer Code</label>
@@ -463,11 +486,23 @@
         <div id="serialRegistryCard" class="history-card" style="margin-bottom: 2rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
                 <div>
-                    <div class="card-title" style="margin-bottom: 0.25rem;">📦 Uploaded Serial Registry Units</div>
-                    <p style="color: var(--text-light); font-size: 0.875rem;">View, modify, or delete mistaken serial uploads. All edits and deletions are audit-logged for Super Admin review.</p>
+                    <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.25rem;">
+                        <div class="card-title" style="margin-bottom: 0;">📦 Uploaded Serial Registry Units</div>
+                        <span id="unitsCountBadge" class="badge badge-info" style="margin-top: 0; font-size: 0.75rem;">Loading units...</span>
+                    </div>
+                    <p style="color: var(--text-light); font-size: 0.875rem;" id="unitsSubTitle">Search across all uploaded serials, modify details, or remove records.</p>
                 </div>
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <input type="text" id="unitSearchInput" placeholder="🔍 Search serial, material, dealer..." class="form-control" style="max-width: 280px; padding: 0.45rem 0.75rem; font-size: 0.9rem;" onkeyup="filterUnitsTable()">
+                <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                    <div style="position: relative; display: flex; align-items: center;">
+                        <input type="text" id="unitSearchInput" placeholder="🔍 Search all serials, material, dealer..." class="form-control" style="max-width: 300px; padding: 0.45rem 2rem 0.45rem 0.75rem; font-size: 0.9rem;" oninput="handleUnitsSearch(this.value)">
+                        <button type="button" id="clearSearchBtn" onclick="clearUnitsSearch()" style="display:none; position: absolute; right: 8px; background: transparent; border: none; color: var(--text-light); cursor: pointer; font-size: 0.85rem;" title="Clear search">✕</button>
+                    </div>
+                    <select id="unitsLimitSelect" onchange="handleLimitChange(this.value)" class="form-control" style="width: auto; padding: 0.45rem 0.75rem; font-size: 0.85rem;" title="Units limit">
+                        <option value="500">Show 500</option>
+                        <option value="1000" selected>Show 1,000</option>
+                        <option value="5000">Show 5,000</option>
+                        <option value="all">Show All</option>
+                    </select>
                     <button onclick="loadUnits()" class="btn btn-secondary" style="font-size: 0.875rem; padding: 0.45rem 0.85rem;">🔄 Refresh</button>
                     <a href="/bulk-import.html?type=serials" class="btn btn-secondary" style="font-size: 0.875rem; padding: 0.45rem 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;" title="Manage or rollback bulk upload lots">📁 Bulk Lots & Rollback</a>
                 </div>
@@ -811,24 +846,87 @@
 
         // In-memory units cache
         let cachedUnits = [];
+        let totalUnitsCount = 0;
+        let currentLimit = '1000';
+        let searchDebounceTimer = null;
+        let autocompleteDebounceTimer = null;
 
-        // Fetch and load registered serial units
+        function handleUnitsSearch(val) {
+            const query = (val || '').trim();
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (clearBtn) clearBtn.style.display = query ? 'inline-block' : 'none';
+
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(() => {
+                fetchUnits(query);
+            }, 300);
+        }
+
+        function clearUnitsSearch() {
+            const input = document.getElementById('unitSearchInput');
+            if (input) input.value = '';
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (clearBtn) clearBtn.style.display = 'none';
+            fetchUnits('');
+        }
+
+        function handleLimitChange(val) {
+            currentLimit = val;
+            const query = (document.getElementById('unitSearchInput')?.value || '').trim();
+            fetchUnits(query);
+        }
+
         async function loadUnits() {
+            const query = (document.getElementById('unitSearchInput')?.value || '').trim();
+            return fetchUnits(query);
+        }
+
+        // Fetch registered serial units with server-side search across ALL records
+        async function fetchUnits(searchQuery = '') {
             const tableBody = document.getElementById('unitsTableBody');
+            const badge = document.getElementById('unitsCountBadge');
+            const subTitle = document.getElementById('unitsSubTitle');
             if (!tableBody) return;
-            tableBody.innerHTML = `<tr><td colspan="7" class="text-center" style="color: var(--text-light);">Loading registered units...</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="7" class="text-center" style="color: var(--text-light); padding: 1.5rem;">⏳ Searching registered serial units...</td></tr>`;
 
             try {
-                const response = await fetch(`${window.location.origin}/api/v1/serial-registry/units`, {
+                const params = new URLSearchParams();
+                if (searchQuery) params.set('search', searchQuery);
+                if (currentLimit) params.set('limit', currentLimit);
+
+                const response = await fetch(`${window.location.origin}/api/v1/serial-registry/units?${params.toString()}`, {
                     headers: { 'Authorization': `Bearer ${authToken}` }
                 });
 
                 if (!response.ok) throw new Error('Could not fetch registered serials');
                 const result = await response.json();
-                cachedUnits = result.data?.units || [];
+                const data = result.data || {};
+                cachedUnits = data.units || [];
+                totalUnitsCount = data.totalCount !== undefined ? data.totalCount : cachedUnits.length;
+                const filteredCount = data.filteredCount !== undefined ? data.filteredCount : cachedUnits.length;
+
+                if (badge) {
+                    if (searchQuery) {
+                        badge.innerText = `Found ${filteredCount} of ${totalUnitsCount}`;
+                        badge.className = 'badge badge-warning';
+                    } else {
+                        badge.innerText = `${totalUnitsCount} Total Units`;
+                        badge.className = 'badge badge-info';
+                    }
+                }
+
+                if (subTitle) {
+                    if (searchQuery) {
+                        subTitle.innerHTML = `Showing <strong>${cachedUnits.length}</strong> matching records for "<em>${escapeHtml(searchQuery)}</em>" (out of ${totalUnitsCount} total uploaded serials).`;
+                    } else {
+                        subTitle.innerHTML = `Viewing <strong>${cachedUnits.length}</strong> of <strong>${totalUnitsCount}</strong> uploaded serial registry records.`;
+                    }
+                }
+
                 renderUnitsTable(cachedUnits);
+                updateSerialNumberDatalist(cachedUnits);
             } catch (err) {
-                tableBody.innerHTML = `<tr><td colspan="7" class="text-center" style="color: var(--danger);">Failed to load registered serial units: ${err.message}</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="7" class="text-center" style="color: var(--danger); padding: 1.5rem;">Failed to load registered serial units: ${err.message}</td></tr>`;
             }
         }
 
@@ -837,7 +935,7 @@
             const tableBody = document.getElementById('unitsTableBody');
             if (!tableBody) return;
             if (!units || units.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="7" class="text-center" style="color: var(--text-light);">No registered serial units found.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="7" class="text-center" style="color: var(--text-light); padding: 1.5rem;">No registered serial units found matching your search.</td></tr>`;
                 return;
             }
 
@@ -847,38 +945,115 @@
                     : (u.status === 'DEFECTIVE' || u.status === 'DEACTIVATED' ? 'badge-danger' : 'badge-warning');
 
                 const escapedUnit = encodeURIComponent(JSON.stringify(u));
+                const quickFillPayload = encodeURIComponent(JSON.stringify({
+                    serialNumber: u.serialNumber,
+                    materialCode: u.materialCode,
+                    dealerCode: u.dealerCode
+                }));
 
                 return `
                     <tr>
-                        <td style="font-family: monospace; font-weight: 600; color: var(--text-dark);">${u.serialNumber}</td>
-                        <td>${u.materialCode || '-'}</td>
-                        <td>${u.dealerCode || '-'}</td>
-                        <td><span class="badge ${statusColor}" style="margin-top:0;">${u.status || 'IN_STOCK'}</span></td>
-                        <td>${u.customer || '-'}</td>
+                        <td style="font-family: monospace; font-weight: 600; color: var(--text-dark); cursor: pointer;" onclick="quickFillValidate('${quickFillPayload}')" title="Click to validate this serial">
+                            ${escapeHtml(u.serialNumber)}
+                        </td>
+                        <td>${escapeHtml(u.materialCode || '-')}</td>
+                        <td>${escapeHtml(u.dealerCode || '-')}</td>
+                        <td><span class="badge ${statusColor}" style="margin-top:0;">${escapeHtml(u.status || 'IN_STOCK')}</span></td>
+                        <td>${escapeHtml(u.customer || '-')}</td>
                         <td style="font-size: 0.85rem; color: var(--text-light);">${u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '-'}</td>
                         <td style="text-align: right; white-space: nowrap;">
-                            <button onclick="openEditModal('${escapedUnit}')" class="btn-action-edit" title="Modify details">✏️ Edit</button>
-                            <button onclick="handleDeleteSerial('${u._id}', '${u.serialNumber}')" class="btn-action-delete" title="Delete mistaken upload">🗑️ Delete</button>
+                            <button type="button" onclick="quickFillValidate('${quickFillPayload}')" class="btn-action-validate" title="Validate this serial in verification form">⚡ Validate</button>
+                            <button type="button" onclick="openEditModal('${escapedUnit}')" class="btn-action-edit" title="Modify details">✏️ Edit</button>
+                            <button type="button" onclick="handleDeleteSerial('${u._id}', '${escapeHtml(u.serialNumber)}')" class="btn-action-delete" title="Delete mistaken upload">🗑️ Delete</button>
                         </td>
                     </tr>
                 `;
             }).join('');
         }
 
-        // Filter units table by search query
-        function filterUnitsTable() {
-            const query = (document.getElementById('unitSearchInput').value || '').trim().toLowerCase();
-            if (!query) {
-                renderUnitsTable(cachedUnits);
+        function quickFillValidate(escapedJson) {
+            try {
+                const item = JSON.parse(decodeURIComponent(escapedJson));
+                const matInput = document.getElementById('materialCode');
+                const serialInput = document.getElementById('serialNumber');
+                const dealerInput = document.getElementById('dealerCode');
+
+                if (matInput) matInput.value = item.materialCode || '';
+                if (serialInput) serialInput.value = item.serialNumber || '';
+                if (dealerInput) dealerInput.value = item.dealerCode || '';
+
+                const form = document.getElementById('validationForm');
+                if (form) {
+                    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    form.style.transition = 'box-shadow 0.3s ease';
+                    form.style.boxShadow = '0 0 15px rgba(37, 99, 235, 0.5)';
+                    setTimeout(() => { form.style.boxShadow = 'none'; }, 1500);
+                }
+                showToast(`Loaded serial ${item.serialNumber} into validation form! Click submit to run verification.`);
+            } catch (e) {
+                console.error('quickFillValidate error:', e);
+            }
+        }
+
+        function handleSerialInputAutocomplete(val) {
+            const term = (val || '').trim();
+            const exact = cachedUnits.find(u => u.serialNumber && u.serialNumber.toLowerCase() === term.toLowerCase());
+            if (exact) {
+                if (exact.materialCode && !document.getElementById('materialCode').value) {
+                    document.getElementById('materialCode').value = exact.materialCode;
+                }
+                if (exact.dealerCode && !document.getElementById('dealerCode').value) {
+                    document.getElementById('dealerCode').value = exact.dealerCode;
+                }
                 return;
             }
-            const filtered = cachedUnits.filter(u => 
-                (u.serialNumber && u.serialNumber.toLowerCase().includes(query)) ||
-                (u.materialCode && u.materialCode.toLowerCase().includes(query)) ||
-                (u.dealerCode && u.dealerCode.toLowerCase().includes(query)) ||
-                (u.customer && u.customer.toLowerCase().includes(query))
-            );
-            renderUnitsTable(filtered);
+
+            if (term.length >= 2) {
+                clearTimeout(autocompleteDebounceTimer);
+                autocompleteDebounceTimer = setTimeout(async () => {
+                    try {
+                        const res = await fetch(`${window.location.origin}/api/v1/serial-registry/search?q=${encodeURIComponent(term)}&limit=30`, {
+                            headers: { 'Authorization': `Bearer ${authToken}` }
+                        });
+                        if (res.ok) {
+                            const json = await res.json();
+                            const results = json.data?.units || [];
+                            updateSerialNumberDatalist(results);
+
+                            const exactMatch = results.find(u => u.serialNumber.toLowerCase() === term.toLowerCase());
+                            if (exactMatch) {
+                                if (exactMatch.materialCode) document.getElementById('materialCode').value = exactMatch.materialCode;
+                                if (exactMatch.dealerCode) document.getElementById('dealerCode').value = exactMatch.dealerCode;
+                            }
+                        }
+                    } catch (e) {
+                        // Ignore autocomplete errors silently
+                    }
+                }, 250);
+            }
+        }
+
+        function updateSerialNumberDatalist(units) {
+            const datalist = document.getElementById('serialNumberSuggestions');
+            if (!datalist || !units) return;
+            const seen = new Set();
+            datalist.innerHTML = units.filter(u => {
+                if (!u.serialNumber || seen.has(u.serialNumber)) return false;
+                seen.add(u.serialNumber);
+                return true;
+            }).slice(0, 50).map(u => 
+                `<option value="${escapeHtml(u.serialNumber)}">${escapeHtml(u.materialCode || '')} | ${escapeHtml(u.dealerCode || '')} | ${escapeHtml(u.status || 'IN_STOCK')}</option>`
+            ).join('');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
         }
 
         // Open Edit Modal
@@ -970,8 +1145,8 @@
             }
         }
     </script>
-    <script src="/js/feature-guard.js"></script>
-    <script src="/js/tenant-branding.js"></script>
-    <script src="/js/tenant-notifications.js"></script>
+    <script src="/js/feature-guard.js?v=20261103_01"></script>
+    <script src="/js/tenant-branding.js?v=20261103_01"></script>
+    <script src="/js/tenant-notifications.js?v=20261103_01"></script>
 </body>
 </html>

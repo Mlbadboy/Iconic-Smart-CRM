@@ -253,16 +253,90 @@ router.post('/import/commit', auth, requirePermission('serial_validation.import'
   }
 });
 
-// List Registered Product Units (Tenant Scoped)
+// Helper to escape regex special characters
+function escapeRegex(text) {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+}
+
+// Search Registered Product Units (Autocomplete / Quick Search)
+router.get('/search', auth, async (req, res) => {
+  try {
+    const companyId = req.user?.companyId;
+    const q = String(req.query.q || req.query.search || '').trim();
+    const filter = companyId ? { companyId } : {};
+
+    if (q) {
+      const safeRegex = new RegExp(escapeRegex(q), 'i');
+      filter.$or = [
+        { serialNumber: safeRegex },
+        { materialCode: safeRegex },
+        { dealerCode: safeRegex },
+        { customer: safeRegex }
+      ];
+    }
+
+    const limit = Math.min(Math.max(1, parseInt(req.query.limit, 10) || 50), 200);
+    const units = await SerialRegistry.find(filter)
+      .select('serialNumber materialCode dealerCode status customer batchNumber')
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .lean();
+
+    return success(res, { units, count: units.length });
+  } catch (err) {
+    return error(res, { status: 500, message: err.message });
+  }
+});
+
+// List Registered Product Units (Tenant Scoped with Full Search & Scalable Pagination)
 router.get('/units', auth, async (req, res) => {
   try {
     const companyId = req.user?.companyId;
     const filter = companyId ? { companyId } : {};
+    
     if (req.query.materialCode) filter.materialCode = req.query.materialCode.toUpperCase();
     if (req.query.status) filter.status = req.query.status;
 
-    const units = await SerialRegistry.find(filter).sort({ createdAt: -1 }).limit(100).lean();
-    return success(res, { units, count: units.length });
+    // Full search across serialNumber, materialCode, dealerCode, and customer
+    const searchTerm = String(req.query.search || req.query.q || '').trim();
+    if (searchTerm) {
+      const safeRegex = new RegExp(escapeRegex(searchTerm), 'i');
+      filter.$or = [
+        { serialNumber: safeRegex },
+        { materialCode: safeRegex },
+        { dealerCode: safeRegex },
+        { customer: safeRegex }
+      ];
+    }
+
+    // Determine limit: support 'all' (up to 10000) or numeric limit, default 1000 (was 100)
+    let limit = 1000;
+    if (req.query.limit === 'all' || req.query.all === 'true') {
+      limit = 10000;
+    } else if (req.query.limit) {
+      const parsedLimit = parseInt(req.query.limit, 10);
+      if (!isNaN(parsedLimit) && parsedLimit > 0) {
+        limit = Math.min(parsedLimit, 10000);
+      }
+    }
+
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const skip = (page - 1) * limit;
+
+    const [totalCount, filteredCount, units] = await Promise.all([
+      SerialRegistry.countDocuments(companyId ? { companyId } : {}),
+      (filter.$or || filter.materialCode || filter.status) ? SerialRegistry.countDocuments(filter) : null,
+      SerialRegistry.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean()
+    ]);
+
+    return success(res, {
+      units,
+      count: units.length,
+      totalCount,
+      filteredCount: filteredCount !== null ? filteredCount : totalCount,
+      page,
+      limit
+    });
   } catch (err) {
     return error(res, { status: 500, message: err.message });
   }
