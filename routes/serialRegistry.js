@@ -291,31 +291,52 @@ router.get('/search', auth, async (req, res) => {
   }
 });
 
-// List Registered Product Units (Tenant Scoped with Full Search & Scalable Pagination)
+// List Registered Product Units (Tenant Scoped with Full Search, Status Filter & Status Counts)
 router.get('/units', auth, async (req, res) => {
   try {
     const companyId = req.user?.companyId;
     const filter = {};
+    const andConditions = [];
+
+    const baseCompanyFilter = (companyId && req.user?.role !== 'superadmin')
+      ? { $or: [{ companyId }, { companyId: null }, { companyId: { $exists: false } }] }
+      : {};
+
     if (companyId && req.user?.role !== 'superadmin') {
-      filter.$or = [{ companyId }, { companyId: null }, { companyId: { $exists: false } }];
+      andConditions.push(baseCompanyFilter);
     }
     
-    if (req.query.materialCode) filter.materialCode = req.query.materialCode.toUpperCase();
-    if (req.query.status) filter.status = req.query.status;
+    if (req.query.materialCode) {
+      andConditions.push({ materialCode: req.query.materialCode.toUpperCase() });
+    }
+
+    // Support status filter (IN_STOCK, VALIDATED, SOLD, DEFECTIVE, etc.)
+    const statusParam = String(req.query.status || '').trim().toUpperCase();
+    if (statusParam && statusParam !== 'ALL') {
+      andConditions.push({ status: statusParam });
+    }
 
     // Full search across serialNumber, materialCode, dealerCode, and customer
     const searchTerm = String(req.query.search || req.query.q || '').trim();
     if (searchTerm) {
       const safeRegex = new RegExp(escapeRegex(searchTerm), 'i');
-      filter.$or = [
-        { serialNumber: safeRegex },
-        { materialCode: safeRegex },
-        { dealerCode: safeRegex },
-        { customer: safeRegex }
-      ];
+      andConditions.push({
+        $or: [
+          { serialNumber: safeRegex },
+          { materialCode: safeRegex },
+          { dealerCode: safeRegex },
+          { customer: safeRegex }
+        ]
+      });
     }
 
-    // Determine limit: support 'all' (up to 10000) or numeric limit, default 1000 (was 100)
+    if (andConditions.length === 1) {
+      Object.assign(filter, andConditions[0]);
+    } else if (andConditions.length > 1) {
+      filter.$and = andConditions;
+    }
+
+    // Determine limit: support 'all' (up to 10000) or numeric limit, default 1000
     let limit = 1000;
     if (req.query.limit === 'all' || req.query.all === 'true') {
       limit = 10000;
@@ -329,17 +350,42 @@ router.get('/units', auth, async (req, res) => {
     const page = Math.max(1, parseInt(req.query.page, 10) || 1);
     const skip = (page - 1) * limit;
 
-    const [totalCount, filteredCount, units] = await Promise.all([
-      SerialRegistry.countDocuments(companyId ? { companyId } : {}),
-      (filter.$or || filter.materialCode || filter.status) ? SerialRegistry.countDocuments(filter) : null,
+    const [statusCountsAgg, totalCount, filteredCount, units] = await Promise.all([
+      SerialRegistry.aggregate([
+        { $match: baseCompanyFilter },
+        { $group: { _id: '$status', count: { $sum: 1 } } }
+      ]),
+      SerialRegistry.countDocuments(baseCompanyFilter),
+      (filter.$and || filter.materialCode || filter.status) ? SerialRegistry.countDocuments(filter) : null,
       SerialRegistry.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean()
     ]);
+
+    const statusCounts = {
+      total: totalCount,
+      inStock: 0,
+      validated: 0,
+      sold: 0,
+      defective: 0,
+      expired: 0,
+      returned: 0
+    };
+
+    statusCountsAgg.forEach(item => {
+      const st = String(item._id || '').toUpperCase();
+      if (st === 'IN_STOCK' || st === 'READY' || st === 'REGISTERED') statusCounts.inStock += item.count;
+      else if (st === 'VALIDATED') statusCounts.validated += item.count;
+      else if (st === 'SOLD') statusCounts.sold += item.count;
+      else if (st === 'DEFECTIVE') statusCounts.defective += item.count;
+      else if (st === 'EXPIRED') statusCounts.expired += item.count;
+      else if (st === 'RETURNED') statusCounts.returned += item.count;
+    });
 
     return success(res, {
       units,
       count: units.length,
       totalCount,
       filteredCount: filteredCount !== null ? filteredCount : totalCount,
+      statusCounts,
       page,
       limit
     });

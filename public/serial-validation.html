@@ -401,6 +401,41 @@
             background: #e0f2fe;
             color: #0369a1;
         }
+        /* Filter Pill Buttons */
+        .status-pill-btn, .history-pill-btn {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            color: var(--text-dark);
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s ease;
+        }
+        .status-pill-btn:hover, .history-pill-btn:hover {
+            border-color: var(--primary);
+            background: #f8fafc;
+        }
+        .status-pill-btn.active, .history-pill-btn.active {
+            background: var(--pill-bg, #eff6ff) !important;
+            border-color: var(--pill-color, var(--primary)) !important;
+            color: var(--pill-color, var(--primary)) !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .count-badge {
+            background: rgba(0,0,0,0.07);
+            border-radius: 12px;
+            padding: 0.1rem 0.45rem;
+            font-size: 0.725rem;
+            font-weight: 700;
+        }
+        .status-pill-btn.active .count-badge {
+            background: rgba(0,0,0,0.12);
+        }
     </style>
 </head>
 <body>
@@ -494,19 +529,52 @@
                 </div>
                 <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
                     <div style="position: relative; display: flex; align-items: center;">
-                        <input type="text" id="unitSearchInput" placeholder="🔍 Search all serials, material, dealer..." class="form-control" style="max-width: 300px; padding: 0.45rem 2rem 0.45rem 0.75rem; font-size: 0.9rem;" oninput="handleUnitsSearch(this.value)">
+                        <input type="text" id="unitSearchInput" placeholder="🔍 Search serials, material, dealer..." class="form-control" style="max-width: 260px; padding: 0.45rem 2rem 0.45rem 0.75rem; font-size: 0.9rem;" oninput="handleUnitsSearch(this.value)">
                         <button type="button" id="clearSearchBtn" onclick="clearUnitsSearch()" style="display:none; position: absolute; right: 8px; background: transparent; border: none; color: var(--text-light); cursor: pointer; font-size: 0.85rem;" title="Clear search">✕</button>
                     </div>
+                    <select id="unitsStatusFilter" onchange="handleStatusFilterChange(this.value)" class="form-control" style="width: auto; padding: 0.45rem 0.75rem; font-size: 0.85rem; font-weight: 600;" title="Filter units by status">
+                        <option value="">All Statuses</option>
+                        <option value="IN_STOCK">⚡ IN_STOCK (Ready to Validate)</option>
+                        <option value="VALIDATED">✅ VALIDATED (Already Validated)</option>
+                        <option value="SOLD">🏷️ SOLD</option>
+                        <option value="DEFECTIVE">⚠️ DEFECTIVE</option>
+                        <option value="EXPIRED">⏳ EXPIRED</option>
+                        <option value="RETURNED">↩️ RETURNED</option>
+                    </select>
                     <select id="unitsLimitSelect" onchange="handleLimitChange(this.value)" class="form-control" style="width: auto; padding: 0.45rem 0.75rem; font-size: 0.85rem;" title="Units limit">
                         <option value="500">Show 500</option>
                         <option value="1000" selected>Show 1,000</option>
                         <option value="5000">Show 5,000</option>
                         <option value="all">Show All</option>
                     </select>
+                    <button type="button" onclick="exportUnitsToExcel()" class="btn btn-secondary" style="font-size: 0.875rem; padding: 0.45rem 0.85rem; display: inline-flex; align-items: center; gap: 0.35rem; background: #f0fdf4; border-color: #bbf7d0; color: #166534;" title="Export filtered serial numbers to Excel (.xlsx)">
+                        📥 Export Excel
+                    </button>
                     <button onclick="loadUnits()" class="btn btn-secondary" style="font-size: 0.875rem; padding: 0.45rem 0.85rem;">🔄 Refresh</button>
-                    <a href="/bulk-import.html?type=serials" class="btn btn-secondary" style="font-size: 0.875rem; padding: 0.45rem 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;" title="Manage or rollback bulk upload lots">📁 Bulk Lots & Rollback</a>
+                    <a href="/bulk-import.html?type=serials" class="btn btn-secondary" style="font-size: 0.875rem; padding: 0.45rem 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;" title="Manage or rollback bulk upload lots">📁 Lots</a>
                 </div>
             </div>
+
+            <!-- Quick Filter Pills for Status -->
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: center; padding: 0.5rem 0.75rem; background: var(--bg-light); border-radius: 8px; border: 1px solid var(--border);">
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-dark); text-transform: uppercase; letter-spacing: 0.05em; margin-right: 0.25rem;">Quick Status Filter:</span>
+                <button type="button" id="pillUnitsAll" class="status-pill-btn active" data-status="" onclick="setStatusFilter('')">
+                    All <span id="countPillAll" class="count-badge">0</span>
+                </button>
+                <button type="button" id="pillUnitsInStock" class="status-pill-btn" data-status="IN_STOCK" onclick="setStatusFilter('IN_STOCK')" style="--pill-color: #059669; --pill-bg: #ecfdf5;">
+                    ⚡ Ready to Validate / In Stock <span id="countPillInStock" class="count-badge">0</span>
+                </button>
+                <button type="button" id="pillUnitsValidated" class="status-pill-btn" data-status="VALIDATED" onclick="setStatusFilter('VALIDATED')" style="--pill-color: #2563eb; --pill-bg: #eff6ff;">
+                    ✅ Validated <span id="countPillValidated" class="count-badge">0</span>
+                </button>
+                <button type="button" id="pillUnitsSold" class="status-pill-btn" data-status="SOLD" onclick="setStatusFilter('SOLD')" style="--pill-color: #d97706; --pill-bg: #fffbeb;">
+                    🏷️ Sold <span id="countPillSold" class="count-badge">0</span>
+                </button>
+                <button type="button" id="pillUnitsDefective" class="status-pill-btn" data-status="DEFECTIVE" onclick="setStatusFilter('DEFECTIVE')" style="--pill-color: #dc2626; --pill-bg: #fef2f2;">
+                    ⚠️ Defective <span id="countPillDefective" class="count-badge">0</span>
+                </button>
+            </div>
+
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -538,12 +606,33 @@
                 </div>
                 <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
                     <div style="position: relative; display: flex; align-items: center;">
-                        <input type="text" id="historySearchInput" placeholder="🔍 Search history by serial, model, dealer, remark..." class="form-control" style="min-width: 300px; padding: 0.45rem 2rem 0.45rem 0.75rem; font-size: 0.9rem;" oninput="handleHistorySearch(this.value)">
+                        <input type="text" id="historySearchInput" placeholder="🔍 Search history by serial, model, dealer..." class="form-control" style="min-width: 260px; padding: 0.45rem 2rem 0.45rem 0.75rem; font-size: 0.9rem;" oninput="handleHistorySearch(this.value)">
                         <button type="button" id="clearHistorySearchBtn" onclick="clearHistorySearch()" style="display:none; position: absolute; right: 8px; background: transparent; border: none; color: var(--text-light); cursor: pointer; font-size: 0.85rem;" title="Clear search">✕</button>
                     </div>
+                    <select id="historyResultFilter" onchange="handleHistoryFilterChange()" class="form-control" style="width: auto; padding: 0.45rem 0.75rem; font-size: 0.85rem; font-weight: 600;" title="Filter by Validation Result">
+                        <option value="">All Results</option>
+                        <option value="VALID">✅ VALID (Approved)</option>
+                        <option value="REJECTED">❌ REJECTED (Gated)</option>
+                        <option value="READY">⚡ READY (Ready to Validate)</option>
+                        <option value="STATUS_UPDATE">🔄 STATUS_UPDATE</option>
+                    </select>
+                    <button type="button" onclick="exportHistoryToExcel()" class="btn btn-secondary" style="font-size: 0.875rem; padding: 0.45rem 0.85rem; display: inline-flex; align-items: center; gap: 0.35rem; background: #f0fdf4; border-color: #bbf7d0; color: #166534;" title="Export validation audit history to Excel (.xlsx)">
+                        📥 Export Excel
+                    </button>
                     <button onclick="loadHistory()" class="btn btn-secondary" style="font-size: 0.875rem; padding: 0.45rem 0.85rem;">🔄 Refresh</button>
                 </div>
             </div>
+
+            <!-- Quick Filter Pills for Validation History -->
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: center; padding: 0.5rem 0.75rem; background: var(--bg-light); border-radius: 8px; border: 1px solid var(--border);">
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-dark); text-transform: uppercase; letter-spacing: 0.05em; margin-right: 0.25rem;">Filter History:</span>
+                <button type="button" id="pillHistAll" class="history-pill-btn active" data-result="" onclick="setHistoryResultFilter('')">All History</button>
+                <button type="button" id="pillHistValid" class="history-pill-btn" data-result="VALID" onclick="setHistoryResultFilter('VALID')" style="--pill-color: #059669; --pill-bg: #ecfdf5;">✅ VALID</button>
+                <button type="button" id="pillHistRejected" class="history-pill-btn" data-result="REJECTED" onclick="setHistoryResultFilter('REJECTED')" style="--pill-color: #dc2626; --pill-bg: #fef2f2;">❌ REJECTED</button>
+                <button type="button" id="pillHistReady" class="history-pill-btn" data-result="READY" onclick="setHistoryResultFilter('READY')" style="--pill-color: #059669; --pill-bg: #ecfdf5;">⚡ READY TO VALIDATE</button>
+                <button type="button" id="pillHistUpdated" class="history-pill-btn" data-result="STATUS_UPDATE" onclick="setHistoryResultFilter('STATUS_UPDATE')" style="--pill-color: #4f46e5; --pill-bg: #eef2ff;">🔄 STATUS UPDATES</button>
+            </div>
+
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -886,9 +975,10 @@
             if (!tableBody) return;
             
             try {
-                const url = searchQuery 
-                    ? `${API_URL}/serial-validation/history?search=${encodeURIComponent(searchQuery)}`
-                    : `${API_URL}/serial-validation/history`;
+                const params = new URLSearchParams();
+                if (searchQuery) params.set('search', searchQuery);
+                if (currentHistoryResultFilter) params.set('result', currentHistoryResultFilter);
+                const url = `${API_URL}/serial-validation/history?${params.toString()}`;
 
                 const response = await fetch(url, {
                     headers: {
@@ -975,12 +1065,112 @@
             loadUnits();
         });
 
-        // In-memory units cache
+        // In-memory units cache and filter state
         let cachedUnits = [];
         let totalUnitsCount = 0;
         let currentLimit = '1000';
+        let currentStatusFilter = '';
+        let currentHistoryResultFilter = '';
         let searchDebounceTimer = null;
         let autocompleteDebounceTimer = null;
+
+        // Filter by Status for Uploaded Units
+        function setStatusFilter(status) {
+            currentStatusFilter = status;
+            const select = document.getElementById('unitsStatusFilter');
+            if (select) select.value = status;
+            document.querySelectorAll('.status-pill-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-status') === status);
+            });
+            const query = (document.getElementById('unitSearchInput')?.value || '').trim();
+            fetchUnits(query);
+        }
+
+        function handleStatusFilterChange(status) {
+            setStatusFilter(status);
+        }
+
+        // Filter by Result for Validation History
+        function setHistoryResultFilter(result) {
+            currentHistoryResultFilter = result;
+            const select = document.getElementById('historyResultFilter');
+            if (select) select.value = result;
+            document.querySelectorAll('.history-pill-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-result') === result);
+            });
+            const query = (document.getElementById('historySearchInput')?.value || '').trim();
+            loadHistory(query);
+        }
+
+        function handleHistoryFilterChange() {
+            const val = document.getElementById('historyResultFilter')?.value || '';
+            setHistoryResultFilter(val);
+        }
+
+        // Export Filtered Serial Units to Excel (.xlsx)
+        async function exportUnitsToExcel() {
+            try {
+                showToast('⏳ Generating Serial Numbers & Status Excel Report...');
+                const params = new URLSearchParams();
+                if (currentStatusFilter) params.set('status', currentStatusFilter);
+                const search = (document.getElementById('unitSearchInput')?.value || '').trim();
+                if (search) params.set('search', search);
+
+                const res = await fetch(`${window.location.origin}/api/reports/serials?${params.toString()}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    throw new Error(errData.message || 'Failed to export serials report');
+                }
+
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const statusLabel = currentStatusFilter ? `_${currentStatusFilter.toLowerCase()}` : '';
+                a.download = `serial_numbers_status${statusLabel}_${new Date().toISOString().split('T')[0]}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                showToast('✅ Serial numbers Excel report downloaded successfully!');
+            } catch (err) {
+                showToast('❌ Export failed: ' + err.message, 'error');
+            }
+        }
+
+        // Export Validation History Audit Log to Excel (.xlsx)
+        async function exportHistoryToExcel() {
+            try {
+                showToast('⏳ Generating Validation History Excel Report...');
+                const params = new URLSearchParams();
+                if (currentHistoryResultFilter) params.set('result', currentHistoryResultFilter);
+                const search = (document.getElementById('historySearchInput')?.value || '').trim();
+                if (search) params.set('search', search);
+
+                const res = await fetch(`${window.location.origin}/api/reports/serial-validations?${params.toString()}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    throw new Error(errData.message || 'Failed to export validation history');
+                }
+
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `serial_validation_history_${new Date().toISOString().split('T')[0]}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                showToast('✅ Validation history Excel report downloaded successfully!');
+            } catch (err) {
+                showToast('❌ Export failed: ' + err.message, 'error');
+            }
+        }
 
         function handleUnitsSearch(val) {
             const query = (val || '').trim();
@@ -1024,6 +1214,7 @@
                 const params = new URLSearchParams();
                 if (searchQuery) params.set('search', searchQuery);
                 if (currentLimit) params.set('limit', currentLimit);
+                if (currentStatusFilter) params.set('status', currentStatusFilter);
 
                 const response = await fetch(`${window.location.origin}/api/v1/serial-registry/units?${params.toString()}`, {
                     headers: { 'Authorization': `Bearer ${authToken}` }
@@ -1037,13 +1228,29 @@
                 const filteredCount = data.filteredCount !== undefined ? data.filteredCount : cachedUnits.length;
 
                 if (badge) {
-                    if (searchQuery) {
-                        badge.innerText = `Found ${filteredCount} of ${totalUnitsCount}`;
+                    if (searchQuery || currentStatusFilter) {
+                        const filterLabel = currentStatusFilter ? ` [${currentStatusFilter}]` : '';
+                        badge.innerText = `Found ${filteredCount} of ${totalUnitsCount}${filterLabel}`;
                         badge.className = 'badge badge-warning';
                     } else {
                         badge.innerText = `${totalUnitsCount} Total Units`;
                         badge.className = 'badge badge-info';
                     }
+                }
+
+                // Update status count badges on filter pills
+                if (data.statusCounts) {
+                    const c = data.statusCounts;
+                    const elAll = document.getElementById('countPillAll');
+                    const elStock = document.getElementById('countPillInStock');
+                    const elVal = document.getElementById('countPillValidated');
+                    const elSold = document.getElementById('countPillSold');
+                    const elDef = document.getElementById('countPillDefective');
+                    if (elAll) elAll.innerText = c.total !== undefined ? c.total : totalUnitsCount;
+                    if (elStock) elStock.innerText = c.inStock || 0;
+                    if (elVal) elVal.innerText = c.validated || 0;
+                    if (elSold) elSold.innerText = c.sold || 0;
+                    if (elDef) elDef.innerText = c.defective || 0;
                 }
 
                 if (subTitle) {
@@ -1341,8 +1548,8 @@
             }
         }
     </script>
-    <script src="/js/feature-guard.js?v=20261103_05"></script>
-    <script src="/js/tenant-branding.js?v=20261103_05"></script>
-    <script src="/js/tenant-notifications.js?v=20261103_05"></script>
+    <script src="/js/feature-guard.js?v=20261104_01"></script>
+    <script src="/js/tenant-branding.js?v=20261104_01"></script>
+    <script src="/js/tenant-notifications.js?v=20261104_01"></script>
 </body>
 </html>

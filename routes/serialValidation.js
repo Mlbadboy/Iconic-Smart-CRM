@@ -36,22 +36,55 @@ router.post('/validate', auth, requirePermission('serial_validation.validate'), 
   }
 });
 
-// View recent validation history (Scoped by Tenant with Full Search & Live Status Enrichment)
+// View recent validation history (Scoped by Tenant with Full Search, Result & Status Filters, Live Status Enrichment)
 router.get('/history', auth, requirePermission('serial_validation.history'), async (req, res) => {
   try {
     const companyId = req.companyId || req.user?.companyId;
     const filter = {};
+    const andConditions = [];
+
+    const baseCompanyFilter = (companyId && req.user?.role !== 'superadmin')
+      ? { $or: [{ companyId }, { companyId: null }, { companyId: { $exists: false } }] }
+      : {};
+
     if (companyId && req.user?.role !== 'superadmin') {
-      filter.$and = [
-        { $or: [{ companyId }, { companyId: null }, { companyId: { $exists: false } }] }
-      ];
+      andConditions.push(baseCompanyFilter);
+    }
+
+    // Filter by Result: VALID, REJECTED, READY, STATUS_UPDATE
+    const resultParam = String(req.query.result || req.query.validationResult || '').trim().toUpperCase();
+    if (resultParam && resultParam !== 'ALL') {
+      if (resultParam === 'REJECTED') {
+        andConditions.push({
+          $or: [
+            { validationResult: 'REJECTED' },
+            { responseStatus: { $nin: ['0', 0] } },
+            { validationResult: { $in: ['INVALID_SERIAL', 'MODEL_SERIAL_MISMATCH', 'ALREADY_VALIDATED', 'INVALID_MATERIAL_CODE', 'DEALER_MISMATCH', 'EXPIRED', 'DEFECTIVE', 'SERVICE_ERROR', 'SERVICE_UNAVAILABLE', 'UNKNOWN', 'UNKNOWN_RESPONSE'] } }
+          ]
+        });
+      } else if (resultParam === 'VALID') {
+        andConditions.push({
+          $or: [
+            { validationResult: 'VALID' },
+            { responseStatus: '0' }
+          ]
+        });
+      } else {
+        andConditions.push({ validationResult: resultParam });
+      }
+    }
+
+    // Filter by Status: IN_STOCK, VALIDATED, SOLD, DEFECTIVE
+    const statusParam = String(req.query.status || req.query.currentStatus || '').trim().toUpperCase();
+    if (statusParam && statusParam !== 'ALL') {
+      andConditions.push({ currentStatus: statusParam });
     }
 
     const search = String(req.query.search || req.query.q || '').trim();
     if (search) {
-      const escaped = search.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+      const escaped = search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
       const safeRegex = new RegExp(escaped, 'i');
-      const searchOr = {
+      andConditions.push({
         $or: [
           { serialNumber: safeRegex },
           { materialCode: safeRegex },
@@ -61,12 +94,13 @@ router.get('/history', auth, requirePermission('serial_validation.history'), asy
           { currentStatus: safeRegex },
           { validationResult: safeRegex }
         ]
-      };
-      if (filter.$and) {
-        filter.$and.push(searchOr);
-      } else {
-        filter.$or = searchOr.$or;
-      }
+      });
+    }
+
+    if (andConditions.length === 1) {
+      Object.assign(filter, andConditions[0]);
+    } else if (andConditions.length > 1) {
+      filter.$and = andConditions;
     }
 
     const history = await SerialValidationHistory.find(filter)

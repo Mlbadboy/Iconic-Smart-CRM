@@ -278,9 +278,17 @@
             <h2 style="font-size: 1.15rem; margin: 0 0 0.5rem 0;">📥 Export Operational Datasets</h2>
             <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0 0 1rem 0;">Download verified Excel and CSV sheets for offline analysis.</p>
             <div class="export-grid">
+                <div class="export-card" style="border-left: 4px solid var(--primary);">
+                    <div><strong>Serial Numbers & Status Report</strong><br><small style="color: var(--text-muted);">Excel spreadsheet (Serials, Status, Validations, Dates)</small></div>
+                    <button type="button" onclick="downloadReportDirect('/api/reports/serials', 'serial_numbers_status_report', 'excel')" class="btn btn-sm" style="background: var(--primary); color: #fff;">Download Excel</button>
+                </div>
+                <div class="export-card" style="border-left: 4px solid #059669;">
+                    <div><strong>Serial Validation History</strong><br><small style="color: var(--text-muted);">Excel audit log (Verifications, Remarks, Status)</small></div>
+                    <button type="button" onclick="downloadReportDirect('/api/reports/serial-validations', 'serial_validation_history_report', 'excel')" class="btn btn-sm" style="background: #059669; color: #fff;">Download Excel</button>
+                </div>
                 <div class="export-card">
                     <div><strong>Orders Report</strong><br><small style="color: var(--text-muted);">Excel spreadsheet</small></div>
-                    <a href="/api/reports/orders" class="btn btn-sm">Download</a>
+                    <button type="button" onclick="downloadReportDirect('/api/reports/orders', 'orders_report', 'excel')" class="btn btn-sm">Download</button>
                 </div>
                 <div class="export-card">
                     <div><strong>Deliveries Report</strong><br><small style="color: var(--text-muted);">Excel spreadsheet</small></div>

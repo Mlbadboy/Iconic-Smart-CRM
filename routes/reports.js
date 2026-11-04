@@ -529,6 +529,272 @@ router.get('/complete-crm', auth, async (req, res) => {
     }
 });
 
+// Get Serial Numbers Report with Status (Excel)
+router.get('/serials', auth, async (req, res) => {
+    try {
+        const { startDate, endDate, status, materialCode, dealerCode, search, q } = req.query;
+        
+        const role = String(req.user?.role || '').toLowerCase();
+        let companyId = req.user?.companyId;
+        if ((role === 'super-admin' || role === 'superadmin') && req.query.companyId) {
+            companyId = req.query.companyId;
+        }
+
+        let query = {};
+        const andConditions = [];
+
+        // Tenant scoping with legacy unassigned fallback
+        if (companyId && role !== 'super-admin' && role !== 'superadmin') {
+            const compObjectId = mongoose.Types.ObjectId.isValid(companyId) ? new mongoose.Types.ObjectId(companyId) : companyId;
+            andConditions.push({
+                $or: [{ companyId: compObjectId }, { companyId: null }, { companyId: { $exists: false } }]
+            });
+        }
+
+        // Status filter
+        if (status && status.toUpperCase() !== 'ALL') {
+            andConditions.push({ status: status.toUpperCase() });
+        }
+
+        // Material code filter
+        if (materialCode) {
+            andConditions.push({ materialCode: materialCode.toUpperCase() });
+        }
+
+        // Dealer code filter
+        if (dealerCode) {
+            andConditions.push({ dealerCode: dealerCode.toUpperCase() });
+        }
+
+        // Date range filter
+        if (startDate && endDate) {
+            andConditions.push({
+                createdAt: { $gte: new Date(startDate), $lte: new Date(endDate) }
+            });
+        }
+
+        // Search text
+        const searchTerm = String(search || q || '').trim();
+        if (searchTerm) {
+            const escaped = searchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const safeRegex = new RegExp(escaped, 'i');
+            andConditions.push({
+                $or: [
+                    { serialNumber: safeRegex },
+                    { materialCode: safeRegex },
+                    { dealerCode: safeRegex },
+                    { customer: safeRegex },
+                    { batchNumber: safeRegex }
+                ]
+            });
+        }
+
+        if (andConditions.length === 1) {
+            query = andConditions[0];
+        } else if (andConditions.length > 1) {
+            query.$and = andConditions;
+        }
+
+        const serials = await SerialRegistry.find(query)
+            .populate('productId', 'name sku model category')
+            .sort({ createdAt: -1 })
+            .limit(10000)
+            .lean();
+
+        const flatSerials = serials.map((s, idx) => {
+            const isReady = s.status === 'IN_STOCK' || s.status === 'READY' || s.status === 'REGISTERED';
+            const isValidated = s.status === 'VALIDATED';
+            let validationEligibility = isReady ? 'Ready to Validate' : (isValidated ? 'Already Validated' : 'Gated / Ineligible');
+
+            return {
+                '#': idx + 1,
+                'Serial Number': s.serialNumber || 'N/A',
+                'Material Code': s.materialCode || 'N/A',
+                'Product / Model': s.productId?.model || s.productId?.name || s.materialCode || 'N/A',
+                'Product SKU': s.productId?.sku || 'N/A',
+                'Dealer Code': s.dealerCode || 'Unassigned',
+                'Current Status': s.status || 'IN_STOCK',
+                'Validation Eligibility': validationEligibility,
+                'Validated Date': s.registrationDate ? new Date(s.registrationDate).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : 'Not Validated',
+                'Customer': s.customer || 'Unassigned',
+                'Batch Number': s.batchNumber || 'N/A',
+                'Current Holder': s.currentHolderType || 'COMPANY',
+                'Holder Name': s.holderName || s.customer || 'N/A',
+                'Activation Status': s.activationStatus || 'ACTIVE',
+                'Imported Date': s.createdAt ? new Date(s.createdAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : 'N/A'
+            };
+        });
+
+        // Create Excel workbook
+        const ws = XLSX.utils.json_to_sheet(flatSerials);
+
+        // Auto-fit column widths
+        ws['!cols'] = [
+            { wch: 5 },   // #
+            { wch: 22 },  // Serial Number
+            { wch: 16 },  // Material Code
+            { wch: 24 },  // Product / Model
+            { wch: 16 },  // SKU
+            { wch: 16 },  // Dealer Code
+            { wch: 16 },  // Status
+            { wch: 22 },  // Validation Eligibility
+            { wch: 22 },  // Validated Date
+            { wch: 20 },  // Customer
+            { wch: 16 },  // Batch
+            { wch: 16 },  // Holder
+            { wch: 20 },  // Holder Name
+            { wch: 16 },  // Activation
+            { wch: 22 }   // Imported Date
+        ];
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Serial Numbers');
+
+        const excelBuffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+        
+        const dateStr = new Date().toISOString().split('T')[0];
+        const statusSuffix = status ? ('_' + status.toLowerCase()) : '';
+        res.setHeader('Content-Disposition', 'attachment; filename=serial_numbers_status_report' + statusSuffix + '_' + dateStr + '.xlsx');
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.send(excelBuffer);
+
+        console.log('📊 Serial Numbers Report Generated:', flatSerials.length, 'records');
+    } catch (error) {
+        console.error('Error generating serials report:', error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Get Serial Validation History Audit Report (Excel)
+router.get('/serial-validations', auth, async (req, res) => {
+    try {
+        const { startDate, endDate, result, status, search, q } = req.query;
+        
+        const role = String(req.user?.role || '').toLowerCase();
+        let companyId = req.user?.companyId;
+        if ((role === 'super-admin' || role === 'superadmin') && req.query.companyId) {
+            companyId = req.query.companyId;
+        }
+
+        let query = {};
+        const andConditions = [];
+
+        if (companyId && role !== 'super-admin' && role !== 'superadmin') {
+            const compObjectId = mongoose.Types.ObjectId.isValid(companyId) ? new mongoose.Types.ObjectId(companyId) : companyId;
+            andConditions.push({
+                $or: [{ companyId: compObjectId }, { companyId: null }, { companyId: { $exists: false } }]
+            });
+        }
+
+        if (result && result.toUpperCase() !== 'ALL') {
+            const resUpper = result.toUpperCase();
+            if (resUpper === 'REJECTED') {
+                andConditions.push({
+                    $or: [
+                        { validationResult: 'REJECTED' },
+                        { responseStatus: { $nin: ['0', 0] } },
+                        { validationResult: { $in: ['INVALID_SERIAL', 'MODEL_SERIAL_MISMATCH', 'ALREADY_VALIDATED', 'INVALID_MATERIAL_CODE', 'DEALER_MISMATCH', 'EXPIRED', 'DEFECTIVE', 'SERVICE_ERROR', 'SERVICE_UNAVAILABLE', 'UNKNOWN', 'UNKNOWN_RESPONSE'] } }
+                    ]
+                });
+            } else if (resUpper === 'VALID') {
+                andConditions.push({
+                    $or: [
+                        { validationResult: 'VALID' },
+                        { responseStatus: '0' }
+                    ]
+                });
+            } else {
+                andConditions.push({ validationResult: resUpper });
+            }
+        }
+        if (status && status.toUpperCase() !== 'ALL') {
+            andConditions.push({ currentStatus: status.toUpperCase() });
+        }
+
+        if (startDate && endDate) {
+            andConditions.push({
+                createdAt: { $gte: new Date(startDate), $lte: new Date(endDate) }
+            });
+        }
+
+        const searchTerm = String(search || q || '').trim();
+        if (searchTerm) {
+            const escaped = searchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const safeRegex = new RegExp(escaped, 'i');
+            andConditions.push({
+                $or: [
+                    { serialNumber: safeRegex },
+                    { materialCode: safeRegex },
+                    { dealerCode: safeRegex },
+                    { responseMessage: safeRegex },
+                    { statusChangeRemark: safeRegex },
+                    { currentStatus: safeRegex },
+                    { validationResult: safeRegex }
+                ]
+            });
+        }
+
+        if (andConditions.length === 1) {
+            query = andConditions[0];
+        } else if (andConditions.length > 1) {
+            query.$and = andConditions;
+        }
+
+        const histories = await SerialValidationHistory.find(query)
+            .populate('validatedBy', 'name email role')
+            .sort({ createdAt: -1 })
+            .limit(10000)
+            .lean();
+
+        const flatHistories = histories.map((h, idx) => ({
+            '#': idx + 1,
+            'Serial Number': h.serialNumber || 'N/A',
+            'Material Code': h.materialCode || 'N/A',
+            'Dealer Code': h.dealerCode || 'N/A',
+            'Validation Result': h.validationResult || 'UNKNOWN',
+            'Status Code': h.responseStatus || '0',
+            'Previous Status': h.previousStatus || 'N/A',
+            'Current Status': h.currentStatus || 'N/A',
+            'Status Changed': h.statusChanged ? 'YES' : 'NO',
+            'Rejection Reason & Remarks': h.responseMessage || h.statusChangeRemark || 'N/A',
+            'Verified By': h.validatedBy?.name || h.clientName || 'Portal User',
+            'Feature / Channel': h.feature || 'Serial Validation',
+            'Timestamp': h.createdAt ? new Date(h.createdAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : 'N/A'
+        }));
+
+        const ws = XLSX.utils.json_to_sheet(flatHistories);
+        ws['!cols'] = [
+            { wch: 5 },   // #
+            { wch: 22 },  // Serial Number
+            { wch: 16 },  // Material Code
+            { wch: 16 },  // Dealer Code
+            { wch: 18 },  // Validation Result
+            { wch: 12 },  // Status Code
+            { wch: 16 },  // Previous Status
+            { wch: 16 },  // Current Status
+            { wch: 14 },  // Status Changed
+            { wch: 40 },  // Rejection Reason & Remarks
+            { wch: 22 },  // Verified By
+            { wch: 20 },  // Feature / Channel
+            { wch: 22 }   // Timestamp
+        ];
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Validation History');
+
+        const excelBuffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+        const dateStr = new Date().toISOString().split('T')[0];
+        res.setHeader('Content-Disposition', 'attachment; filename=serial_validation_history_report_' + dateStr + '.xlsx');
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.send(excelBuffer);
+
+        console.log('📊 Serial Validation History Report Generated:', flatHistories.length, 'records');
+    } catch (error) {
+        console.error('Error generating validation history report:', error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // Get Report Summary (metadata about available reports scoped to tenant & features)
 router.get('/summary', auth, async (req, res) => {
     try {
@@ -540,7 +806,8 @@ router.get('/summary', auth, async (req, res) => {
             service: true,
             customers: true,
             sales: true,
-            dashboard: true
+            dashboard: true,
+            serial_validation: true
         };
 
         if (req.user?.companyId) {
@@ -561,7 +828,9 @@ router.get('/summary', auth, async (req, res) => {
             leadsCount,
             contactsCount,
             usersCount,
-            retailersCount
+            retailersCount,
+            serialsCount,
+            serialValidationsCount
         ] = await Promise.all([
             Order.countDocuments(compFilter),
             Dispatch.countDocuments(compFilter),
@@ -573,10 +842,14 @@ router.get('/summary', auth, async (req, res) => {
             Lead.countDocuments(compFilter),
             Contact.countDocuments(compFilter),
             User.countDocuments(compFilter),
-            Retailer.countDocuments(compFilter)
+            Retailer.countDocuments(compFilter),
+            SerialRegistry.countDocuments(compFilter),
+            SerialValidationHistory.countDocuments(compFilter)
         ]);
 
         const allReports = [
+            { key: 'serial_validation', name: 'Serial Numbers & Status Report', type: 'excel', endpoint: '/api/reports/serials', records: serialsCount },
+            { key: 'serial_validation', name: 'Validation History Report', type: 'excel', endpoint: '/api/reports/serial-validations', records: serialValidationsCount },
             { key: 'orders', name: 'Orders Report', type: 'excel', endpoint: '/api/reports/orders', records: ordersCount },
             { key: 'logistics', name: 'Deliveries Report', type: 'excel', endpoint: '/api/reports/deliveries', records: dispatchesCount },
             { key: 'service', name: 'Services Report', type: 'excel', endpoint: '/api/reports/services', records: servicesCount },

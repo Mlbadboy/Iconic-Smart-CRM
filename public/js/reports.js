@@ -55,3 +55,51 @@ async function loadOperationalReport() {
         console.error('Error loading operational report:', err);
     }
 }
+
+
+async function downloadReportDirect(endpoint, filename, type = 'excel') {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        alert('Please log in to download reports');
+        window.location.href = '/login.html';
+        return;
+    }
+    const btn = event?.currentTarget;
+    const originalText = btn ? btn.textContent : '';
+    try {
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Generating...';
+        }
+
+        const res = await fetch(endpoint, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.message || 'Download failed');
+        }
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const ext = type === 'excel' ? 'xlsx' : 'csv';
+        a.download = `${filename}_${new Date().toISOString().split('T')[0]}.${ext}`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    } catch (err) {
+        alert('Failed to download report: ' + err.message);
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    }
+}
